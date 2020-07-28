@@ -1,0 +1,38 @@
+Package: carbonara
+Type: Package
+Title: Utilities for modelling carbon in R based on CBM-CFS3
+Description: Implementation of several components of the Carbon Budget Model of the
+    Canadian Forest Service (v3).
+URL:
+    https://carbonara.predictiveecology.org/,
+    https://github.com/PredictiveEcology/carbonara
+Date: 2020-07-20
+Version: 0.0.1
+Authors@R: c(
+    person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
+    person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("aut")),
+    person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("ctb", "cre"),
+           comment = c(ORCID = "0000-0001-7146-8135"))
+    )
+License: GPL-3
+Depends: R (>= 3.5)
+Imports:
+    data.table,
+    fasterize,
+    ggplot2,
+    magrittr,
+    methods,
+    quickPlot,
+    raster,
+    RSQLite,
+    sf,
+    sp
+Suggests:
+    LandR,
+    SpaDES.core
+Remotes:
+    PredictiveEcology/LandR@development,
+    PredictiveEcology/SpaDES.core@development
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
