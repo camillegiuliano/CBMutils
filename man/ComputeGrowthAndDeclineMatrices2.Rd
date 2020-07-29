@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{ComputeGrowthAndDeclineMatrices2}
 \alias{ComputeGrowthAndDeclineMatrices2}
-\title{\code{ComputeGrowthAndDeclineMatrices2}}
+\title{Compute growth and decline matrices}
 \usage{
 ComputeGrowthAndDeclineMatrices2(
   growthIncrements,

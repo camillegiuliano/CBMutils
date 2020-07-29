@@ -331,6 +331,15 @@ void FillMatrix(int maxIndex, Coomatrix& coomat, Rcpp::NumericMatrix& mat){
   }
 }
 
+
+//' `StepPoolsRef`
+//'
+//' DESCRIPTION NEEDED
+//'
+//' @param pools DESCRIPTION NEEDED
+//' @param opMatrix DESCRIPTION NEEDED
+//' @param flowMatrices DESCRIPTION NEEDED
+//'
 // [[Rcpp::export]]
 void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
                   Rcpp::List& flowMatrices) {
@@ -384,6 +393,16 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
   }
 }
 
+
+//' `StepPools`
+//'
+//' DESCRIPTION NEEDED
+//'
+//' @param pools DESCRIPTION NEEDED
+//' @param opMatrix DESCRIPTION NEEDED
+//' @param flowMatrices DESCRIPTION NEEDED
+//'
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericMatrix StepPools(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
                               Rcpp::List& flowMatrices){
@@ -391,6 +410,7 @@ Rcpp::NumericMatrix StepPools(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& o
   StepPoolsRef(poolsClone, opMatrix, flowMatrices);
   return poolsClone;
 }
+
 //// [[Rcpp::export]]
 //Rcpp::List StepFlux(Rcpp::List& data, Rcpp::IntegerMatrix& opMatrix,
 //    Rcpp::List& flowMatrices, Rcpp::IntegerMatrix& fluxIndicators) {
@@ -904,7 +924,7 @@ Rcpp::List ComputeGrowthAndDeclineMatrices(Rcpp::NumericMatrix& growthIncrements
 	);
 }
 
-//' `ComputeGrowthAndDeclineMatrices2`
+//' Compute growth and decline matrices
 //'
 //' DESCRIPTION NEEDED
 //'
@@ -918,6 +938,7 @@ Rcpp::List ComputeGrowthAndDeclineMatrices(Rcpp::NumericMatrix& growthIncrements
 //' @param swMult softwood multiplier? (DESCRITION NEEDED)
 //' @param hwMult hardwood multiplier? (DESCRITION NEEDED)
 //'
+//' @export
 //' @name ComputeGrowthAndDeclineMatrices2
 //' @rdname ComputeGrowthAndDeclineMatrices2
 // [[Rcpp::export]]
@@ -1047,6 +1068,8 @@ SpinupState UpdateSpinupState(SpinupState current, int finalAge, int stepNum,
 //' @param turnoverParams `data.frame` specifying turnover parameters
 //' @param biomassToCarbonRate DESCRIPTION NEEDED
 //' @param debug logical indicating whether to run spinup in debug mode.
+//'
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 	Rcpp::IntegerMatrix opMatrix,

@@ -23,10 +23,27 @@ NULL
 #' @rdname ComputeOverMatureDeclineCoordinateMatrices
 NULL
 
+#' `StepPoolsRef`
+#'
+#' DESCRIPTION NEEDED
+#'
+#' @param pools DESCRIPTION NEEDED
+#' @param opMatrix DESCRIPTION NEEDED
+#' @param flowMatrices DESCRIPTION NEEDED
+#'
 StepPoolsRef <- function(pools, opMatrix, flowMatrices) {
     invisible(.Call('_carbonara_StepPoolsRef', PACKAGE = 'carbonara', pools, opMatrix, flowMatrices))
 }
 
+#' `StepPools`
+#'
+#' DESCRIPTION NEEDED
+#'
+#' @param pools DESCRIPTION NEEDED
+#' @param opMatrix DESCRIPTION NEEDED
+#' @param flowMatrices DESCRIPTION NEEDED
+#'
+#' @export
 StepPools <- function(pools, opMatrix, flowMatrices) {
     .Call('_carbonara_StepPools', PACKAGE = 'carbonara', pools, opMatrix, flowMatrices)
 }
@@ -73,7 +90,7 @@ ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
     .Call('_carbonara_ComputeGrowthAndDeclineMatrices', PACKAGE = 'carbonara', growthIncrements, decline)
 }
 
-#' `ComputeGrowthAndDeclineMatrices2`
+#' Compute growth and decline matrices
 #'
 #' DESCRIPTION NEEDED
 #'
@@ -87,6 +104,7 @@ ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
 #' @param swMult softwood multiplier? (DESCRITION NEEDED)
 #' @param hwMult hardwood multiplier? (DESCRITION NEEDED)
 #'
+#' @export
 #' @name ComputeGrowthAndDeclineMatrices2
 #' @rdname ComputeGrowthAndDeclineMatrices2
 ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult = 1.0, hwMult = 1.0) {
@@ -115,6 +133,8 @@ ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pool
 #' @param turnoverParams `data.frame` specifying turnover parameters
 #' @param biomassToCarbonRate DESCRIPTION NEEDED
 #' @param debug logical indicating whether to run spinup in debug mode.
+#'
+#' @export
 Spinup <- function(pools, opMatrix, constantProcesses, growthIncrements, ages, gcids, historicdmids, lastPassdmids, delays, minRotations, maxRotations, returnIntervals, rootParameters, turnoverParams, biomassToCarbonRate, debug = FALSE) {
     .Call('_carbonara_Spinup', PACKAGE = 'carbonara', pools, opMatrix, constantProcesses, growthIncrements, ages, gcids, historicdmids, lastPassdmids, delays, minRotations, maxRotations, returnIntervals, rootParameters, turnoverParams, biomassToCarbonRate, debug)
 }
