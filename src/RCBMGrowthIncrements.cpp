@@ -340,6 +340,7 @@ void FillMatrix(int maxIndex, Coomatrix& coomat, Rcpp::NumericMatrix& mat){
 //' @param opMatrix DESCRIPTION NEEDED
 //' @param flowMatrices DESCRIPTION NEEDED
 //'
+//'@export
 // [[Rcpp::export]]
 void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
                   Rcpp::List& flowMatrices) {
@@ -603,6 +604,7 @@ TotalBiomassIncrement GetTotalBiomassIncrement(PoolNames& pn, double* pools,
 //' @param growthIncrements Matrix of growth increments
 //' @param turnoverParams `data.frame` specifying turnover parameters
 //'
+//'@export
 // [[Rcpp::export]]
 Rcpp::NumericMatrix ComputeOvermatureDecline(Rcpp::NumericMatrix growthIncrements,
 	Rcpp::DataFrame& turnoverParams) {
@@ -737,6 +739,7 @@ Rcpp::NumericMatrix ComputeOvermatureDecline(Rcpp::NumericMatrix growthIncrement
 //' @param swMult softwood multiplier? (DESCRIPTION NEEDED)
 //' @param hwMult hardwood multiplier? (DESCRIPTION NEEDED)
 //'
+//'@export
 // [[Rcpp::export]]
 Rcpp::NumericMatrix ComputeGrowthIncrements(Rcpp::Environment& growthIncrements,
 	Rcpp::IntegerVector& ages, Rcpp::IntegerVector& gcids,
@@ -913,6 +916,8 @@ Rcpp::List ComputeOverMatureDeclineCoordinateMatrices(PoolNames& pn, Rcpp::Numer
 //'
 //' @name ComputeGrowthAndDeclineMatrices
 //' @rdname ComputeGrowthAndDeclineMatrices
+
+//'@export
 // [[Rcpp::export]]
 Rcpp::List ComputeGrowthAndDeclineMatrices(Rcpp::NumericMatrix& growthIncrements,
 	Rcpp::NumericMatrix& decline) {
@@ -938,9 +943,10 @@ Rcpp::List ComputeGrowthAndDeclineMatrices(Rcpp::NumericMatrix& growthIncrements
 //' @param swMult softwood multiplier? (DESCRITION NEEDED)
 //' @param hwMult hardwood multiplier? (DESCRITION NEEDED)
 //'
-//' @export
 //' @name ComputeGrowthAndDeclineMatrices2
 //' @rdname ComputeGrowthAndDeclineMatrices2
+//'
+//' @export
 // [[Rcpp::export]]
 Rcpp::List ComputeGrowthAndDeclineMatrices2(Rcpp::Environment& growthIncrements,
 	Rcpp::IntegerVector& ages, Rcpp::IntegerVector& gcids,

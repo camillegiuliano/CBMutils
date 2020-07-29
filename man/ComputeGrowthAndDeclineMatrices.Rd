@@ -3,9 +3,6 @@
 \name{ComputeGrowthAndDeclineMatrices}
 \alias{ComputeGrowthAndDeclineMatrices}
 \title{Compute growth and decline matrices}
-\usage{
-ComputeGrowthAndDeclineMatrices(growthIncrements, decline)
-}
 \arguments{
 \item{growthIncrements}{Matrix of growth increments}
 

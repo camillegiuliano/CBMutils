@@ -23,6 +23,17 @@ NULL
 #' @rdname ComputeOverMatureDeclineCoordinateMatrices
 NULL
 
+#' Compute growth and decline matrices
+#'
+#' DESCRIPTION NEEDED
+#'
+#' @param growthIncrements Matrix of growth increments
+#' @param decline Matrix containing proportion decline for each pool
+#'
+#' @name ComputeGrowthAndDeclineMatrices
+#' @rdname ComputeGrowthAndDeclineMatrices
+NULL
+
 #' `StepPoolsRef`
 #'
 #' DESCRIPTION NEEDED
@@ -31,6 +42,7 @@ NULL
 #' @param opMatrix DESCRIPTION NEEDED
 #' @param flowMatrices DESCRIPTION NEEDED
 #'
+#'@export
 StepPoolsRef <- function(pools, opMatrix, flowMatrices) {
     invisible(.Call('_carbonara_StepPoolsRef', PACKAGE = 'carbonara', pools, opMatrix, flowMatrices))
 }
@@ -55,6 +67,7 @@ StepPools <- function(pools, opMatrix, flowMatrices) {
 #' @param growthIncrements Matrix of growth increments
 #' @param turnoverParams `data.frame` specifying turnover parameters
 #'
+#'@export
 ComputeOvermatureDecline <- function(growthIncrements, turnoverParams) {
     .Call('_carbonara_ComputeOvermatureDecline', PACKAGE = 'carbonara', growthIncrements, turnoverParams)
 }
@@ -73,19 +86,12 @@ ComputeOvermatureDecline <- function(growthIncrements, turnoverParams) {
 #' @param swMult softwood multiplier? (DESCRIPTION NEEDED)
 #' @param hwMult hardwood multiplier? (DESCRIPTION NEEDED)
 #'
+#'@export
 ComputeGrowthIncrements <- function(growthIncrements, ages, gcids, pools, rootParameters, biomassToCarbonRate, swMult = 1.0, hwMult = 1.0) {
     .Call('_carbonara_ComputeGrowthIncrements', PACKAGE = 'carbonara', growthIncrements, ages, gcids, pools, rootParameters, biomassToCarbonRate, swMult, hwMult)
 }
 
-#' Compute growth and decline matrices
-#'
-#' DESCRIPTION NEEDED
-#'
-#' @param growthIncrements Matrix of growth increments
-#' @param decline Matrix containing proportion decline for each pool
-#'
-#' @name ComputeGrowthAndDeclineMatrices
-#' @rdname ComputeGrowthAndDeclineMatrices
+#'@export
 ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
     .Call('_carbonara_ComputeGrowthAndDeclineMatrices', PACKAGE = 'carbonara', growthIncrements, decline)
 }
@@ -104,9 +110,10 @@ ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
 #' @param swMult softwood multiplier? (DESCRITION NEEDED)
 #' @param hwMult hardwood multiplier? (DESCRITION NEEDED)
 #'
-#' @export
 #' @name ComputeGrowthAndDeclineMatrices2
 #' @rdname ComputeGrowthAndDeclineMatrices2
+#'
+#' @export
 ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult = 1.0, hwMult = 1.0) {
     .Call('_carbonara_ComputeGrowthAndDeclineMatrices2', PACKAGE = 'carbonara', growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult, hwMult)
 }
