@@ -1,6 +1,6 @@
 utils::globalVariables(c(
   "a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3",
-  "canfi_species", "ecozone", "genus", "GrowthCurveComponentID",
+  "canfi_species", "eco", "ecozone", "genus", "GrowthCurveComponentID",
   "spatialUnitID", "species", "speciesName"
 ))
 
@@ -108,7 +108,7 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   params4 <- params4[canfi_species == spec & ecozone == ez, ]
   # table 5 is different than the others
   params5 <- params5[genus == gen & ecozone == ez, ]
-  params6 <- params6[species == spec & ecozone == ez, ] ## TODO: verify if col name is 'eco'
+  params6 <- params6[species == spec & eco == ez, ] ## NOTE: col name is 'eco', not 'ecozone'!
 
   # eq1 returns the total stem wood biomass in metric tonnes/ha, when you give it
   # the gross merchantable volume/ha. Parameters a and b are in table3
