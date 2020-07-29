@@ -24,15 +24,22 @@ Imports:
     methods,
     quickPlot,
     raster,
+    Rcpp,
     RSQLite,
     sf,
     sp
 Suggests:
+    knitr,
     LandR,
+    rmarkdown,
     SpaDES.core
 Remotes:
     PredictiveEcology/LandR@development,
     PredictiveEcology/SpaDES.core@development
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp
+VignetteBuilder: knitr

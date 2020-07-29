@@ -7,7 +7,7 @@
 m3ToVolCheckPlots(sim)
 }
 \arguments{
-\item{sim}{A `SpaDES` CBM simulation object (`simList`).}
+\item{sim}{A \code{SpaDES} CBM simulation object (\code{simList}).}
 }
 \description{
 Check the growth increments by above ground pool. This is

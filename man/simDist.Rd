@@ -13,7 +13,7 @@ proportion in which the carbon-transfers are completed.}
 simDist(sim)
 }
 \arguments{
-\item{sim}{A `SpaDES` CBM simulation (`simList`) object.}
+\item{sim}{A \code{SpaDES} CBM simulation (\code{simList}) object.}
 }
 \description{
 get the descriptive name and proportions transferred for disturbances in a simulation

@@ -15,10 +15,10 @@ spuDist(
 \item{dbPath}{Path to sqlite database file.}
 }
 \description{
-You give is spatial units you are targetting `mySpu` and it gives you the disturbance matrix id
+You give is spatial units you are targetting \code{mySpu} and it gives you the disturbance matrix id
 that are possible/default in that specific spu and a descriptive name of that disturbance matrix
-it creates a `data.frame` of length number of disturbances, with three columns:
-`spatial_unit_is`, `disturbance_matrix_id`, and a `desciption` of the disturbance.
+it creates a \code{data.frame} of length number of disturbances, with three columns:
+\code{spatial_unit_is}, \code{disturbance_matrix_id}, and a \code{desciption} of the disturbance.
 }
 \details{
 TODO: can we have a Canada-wide SPU map and they locate themselves on the map?

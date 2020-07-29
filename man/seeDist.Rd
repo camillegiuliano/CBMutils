@@ -15,7 +15,7 @@ seeDist(
 \item{dbPath}{Path to sqlite database file.}
 }
 \value{
-A list of `data.frame`s, one per disturbance matrix id.
+A list of \code{data.frame}s, one per disturbance matrix id.
 }
 \description{
 Get the descriptive name of the disturbance, the source pools, the sink pools, and

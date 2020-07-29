@@ -22,7 +22,9 @@ in medium-soil, and in snags still needs to be estimated.
 In all spatial units in Canada, the historical disturbance is set to fire.
 A stand-replacing fire disturbance is used in a disturb-grow cycle, where stands are disturbed
 and regrown with turnover, overmature, decay, functioning until the dead organic matter pools
-biomass values stabilize (+/- 10%).
-## TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).
+biomass values stabilize (+/- 10\%).
+\subsection{TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).}{
+
 By default the most recent is selected, but the user can change that.
+}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spadesCBMextraFunctions.R
 \name{retrieveSpuRaster}
 \alias{retrieveSpuRaster}
-\title{Produce a raster with `spUnits`}
+\title{Produce a raster with \code{spUnits}}
 \usage{
 retrieveSpuRaster(
   spatialUnitsFile = shapefile("data/spUnit_Locator.shp"),
@@ -18,7 +18,7 @@ retrieveSpuRaster(
 \item{rasterRes}{The desired raster resolution.}
 }
 \description{
-Produce a raster with `spUnits`
+Produce a raster with \code{spUnits}
 }
 \examples{
 \dontrun{

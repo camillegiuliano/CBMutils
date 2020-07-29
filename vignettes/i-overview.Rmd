@@ -1,0 +1,19 @@
+---
+title: "i-overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{i-overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(carbonara)
+```
