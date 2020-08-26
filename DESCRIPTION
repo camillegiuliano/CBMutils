@@ -1,6 +1,6 @@
 Package: carbonara
 Type: Package
-Title: Utilities for modelling carbon in R based on CBM-CFS3
+Title: Utilities for modelling carbon based on CBM-CFS3
 Description: Implementation of several components of the Carbon Budget Model of the
     Canadian Forest Service (v3).
 URL:

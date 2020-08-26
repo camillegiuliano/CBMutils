@@ -4,10 +4,10 @@
 \name{carbonara-package}
 \alias{carbonara}
 \alias{carbonara-package}
-\title{carbanara}
+\title{\code{carbonara}}
 \description{
-Implementation of several components of the Carbon Budget Model of the
-    Canadian Forest Service (v3).
+Utilities for modelling carbon in R/SpaDES based on the Carbon Budget Model of the Canadian
+Forest Service v3 (CBM-CFS3).
 }
 \seealso{
 Useful links:

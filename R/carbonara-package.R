@@ -1,4 +1,7 @@
-#' carbanara
+#' `carbonara`
+#'
+#' Utilities for modelling carbon in R/SpaDES based on the Carbon Budget Model of the Canadian
+#' Forest Service v3 (CBM-CFS3).
 #'
 #' @import methods
 "_PACKAGE"
