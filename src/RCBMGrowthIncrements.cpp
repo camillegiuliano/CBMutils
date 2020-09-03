@@ -18,8 +18,8 @@ template < typename T > std::string to_string( const T& n )
 * square sparse matrix specifically purposed for a vector by matrix
 * multiplication, and the flux operation: @f$ flux=diag(v_{0})\times(M-I) @f$
 *
-* Implemented with coordinate format for off-diagonal values. Diagonal values
-* are stored as an array.
+* Implemented with coordinate format for off-diagonal values.
+* Diagonal values are stored as an array.
 */
 class Coomatrix
 {
@@ -290,8 +290,7 @@ public:
   * this instance stores flux
   *
   * @param v0 the vector left hand operand of the function
-  * @param v1 the return value of the function, any data in this array is
-  *        overwritten
+  * @param v1 the return value of the function, any data in this array is overwritten
   * @param M the matrix of proportional transfers from v0 to v1
   */
   void Flux(double* v0, double* v1, Coomatrix* M){
@@ -319,9 +318,9 @@ public:
 };
 
 void FillMatrix(int maxIndex, Coomatrix& coomat, Rcpp::NumericMatrix& mat){
-  for( auto matRow = 0; matRow<mat.nrow(); matRow++){
-    int rowIdx = (int)mat(matRow, 0)-1;
-    int colIdx = (int)mat(matRow, 1)-1;
+  for( auto matRow = 0; matRow < mat.nrow(); matRow++ ){
+    int rowIdx = (int)mat(matRow, 0) - 1;
+    int colIdx = (int)mat(matRow, 1) - 1;
     double value = mat(matRow, 2);
     if(rowIdx < 0 || rowIdx >= maxIndex ||
        colIdx < 0 || colIdx >= maxIndex){
@@ -340,7 +339,7 @@ void FillMatrix(int maxIndex, Coomatrix& coomat, Rcpp::NumericMatrix& mat){
 //' @param opMatrix DESCRIPTION NEEDED
 //' @param flowMatrices DESCRIPTION NEEDED
 //'
-//'@export
+//' @export
 // [[Rcpp::export]]
 void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
                   Rcpp::List& flowMatrices) {
@@ -361,7 +360,7 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
     Rcpp::NumericVector _currentPools = pools(row, Rcpp::_);
     std::vector<double> currentPools(_currentPools.begin(), _currentPools.end());
 
-    for(auto col = 0; col < opMatrix.ncol(); col ++ ) {
+    for(auto col = 0; col < opMatrix.ncol(); col ++) {
       size_t id = opMatrix(row, col);
       if (id <= 0) {
         continue;
@@ -378,7 +377,6 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
       else
       { //assume list
         Rcpp::List list = (Rcpp::List)flowCol;
-
         Rcpp::NumericMatrix mat = list[id-1];
         FillMatrix(npools, _mat, mat);
       }
@@ -404,6 +402,37 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
 //' @param flowMatrices DESCRIPTION NEEDED
 //'
 //' @export
+//' @examples
+//' nPixGrp <- 3
+//'
+//' pools <- matrix(c(1.0, 10.0, 0.0, 1.0, 20.0, 0.0, 1.0, 5.0, 0.0),
+//'                 ncol = 3, nrow = nPixGrp, byrow = TRUE)
+//' colnames(pools) <- c("input", "pool1", "pool2")
+//' pools
+//'
+//' ##      input pool1 pool2
+//' ## [1,]     1    10     0
+//' ## [2,]     1    20     0
+//' ## [3,]     1     5     0
+//'
+//' op <- matrix(rep(c(1, 1), nPixGrp), ncol = 2, nrow = nPixGrp, byrow = TRUE)
+//' colnames(op) <- c("disturbance", "growth")
+//'
+//' cnames <- c("row", "col", "value")
+//' dist <- matrix(c(2, 3, 1, 1, 1, 1), ncol = 3, nrow = 2, byrow = TRUE)
+//' colnames(dist) <- cnames
+//' grow <- matrix(c(1, 2, 0.1, 1, 3, 0.2, 2, 3, 0.3, 3, 3, 1.0), ncol = 3, nrow = 4, byrow = TRUE)
+//' colnames(grow) <- cnames
+//' flow <- list(Disturbance = list(dist), Growth = list(grow))
+//'
+//' new_pools <- StepPools(pools, op, flow)
+//' new_pools
+//'
+//' ##      input pool1 pool2
+//' ## [1,]     1   0.1  10.2
+//' ## [2,]     1   0.1  20.2
+//' ## [3,]     1   0.1   5.2
+//'
 // [[Rcpp::export]]
 Rcpp::NumericMatrix StepPools(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
                               Rcpp::List& flowMatrices){

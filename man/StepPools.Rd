@@ -16,3 +16,35 @@ StepPools(pools, opMatrix, flowMatrices)
 \description{
 DESCRIPTION NEEDED
 }
+\examples{
+nPixGrp <- 3
+
+pools <- matrix(c(1.0, 10.0, 0.0, 1.0, 20.0, 0.0, 1.0, 5.0, 0.0),
+                ncol = 3, nrow = nPixGrp, byrow = TRUE)
+colnames(pools) <- c("input", "pool1", "pool2")
+pools
+
+##      input pool1 pool2
+## [1,]     1    10     0
+## [2,]     1    20     0
+## [3,]     1     5     0
+
+op <- matrix(rep(c(1, 1), nPixGrp), ncol = 2, nrow = nPixGrp, byrow = TRUE)
+colnames(op) <- c("disturbance", "growth")
+
+cnames <- c("row", "col", "value")
+dist <- matrix(c(2, 3, 1, 1, 1, 1), ncol = 3, nrow = 2, byrow = TRUE)
+colnames(dist) <- cnames
+grow <- matrix(c(1, 2, 0.1, 1, 3, 0.2, 2, 3, 0.3, 3, 3, 1.0), ncol = 3, nrow = 4, byrow = TRUE)
+colnames(grow) <- cnames
+flow <- list(Disturbance = list(dist), Growth = list(grow))
+
+new_pools <- StepPools(pools, op, flow)
+new_pools
+
+##      input pool1 pool2
+## [1,]     1   0.1  10.2
+## [2,]     1   0.1  20.2
+## [3,]     1   0.1   5.2
+
+}

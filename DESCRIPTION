@@ -32,7 +32,8 @@ Suggests:
     knitr,
     LandR,
     rmarkdown,
-    SpaDES.core
+    SpaDES.core,
+    testthat
 Remotes:
     PredictiveEcology/LandR@development,
     PredictiveEcology/SpaDES.core@development
