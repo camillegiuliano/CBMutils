@@ -1,3 +1,10 @@
+#' Load disturbance matrix IDs
+#'
+#' @param disturbanceMatrixValues DESCRIPTION NEEDED
+#' @param dbPools DESCRIPTION NEEDED
+#'
+#' @return DESCRIPTION NEEDED
+#' @export
 loadDisturbanceMatrixIds <- function(disturbanceMatrixValues, dbPools) {
   ids <- unique(disturbanceMatrixValues[, "disturbance_matrix_id"])
 
