@@ -13,7 +13,8 @@ test_that("StepPools works", {
   ## [3,]     1     5     0
 
   ## these are the indices into the flow matrices
-  op <- matrix(rep(c(10, 1, 2), nPixGrp), ncol = 3, nrow = nPixGrp, byrow = TRUE)
+  #op <- matrix(rep(c(10, 1, 2), nPixGrp), ncol = 3, nrow = nPixGrp, byrow = TRUE)
+  op <- matrix(rep(c(10, 1), nPixGrp), ncol = 2, nrow = nPixGrp, byrow = TRUE)
   colnames(op) <- c("disturbance", "growth", "other")
 
   stopifnot(nrow(pools) == nrow(op))
@@ -23,12 +24,13 @@ test_that("StepPools works", {
   colnames(dist) <- cnames
   grow <- matrix(c(1, 2, 0.1, 1, 3, 0.2, 2, 3, 0.3, 3, 3, 1.0), ncol = 3, nrow = 4, byrow = TRUE)
   colnames(grow) <- cnames
-  other <- matrix(c(1, 1, 1, 2, 2, 1, 3, 3, 1), ncol = 3, nrow = 3, byrow = TRUE)
-  colnames(grow) <- cnames
+  #other <- matrix(c(1, 1, 1, 2, 2, 1, 3, 3, 1), ncol = 3, nrow = 3, byrow = TRUE)
+  #colnames(grow) <- cnames
 
   distenv <- new.env(parent = emptyenv())
   distenv$`10` <- dist
-  flow <- list(Disturbance = distenv, Growth = list(grow), Other = list(list(), other))
+  #flow <- list(Disturbance = distenv, Growth = list(grow), Other = list(list(), other))
+  flow <- list(Disturbance = distenv, Growth = list(grow))
 
   stopifnot(length(flow) == ncol(op))
 
