@@ -15,7 +15,7 @@ loadDisturbanceMatrixIds <- function(disturbanceMatrixValues, dbPools) {
   }
 
   # fill in the neutral transfers not covered by the matrix data
-  # ie. the matrix will not withdraw from any of the following pools
+  # i.e., the matrix will not withdraw from any of the following pools
   neutrals <- NULL
   neutrals <- rbind(neutrals, c(Input, Input, 1))
   neutrals <- rbind(neutrals, c(CO2, CO2, 1))
