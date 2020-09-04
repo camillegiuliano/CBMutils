@@ -2,19 +2,21 @@
 % Please edit documentation in R/RcppExports.R
 \name{StepPools}
 \alias{StepPools}
-\title{\code{StepPools}}
+\title{Step through pools, computing carbon transfers}
 \usage{
 StepPools(pools, opMatrix, flowMatrices)
 }
 \arguments{
-\item{pools}{DESCRIPTION NEEDED}
+\item{pools}{A numeric matrix describing the amount of carbon in each pool (column) across
+multiple stands/pixel groups (rows).}
 
-\item{opMatrix}{DESCRIPTION NEEDED}
+\item{opMatrix}{A numeric matrix with columns corresponding to flows, and rows corresponding
+to stands/pixel groups. Values are indices into the \code{flowMatrices}.}
 
-\item{flowMatrices}{DESCRIPTION NEEDED}
+\item{flowMatrices}{A list of lists (or environments) containing all carbon flow matrices.}
 }
 \description{
-DESCRIPTION NEEDED
+Computes by row (stand/\code{pixelGroup}) across all columns (pools).
 }
 \examples{
 nPixGrp <- 3

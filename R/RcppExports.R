@@ -34,28 +34,29 @@ NULL
 #' @rdname ComputeGrowthAndDeclineMatrices
 NULL
 
-#' `StepPoolsRef`
+#' Step through pools, computing carbon transfers
 #'
-#' DESCRIPTION NEEDED
+#' Computes by row (stand/`pixelGroup`) across all columns (pools) in place.
 #'
-#' @param pools DESCRIPTION NEEDED
-#' @param opMatrix DESCRIPTION NEEDED
-#' @param flowMatrices DESCRIPTION NEEDED
+#' @param pools A numeric matrix describing the amount of carbon in each pool (column) across
+#'              multiple stands/pixel groups (rows).
+#' @param opMatrix A numeric matrix with columns corresponding to flows, and rows corresponding
+#'                 to stands/pixel groups. Values are indices into the `flowMatrices`.
+#' @param flowMatrices A list of lists (or environments) containing all carbon flow matrices.
 #'
 #' @export
 StepPoolsRef <- function(pools, opMatrix, flowMatrices) {
     invisible(.Call(`_carbonara_StepPoolsRef`, pools, opMatrix, flowMatrices))
 }
 
-#' `StepPools`
+#' Step through pools, computing carbon transfers
 #'
-#' DESCRIPTION NEEDED
+#' Computes by row (stand/`pixelGroup`) across all columns (pools).
 #'
-#' @param pools DESCRIPTION NEEDED
-#' @param opMatrix DESCRIPTION NEEDED
-#' @param flowMatrices DESCRIPTION NEEDED
+#' @inheritParams StepPoolsRef
 #'
 #' @export
+#'
 #' @examples
 #' nPixGrp <- 3
 #'
