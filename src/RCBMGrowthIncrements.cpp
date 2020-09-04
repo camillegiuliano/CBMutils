@@ -90,7 +90,6 @@ private:
     AllocatedSize = _size;
   }
 
-
 public:
   /**
   * Gets the matrix id
@@ -121,6 +120,7 @@ public:
     {
       Diagonal[i] = 0;
     }
+    Diagonal[0] = 1; // inputs to inputs is always 1
     Order = order;
   }
 
@@ -133,11 +133,18 @@ public:
     delete[] Values;
     delete[] Diagonal;
   }
+
   /**
   * Reset the matrix by setting the Count to 0 and the diagonal values to 0
   */
   void Reset() {
     Count = 0;
+    // resetting the diagonal was not being done previously
+    for (int i = 0; i < Order; i++)
+    {
+      Diagonal[i] = 0;
+    }
+    Diagonal[0] = 1; // keep the inputs at 1; reset the rest
   }
 
   /**
