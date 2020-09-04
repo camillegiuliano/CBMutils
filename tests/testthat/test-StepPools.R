@@ -15,7 +15,8 @@ test_that("StepPools works", {
   ## these are the indices into the flow matrices
   #op <- matrix(rep(c(10, 1, 2), nPixGrp), ncol = 3, nrow = nPixGrp, byrow = TRUE)
   op <- matrix(rep(c(10, 1), nPixGrp), ncol = 2, nrow = nPixGrp, byrow = TRUE)
-  colnames(op) <- c("disturbance", "growth", "other")
+  #colnames(op) <- c("disturbance", "growth", "other")
+  colnames(op) <- c("disturbance", "growth")
 
   stopifnot(nrow(pools) == nrow(op))
 
