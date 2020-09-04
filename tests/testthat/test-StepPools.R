@@ -1,3 +1,5 @@
+if (interactive()) library(testthat)
+
 test_that("StepPools works", {
   nPixGrp <- 3 ## aka nstands
 
@@ -26,7 +28,7 @@ test_that("StepPools works", {
 
   distenv <- new.env(parent = emptyenv())
   distenv$`10` <- dist
-  flow <- list(Disturbance = distenv, Growth = list(grow), Other = list(other))
+  flow <- list(Disturbance = distenv, Growth = list(grow), Other = list(list(), other))
 
   stopifnot(length(flow) == ncol(op))
 
