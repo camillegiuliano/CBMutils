@@ -330,7 +330,6 @@ void FillMatrix(int maxIndex, Coomatrix& coomat, Rcpp::NumericMatrix& mat){
   }
 }
 
-
 //' `StepPoolsRef`
 //'
 //' DESCRIPTION NEEDED
@@ -367,7 +366,6 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
       }
       //fetch the pre-allocated matrix corresponding to the id in the op matrix
       SEXP flowCol = flowMatrices[col];
-      //Rcpp::NumericMatrix mat;
       if(TYPEOF(flowCol) == ENVSXP )
       {
         Rcpp::Environment hash = (Rcpp::Environment)flowCol;
@@ -435,8 +433,8 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
 //'
 // [[Rcpp::export]]
 Rcpp::NumericMatrix StepPools(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
-                              Rcpp::List& flowMatrices){
-  Rcpp::NumericMatrix poolsClone(clone(pools));
+                              Rcpp::List& flowMatrices) {
+  Rcpp::NumericMatrix poolsClone(Rcpp::clone(pools));
   StepPoolsRef(poolsClone, opMatrix, flowMatrices);
   return poolsClone;
 }
