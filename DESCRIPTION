@@ -6,8 +6,8 @@ Description: Implementation of several components of the Carbon Budget Model of 
 URL:
     https://carbonara.predictiveecology.org/,
     https://github.com/PredictiveEcology/carbonara
-Date: 2020-09-04
-Version: 0.0.2
+Date: 2020-09-25
+Version: 0.0.3
 Authors@R: c(
     person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
     person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("aut")),
@@ -27,12 +27,12 @@ Imports:
     Rcpp,
     RSQLite,
     sf,
-    sp
+    sp,
+    SpaDES.core
 Suggests:
     knitr,
     LandR,
     rmarkdown,
-    SpaDES.core,
     testthat
 Remotes:
     PredictiveEcology/LandR@development,

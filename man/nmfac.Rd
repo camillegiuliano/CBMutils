@@ -4,12 +4,14 @@
 \alias{nmfac}
 \title{nmfac}
 \usage{
-nmfac(table4, eq1)
+nmfac(table4, eq1, vol)
 }
 \arguments{
 \item{table4}{DESCRIPTION NEEDED}
 
 \item{eq1}{DESCRIPTION NEEDED}
+
+\item{vol}{DESCRIPTION NEEDED}
 }
 \description{
 eq2 is for non-merch sized trees.

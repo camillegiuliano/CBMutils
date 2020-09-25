@@ -12,7 +12,8 @@ convertM3biom(
   params3,
   params4,
   params5,
-  params6
+  params6,
+  params7
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ convertM3biom(
 \item{params5}{DESCRIPTION NEEDED}
 
 \item{params6}{DESCRIPTION NEEDED}
+
+\item{params7}{DESCRIPTION NEEDED}
 }
 \description{
 DESCRIPTION NEEDED

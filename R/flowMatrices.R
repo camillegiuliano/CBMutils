@@ -1,9 +1,9 @@
 utils::globalVariables(c(
   "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil",
   "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil",
-  "CH4", "CO", "CO2",
-  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", "Products",
-  "SoftwoodBranchSnag", "SoftwoodStemSnag"
+  "calcDist", "CH4", "CO", "CO2", "fluxOut",
+  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", ".N",
+  "Products", "SoftwoodBranchSnag", "SoftwoodStemSnag", "V1"
 ))
 
 #' Calculate the decay rate based on mean annual temperature and other parameters
@@ -137,7 +137,7 @@ computeDomDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
   return(matrices)
 }
 
-#' Slow decay martrix
+#' Slow decay matrix
 #'
 #' @param decayRates DESCRIPTION NEEDED
 #' @param decayParameters DESCRIPTION NEEDED
@@ -221,6 +221,26 @@ domTurnOverMatrix <- function(turnoverParam, PoolCount) {
   return(mat)
 }
 
+#' Calculate turnover rates
+#'
+#' For all spatial units in the simulation, calculate turnover rates.
+#'
+#' @param turnoverRates DESCRIPTION NEEEDED
+#' @param spatialUnitIds DESCRIPTION NEEEDED
+#' @param spatialUnits DESCRIPTION NEEEDED
+#'
+#' @return DESCRIPTION NEEEDED
+#'
+#' @export
+#' @importFrom data.table as.data.table merge.data.table
+calcTurnoverRates <- function(turnoverRates, spatialUnitIds, spatialUnits) {
+  turnoverRates <- as.data.table(turnoverRates)
+  SPU <- as.data.table(spatialUnitIds)
+  SPU <- SPU[SpatialUnitID %in% unique(spatialUnitIds)]
+  SPU <- merge(SPU, turnoverRates, by = "EcoBoundaryID", all.y = FALSE)
+  SPU <- SPU[SpatialUnitID %in% unique(spatialUnits),]
+  return(SPU)
+}
 
 #' Compute DOM turnover matrices
 #'
@@ -317,4 +337,66 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
 
   colnames(matrices) <- c("id", "row", "col", "value")
   return(matrices)
+}
+
+#' Calculate C transfer for disturbances and annual processes post-disturbance
+#'
+#' Mismatch in C transfers when disturbance happens in C++ processing so bypassing it
+#' C transfer functions: one for the disturbance (so small decimals errors in
+#' matrices are corrected), and one for the annual processes.
+#'
+#' @param standIn DESCRIPTION NEEDED
+#' @param transProp  DESCRIPTION NEEDED
+#'
+#' @return DESCRIPTION NEEDED
+#'
+#' @export
+#' @importFrom data.table as.data.table
+#' @rdname cTransfer
+cTransfer <- function(standIn, transProp) {
+  standIn <- as.data.table(cbind(standIn, row = c(1:length(standIn))))
+  names(standIn) <- c("V1","row")
+  transProp <- as.data.table(transProp)
+  rowJoin <- standIn[transProp, on = "row"][, fluxOut := (V1*value)]
+
+  # calculate carbon out and in
+  outC <- rowJoin[, .(outC = sum(fluxOut)), by = row]
+  inC <-  rowJoin[, .(inC = sum(fluxOut)), by = col]
+  names(inC) <- c("row", "inC")
+  fluxes <- merge(outC, inC, by = "row", all = TRUE)
+  # no NAs allowed
+  fluxes$inC[which(is.na(fluxes$inC))] <- 0
+
+  standOut <- standIn[fluxes, on = "row"][, .(calcDist = V1 - outC + inC), by = "row"]
+
+  return(standOut)
+}
+
+#' @export
+#' @importFrom data.table as.data.table
+#' @rdname cTransfer
+cTransferDist <- function(standIn, transProp) {
+  standIn <- as.data.table(cbind(standIn, row = c(1:length(standIn))))
+  names(standIn) <- c("V1","row")
+  transProp <- as.data.table(transProp)
+  rowJoin <- standIn[transProp, on = "row"][, fluxOut := (V1*value)]
+
+  # calculate carbon out and in
+  outC <- rowJoin[, .(outC = sum(fluxOut)), by = row]
+  inC <-  rowJoin[, .(inC = sum(fluxOut)), by = col]
+  names(inC) <- c("row", "inC")
+  fluxes <- merge(outC, inC, by = "row", all = TRUE)
+  # no NAs allowed
+  fluxes$inC[which(is.na(fluxes$inC))] <- 0
+
+  standOut <- standIn[fluxes, on = "row"][, .(calcDist = V1 - outC + inC), by = "row"]
+
+  # these two lines are "fixes for small decimal differences that should not be there
+  # pools can't go negative
+  standOut[calcDist < 0, "calcDist"] <- 0
+  # if it does not transfer to itself it has to end-up empty
+  rowsTofix <- transProp[row == col, .N, by = "row"]
+  standOut[!(row %in% rowsTofix$row), "calcDist"] <- 0
+
+  return(standOut)
 }

@@ -4,10 +4,10 @@
 \alias{b_m}
 \title{b_m}
 \usage{
-b_m(paramTable1, vol)
+b_m(table3, vol)
 }
 \arguments{
-\item{paramTable1}{DESCRIPTION NEEDED}
+\item{table3}{DESCRIPTION NEEDED}
 
 \item{vol}{DESCRIPTION NEEDED}
 }

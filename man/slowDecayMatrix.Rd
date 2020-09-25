@@ -2,7 +2,7 @@
 % Please edit documentation in R/flowMatrices.R
 \name{slowDecayMatrix}
 \alias{slowDecayMatrix}
-\title{Slow decay martrix}
+\title{Slow decay matrix}
 \usage{
 slowDecayMatrix(decayRates, decayParameters, PoolCount)
 }
@@ -17,5 +17,5 @@ slowDecayMatrix(decayRates, decayParameters, PoolCount)
 DESCRIPTION NEEDED
 }
 \description{
-Slow decay martrix
+Slow decay matrix
 }

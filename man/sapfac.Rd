@@ -4,13 +4,15 @@
 \alias{sapfac}
 \title{sapfac}
 \usage{
-sapfac(table5, eq2)
+sapfac(table5, eq2, vol)
 }
 \arguments{
 \item{table5}{DESCRIPTION NEEDED}
 
 \item{eq2}{DESCRIPTION NEEDED}
+
+\item{vol}{DESCRIPTION NEEDED}
 }
 \description{
-eq3 is for the saplings and it needs b_nm from the previous eq2
+\code{eq3} is for the saplings and it needs \code{b_nm} from the previous \code{eq2}
 }

@@ -4,10 +4,12 @@
 \alias{biomProp}
 \title{calculate the 4 proportions that should be returned}
 \usage{
-biomProp(table6, vol)
+biomProp(table6, table7, vol)
 }
 \arguments{
 \item{table6}{DESCRIPTION NEEDED}
+
+\item{table7}{DESCRIPTION NEEDED}
 
 \item{vol}{DESCRIPTION NEEDED}
 }
