@@ -1,4 +1,4 @@
 library(testthat)
-library(carbonara)
+library(CBMutils)
 
-test_check("carbonara")
+test_check("CBMutils")

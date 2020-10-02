@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // StepPoolsRef
 void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix, Rcpp::List& flowMatrices);
-RcppExport SEXP _carbonara_StepPoolsRef(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP flowMatricesSEXP) {
+RcppExport SEXP _CBMutils_StepPoolsRef(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP flowMatricesSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type pools(poolsSEXP);
@@ -19,7 +19,7 @@ END_RCPP
 }
 // StepPools
 Rcpp::NumericMatrix StepPools(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix, Rcpp::List& flowMatrices);
-RcppExport SEXP _carbonara_StepPools(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP flowMatricesSEXP) {
+RcppExport SEXP _CBMutils_StepPools(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP flowMatricesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,7 @@ END_RCPP
 }
 // ComputeOvermatureDecline
 Rcpp::NumericMatrix ComputeOvermatureDecline(Rcpp::NumericMatrix growthIncrements, Rcpp::DataFrame& turnoverParams);
-RcppExport SEXP _carbonara_ComputeOvermatureDecline(SEXP growthIncrementsSEXP, SEXP turnoverParamsSEXP) {
+RcppExport SEXP _CBMutils_ComputeOvermatureDecline(SEXP growthIncrementsSEXP, SEXP turnoverParamsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,7 +44,7 @@ END_RCPP
 }
 // ComputeGrowthIncrements
 Rcpp::NumericMatrix ComputeGrowthIncrements(Rcpp::Environment& growthIncrements, Rcpp::IntegerVector& ages, Rcpp::IntegerVector& gcids, Rcpp::NumericMatrix& pools, Rcpp::DataFrame& rootParameters, double biomassToCarbonRate, double swMult, double hwMult);
-RcppExport SEXP _carbonara_ComputeGrowthIncrements(SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP poolsSEXP, SEXP rootParametersSEXP, SEXP biomassToCarbonRateSEXP, SEXP swMultSEXP, SEXP hwMultSEXP) {
+RcppExport SEXP _CBMutils_ComputeGrowthIncrements(SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP poolsSEXP, SEXP rootParametersSEXP, SEXP biomassToCarbonRateSEXP, SEXP swMultSEXP, SEXP hwMultSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,7 @@ END_RCPP
 }
 // ComputeGrowthAndDeclineMatrices
 Rcpp::List ComputeGrowthAndDeclineMatrices(Rcpp::NumericMatrix& growthIncrements, Rcpp::NumericMatrix& decline);
-RcppExport SEXP _carbonara_ComputeGrowthAndDeclineMatrices(SEXP growthIncrementsSEXP, SEXP declineSEXP) {
+RcppExport SEXP _CBMutils_ComputeGrowthAndDeclineMatrices(SEXP growthIncrementsSEXP, SEXP declineSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -74,7 +74,7 @@ END_RCPP
 }
 // ComputeGrowthAndDeclineMatrices2
 Rcpp::List ComputeGrowthAndDeclineMatrices2(Rcpp::Environment& growthIncrements, Rcpp::IntegerVector& ages, Rcpp::IntegerVector& gcids, Rcpp::NumericMatrix& pools, Rcpp::DataFrame& rootParameters, Rcpp::DataFrame& turnoverParams, double biomassToCarbonRate, double swMult, double hwMult);
-RcppExport SEXP _carbonara_ComputeGrowthAndDeclineMatrices2(SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP poolsSEXP, SEXP rootParametersSEXP, SEXP turnoverParamsSEXP, SEXP biomassToCarbonRateSEXP, SEXP swMultSEXP, SEXP hwMultSEXP) {
+RcppExport SEXP _CBMutils_ComputeGrowthAndDeclineMatrices2(SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP poolsSEXP, SEXP rootParametersSEXP, SEXP turnoverParamsSEXP, SEXP biomassToCarbonRateSEXP, SEXP swMultSEXP, SEXP hwMultSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,7 +93,7 @@ END_RCPP
 }
 // Spinup
 Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix opMatrix, Rcpp::List& constantProcesses, Rcpp::Environment& growthIncrements, Rcpp::IntegerVector& ages, Rcpp::IntegerVector& gcids, Rcpp::IntegerVector& historicdmids, Rcpp::IntegerVector& lastPassdmids, Rcpp::IntegerVector& delays, Rcpp::IntegerVector& minRotations, Rcpp::IntegerVector& maxRotations, Rcpp::IntegerVector& returnIntervals, Rcpp::DataFrame& rootParameters, Rcpp::DataFrame& turnoverParams, double biomassToCarbonRate, bool debug);
-RcppExport SEXP _carbonara_Spinup(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP constantProcessesSEXP, SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP historicdmidsSEXP, SEXP lastPassdmidsSEXP, SEXP delaysSEXP, SEXP minRotationsSEXP, SEXP maxRotationsSEXP, SEXP returnIntervalsSEXP, SEXP rootParametersSEXP, SEXP turnoverParamsSEXP, SEXP biomassToCarbonRateSEXP, SEXP debugSEXP) {
+RcppExport SEXP _CBMutils_Spinup(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP constantProcessesSEXP, SEXP growthIncrementsSEXP, SEXP agesSEXP, SEXP gcidsSEXP, SEXP historicdmidsSEXP, SEXP lastPassdmidsSEXP, SEXP delaysSEXP, SEXP minRotationsSEXP, SEXP maxRotationsSEXP, SEXP returnIntervalsSEXP, SEXP rootParametersSEXP, SEXP turnoverParamsSEXP, SEXP biomassToCarbonRateSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -119,17 +119,17 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_carbonara_StepPoolsRef", (DL_FUNC) &_carbonara_StepPoolsRef, 3},
-    {"_carbonara_StepPools", (DL_FUNC) &_carbonara_StepPools, 3},
-    {"_carbonara_ComputeOvermatureDecline", (DL_FUNC) &_carbonara_ComputeOvermatureDecline, 2},
-    {"_carbonara_ComputeGrowthIncrements", (DL_FUNC) &_carbonara_ComputeGrowthIncrements, 8},
-    {"_carbonara_ComputeGrowthAndDeclineMatrices", (DL_FUNC) &_carbonara_ComputeGrowthAndDeclineMatrices, 2},
-    {"_carbonara_ComputeGrowthAndDeclineMatrices2", (DL_FUNC) &_carbonara_ComputeGrowthAndDeclineMatrices2, 9},
-    {"_carbonara_Spinup", (DL_FUNC) &_carbonara_Spinup, 16},
+    {"_CBMutils_StepPoolsRef", (DL_FUNC) &_CBMutils_StepPoolsRef, 3},
+    {"_CBMutils_StepPools", (DL_FUNC) &_CBMutils_StepPools, 3},
+    {"_CBMutils_ComputeOvermatureDecline", (DL_FUNC) &_CBMutils_ComputeOvermatureDecline, 2},
+    {"_CBMutils_ComputeGrowthIncrements", (DL_FUNC) &_CBMutils_ComputeGrowthIncrements, 8},
+    {"_CBMutils_ComputeGrowthAndDeclineMatrices", (DL_FUNC) &_CBMutils_ComputeGrowthAndDeclineMatrices, 2},
+    {"_CBMutils_ComputeGrowthAndDeclineMatrices2", (DL_FUNC) &_CBMutils_ComputeGrowthAndDeclineMatrices2, 9},
+    {"_CBMutils_Spinup", (DL_FUNC) &_CBMutils_Spinup, 16},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_carbonara(DllInfo *dll) {
+RcppExport void R_init_CBMutils(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

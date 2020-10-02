@@ -46,7 +46,7 @@ NULL
 #'
 #' @export
 StepPoolsRef <- function(pools, opMatrix, flowMatrices) {
-    invisible(.Call(`_carbonara_StepPoolsRef`, pools, opMatrix, flowMatrices))
+    invisible(.Call(`_CBMutils_StepPoolsRef`, pools, opMatrix, flowMatrices))
 }
 
 #' Step through pools, computing carbon transfers
@@ -89,7 +89,7 @@ StepPoolsRef <- function(pools, opMatrix, flowMatrices) {
 #' ## [3,]     1   0.1   5.2
 #'
 StepPools <- function(pools, opMatrix, flowMatrices) {
-    .Call(`_carbonara_StepPools`, pools, opMatrix, flowMatrices)
+    .Call(`_CBMutils_StepPools`, pools, opMatrix, flowMatrices)
 }
 
 #' Compute overmature decline
@@ -101,7 +101,7 @@ StepPools <- function(pools, opMatrix, flowMatrices) {
 #'
 #'@export
 ComputeOvermatureDecline <- function(growthIncrements, turnoverParams) {
-    .Call(`_carbonara_ComputeOvermatureDecline`, growthIncrements, turnoverParams)
+    .Call(`_CBMutils_ComputeOvermatureDecline`, growthIncrements, turnoverParams)
 }
 
 #' Compute growth increments
@@ -120,12 +120,12 @@ ComputeOvermatureDecline <- function(growthIncrements, turnoverParams) {
 #'
 #'@export
 ComputeGrowthIncrements <- function(growthIncrements, ages, gcids, pools, rootParameters, biomassToCarbonRate, swMult = 1.0, hwMult = 1.0) {
-    .Call(`_carbonara_ComputeGrowthIncrements`, growthIncrements, ages, gcids, pools, rootParameters, biomassToCarbonRate, swMult, hwMult)
+    .Call(`_CBMutils_ComputeGrowthIncrements`, growthIncrements, ages, gcids, pools, rootParameters, biomassToCarbonRate, swMult, hwMult)
 }
 
 #'@export
 ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
-    .Call(`_carbonara_ComputeGrowthAndDeclineMatrices`, growthIncrements, decline)
+    .Call(`_CBMutils_ComputeGrowthAndDeclineMatrices`, growthIncrements, decline)
 }
 
 #' Compute growth and decline matrices
@@ -147,7 +147,7 @@ ComputeGrowthAndDeclineMatrices <- function(growthIncrements, decline) {
 #'
 #' @export
 ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult = 1.0, hwMult = 1.0) {
-    .Call(`_carbonara_ComputeGrowthAndDeclineMatrices2`, growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult, hwMult)
+    .Call(`_CBMutils_ComputeGrowthAndDeclineMatrices2`, growthIncrements, ages, gcids, pools, rootParameters, turnoverParams, biomassToCarbonRate, swMult, hwMult)
 }
 
 #' Spinup
@@ -175,6 +175,6 @@ ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pool
 #'
 #' @export
 Spinup <- function(pools, opMatrix, constantProcesses, growthIncrements, ages, gcids, historicdmids, lastPassdmids, delays, minRotations, maxRotations, returnIntervals, rootParameters, turnoverParams, biomassToCarbonRate, debug = FALSE) {
-    .Call(`_carbonara_Spinup`, pools, opMatrix, constantProcesses, growthIncrements, ages, gcids, historicdmids, lastPassdmids, delays, minRotations, maxRotations, returnIntervals, rootParameters, turnoverParams, biomassToCarbonRate, debug)
+    .Call(`_CBMutils_Spinup`, pools, opMatrix, constantProcesses, growthIncrements, ages, gcids, historicdmids, lastPassdmids, delays, minRotations, maxRotations, returnIntervals, rootParameters, turnoverParams, biomassToCarbonRate, debug)
 }
 

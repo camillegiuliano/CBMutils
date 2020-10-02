@@ -1,13 +1,13 @@
-Package: carbonara
+Package: CBMutils
 Type: Package
 Title: Utilities for modelling carbon based on CBM-CFS3
 Description: Implementation of several components of the Carbon Budget Model of the
     Canadian Forest Service (v3).
 URL:
-    https://carbonara.predictiveecology.org/,
-    https://github.com/PredictiveEcology/carbonara
+    https://CBMutils.predictiveecology.org/,
+    https://github.com/PredictiveEcology/CBMutils
 Date: 2020-09-25
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: c(
     person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
     person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("aut")),
