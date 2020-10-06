@@ -1,22 +1,12 @@
-utils::globalVariables(c(
-  "AGB", "BGB", "carbon", "DOM", "emissionsCH4", "emissionsCO", "emissionsCO2",
-  "pixelCount", "pool", "products", "res", "weight"
-))
 
-#' spatialPlot
-#'
-#' @param pixelkeep TODO
-#' @param cbmPools TODO
-#' @param poolsToPlot TODO
-#' @param years TODO
-#' @param masterRaster TODO
-#'
-#' @return TODO
-#'
-#' @export
-#' @importFrom data.table as.data.table merge.data.table
-#' @importFrom raster getValues raster
-#' @importFrom quickPlot Plot
+
+
+plot2 <- spatialPlot(pixelkeep = spadesCBMout$pixelKeep,
+                                cbmPools = spadesCBMout$cbmPools,
+                                poolsToPlot = c("totalCarbon","SoftwoodMerch"),
+                                years = time(spadesCBMout),
+                                masterRaster = spadesCBMout$masterRaster)
+
 spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
 
   cbmPools[is.na(cbmPools)] <- 0
@@ -75,24 +65,34 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   quickPlot::Plot(temp, addTo = "temp", title = paste0(poolsToPlot, " in ", years))
 }
 
-#' areaPlot
-#'
-#' @param cbmPools TODO
-#' @param masterRaster TODO
-#'
-#' @return TODO
-#'
-#' @export
-#' @importFrom data.table as.data.table melt.data.table
-#' @importFrom ggplot2 aes ggplot geom_col labs scale_fill_discrete theme_bw
-#' @importFrom quickPlot Plot
-areaPlot <- function(cbmPools, masterRaster) {
+
+
+
+
+
+
+outOfTheSystemPlot <- function( emissions, cbmPools, masterRaster) {
+  browser()
+  a <- spadesCBMout$emissionsProducts #emissions
+  masterRaster <- spadesCBMout$masterRaster
+  cbmPools <- spadesCBMout$cbmPools
+  a$pixelGroup <- as.character(a$pixelGroup)
+  # get total emissions (right now it is carbon/ha for a pixelGroup)
+  cbmPools$simYear <- as.character(cbmPools$simYear)
+  productEmissions <- cbmPools[, .(products = sum(Products*(prod(res(masterRaster))/10000)*pixelCount),
+                                   emissionsCH4 = sum(CH4*(prod(res(masterRaster))/10000)*pixelCount),
+                                   emissionsCO = sum(CO*(prod(res(masterRaster))/10000)*pixelCount),
+                                   emissionsCO2 = sum(CO2*(prod(res(masterRaster))/10000)*pixelCount)),
+                               by = .(pixelGroup, simYear)]
+
+
   #This needs to change to belowground living, aboveground living, soil, snag
   colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
   #Need to first average values per ha
   cbmPools <- as.data.table(cbmPools)
   cbmPools$pixelGroup <- as.character(cbmPools$pixelGroup)
   #pixelNo <- sum(cbmPools$pixelCount/length(unique(cbmPools$simYear))) #Get pixel Sum
+
   cbmPools$simYear <- as.character(cbmPools$simYear)
   productEmissions <- cbmPools[, .(products = sum(Products*(prod(res(masterRaster))/10000)*pixelCount),
                                    emissionsCH4 = sum(CH4*(prod(res(masterRaster))/10000)*pixelCount),
@@ -126,81 +126,10 @@ areaPlot <- function(cbmPools, masterRaster) {
   #plot Units must be multiplied by 10000/prod(res(masterRaster)) to get tonnes/ha
 }
 
-#' NPPPlot
-#'
-#' @param spatialDT TODO
-#' @param changeInNPP TODO
-#' @param masterRaster TODO
-#' @param time TODO
-#'
-#' @return TODO
-#'
-#' @export
-#' @importFrom data.table merge.data.table setkey
-#' @importFrom quickPlot Plot
-#' @importFrom raster raster
-NPPPlot <- function(spatialDT, changeInNPP, masterRaster, time){
-  #NPP will not have the disturbed pixelGroups in spatialDT
-  changeInNPP <- changeInNPP[simYear == time,]
-  t <- spatialDT[, .(pixelIndex, pixelGroup)]
-  temp <- merge(t, changeInNPP, on = "pixelGroup", all.x = TRUE)
-  setkey(temp, pixelIndex)
-  #pixelCount[which(is.na(pixelCount$N)),"N"] <- 0
-  temp1 <- temp[which(!is.na(temp$simYear)),.(pixelIndex,NPP)]
-  temp1[order(pixelIndex)]
-  #masterRaster[!masterRaster == 0] <- temp$NPP
-  plotMaster <- raster(masterRaster)
-  plotMaster[] <- 0
-  plotMaster[temp1$pixelIndex] <- temp1$NPP
-  quickPlot::Plot(plotMaster, new = TRUE, title = paste0("NPP in ", time))
-}
+cOut1 <- outOfTheSystemPlot(cbmPools = spadesCBMout$cbmPools, masterRaster = spadesCBMout$masterRaster)
 
-#' barPlot
-#'
-#' @param cbmPools TODO
-#' @param masterRaster TODO
-#'
-#' @return TODO
-#'
-#' @export
-#' @importFrom data.table as.data.table
-#' @importFrom ggplot2 aes geom_col ggplot labs scale_fill_discrete theme_bw
-#' @importFrom quickPlot Plot
-barPlot <- function(cbmPools, masterRaster) {
-  #This needs to change to belowground living, aboveground living, soil, snag
-  colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
-  #Need to first average values per ha
-  cbmPools <- as.data.table(cbmPools)
-  cbmPools$pixelGroup <- as.character(cbmPools$pixelGroup)
-  pixelNo <- sum(cbmPools$pixelCount/length(unique(cbmPools$simYear))) #Get pixel Sum
-  cbmPools$simYear <- as.character(cbmPools$simYear)
-  soilCarbon <- cbmPools[, .(DOM = sum(AboveGroundVeryFastSoil, BelowGroundVeryFastSoil,
-                                       AboveGroundFastSoil, BelowGroundFastSoil,
-                                       AboveGroundSlowSoil, BelowGroundSlowSoil),
-                             AGB = sum(SoftwoodMerch, SoftwoodFoliage, SoftwoodOther,
-                                       HardwoodMerch, HardwoodFoliage, HardwoodOther),
-                             BGB = sum(SoftwoodCoarseRoots, SoftwoodFineRoots,
-                                       HardwoodCoarseRoots, HardwoodFineRoots),
-                             weight = pixelCount/pixelNo),
-                         by = .(pixelGroup, simYear)]
-
-
-  outTable <- soilCarbon[, .(DOM = sum(DOM * weight),
-                             AGB = sum(AGB * weight),
-                             BGB = sum(BGB * weight)),
-                         by = simYear]
-
-  outTable <- data.table::melt.data.table(outTable, id.vars = 'simYear',
-                                          measure.vars = c("DOM", "AGB", "BGB"),
-                                          variable.name = 'pool',
-                                          value.name = "carbon")
-  outTable$simYear <- as.numeric(outTable$simYear)
-  outTable$carbon <- as.numeric(outTable$carbon)
-  barPlots <- ggplot(data = outTable, aes(x = simYear, y = carbon, fill = pool)) +
-    geom_col(position = "fill") +
-    scale_fill_discrete(name = "carbon pool") +
-    labs(x = "Year", y = "proportion") +
-    theme_bw()
-
-  quickPlot::Plot(barPlots, addTo = 'barPlots', title = "proportion of C in DOM/AGB/BGB")
-}
+## emissions check ##
+library(data.table)
+poolsIn <- fread("C:/Celine/github/temp/pGforAnnual1990.csv")
+poolsOut <- fread("C:/Celine/github/temp/poolsOut1990.csv")
+emissions <- fread("C:/Celine/github/temp/emissionsProducts.csv")
