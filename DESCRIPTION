@@ -30,6 +30,7 @@ Imports:
     sp,
     SpaDES.core
 Suggests:
+    covr
     knitr,
     LandR,
     rmarkdown,
