@@ -2,22 +2,20 @@
 % Please edit documentation in R/plotting.R
 \name{NPPplot}
 \alias{NPPplot}
-\title{NPPplot}
+\title{\code{NPPplot}}
 \usage{
 NPPplot(spatialDT, NPP, masterRaster)
 }
 \arguments{
 \item{spatialDT}{TODO}
 
+\item{NPP}{TODO}
+
 \item{masterRaster}{TODO}
-
-\item{changeInNPP}{TODO}
-
-\item{time}{TODO}
 }
 \value{
 TODO
 }
 \description{
-NPPplot
+\code{NPPplot}
 }

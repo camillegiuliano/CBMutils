@@ -1,9 +1,9 @@
 utils::globalVariables(c(
-  "AGB", "BGB", "carbon", "DOM", "emissionsCH4", "emissionsCO", "emissionsCO2",
-  "pixelCount", "pool", "products", "res", "weight"
+  "AGB", "AGlive", "BGB", "BGlive", "carbon", "DOM", "emissionsCH4", "emissionsCO", "emissionsCO2",
+  "pixelCount", "pixNPP", "pool", "products", "res", "snags", "soil", "weight"
 ))
 
-#' spatialPlot
+#' `spatialPlot`
 #'
 #' @param pixelkeep TODO
 #' @param cbmPools TODO
@@ -18,7 +18,6 @@ utils::globalVariables(c(
 #' @importFrom raster getValues raster
 #' @importFrom quickPlot Plot
 spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
-
   cbmPools[is.na(cbmPools)] <- 0
   colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
   if ("totalCarbon" %in% poolsToPlot) {
@@ -64,7 +63,6 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
       #name will begin with x if no character assigned
       return(plotMaster)
     })
-
   }
 
   names(carbonStacks) <- paste0(poolsToPlot)
@@ -73,25 +71,26 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   quickPlot::Plot(temp, addTo = "temp", title = paste0(poolsToPlot, " in ", years, " MgC/ha"))
 }
 
-#' carbonOutPlot
+#' `carbonOutPlot`
 #'
 #' @param cbmPools TODO
+#' @param emissionsProducts TODO
 #' @param masterRaster TODO
 #'
 #' @return TODO
 #'
 #' @export
 #' @importFrom data.table as.data.table melt.data.table
-#' @importFrom ggplot2 aes ggplot geom_col labs scale_fill_discrete theme_bw
+#' @importFrom ggplot2 aes element_text ggplot geom_col labs
+#' @importFrom ggplot2 scale_fill_discrete scale_y_continuous sec_axis theme xlab
 #' @importFrom quickPlot Plot
 carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
-
   pixelCount <- cbmPools[,.(simYear, pixelGroup, pixelCount)]
   cols <- c("simYear", "pixelGroup")
   productEmissions <- merge(pixelCount,emissionsProducts, by = cols)
 
   # get total emissions (right now it is carbon/ha for a pixelGroup)
-  totalOutByYr <- productEmissions[, .(Products = sum(Products*(prod(res(masterRaster))/10000)*pixelCount),
+  totalOutByYr <- productEmissions[, .(Products = sum(Products*(prod(res(masterRaster)) / 10000)*pixelCount),
                                        CH4 = sum(CH4*(prod(res(masterRaster))/10000)*pixelCount),
                                        CO = sum(CO*(prod(res(masterRaster))/10000)*pixelCount),
                                        CO2 = sum(CO2*(prod(res(masterRaster))/10000)*pixelCount)),
@@ -101,36 +100,30 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
 
   carbonOutPlot <- ggplot(data = totalOutByYr, aes(x = simYear)) +
     geom_col(aes(y = Products/coeff), size = 0.1, fill = "#69b3a2") +
-    geom_line(aes(y = CH4), size=1.5, colour = "darkred") +
-    geom_line(aes(y = CO), size=1.5, colour = "steelblue", linetype = "twodash") +
-    geom_line(aes(y = CO2), size=1.5, colour = "forestgreen", linetype = "dotted") +
+    geom_line(aes(y = CH4), size = 1.5, colour = "darkred") +
+    geom_line(aes(y = CO), size = 1.5, colour = "steelblue", linetype = "twodash") +
+    geom_line(aes(y = CO2), size = 1.5, colour = "forestgreen", linetype = "dotted") +
     scale_y_continuous(
-
-      # Features of the first axis
-      name = "Emissions in MgC",
-
-      # Add a second axis and specify its features
-      sec.axis = sec_axis(~.*coeff, name="Products in kgC")
+      name = "Emissions in MgC", # features of the first axis
+      sec.axis = sec_axis(~.*coeff, name = "Products in kgC") # add 2nd axis; specify its features
     ) +
     xlab("Simulation Years") +
     #theme_bw() + labs(colour = "Legend") + scale_colour_manual(values = colours) +
-
     theme(
-      axis.title.y = element_text(color = "black", size=13),
-      axis.title.y.right = element_text(color = "#69b3a2", size=13, angle = 270),
-      legend.position = c(1, 1)# TODO can't get legend to work
+      axis.title.y = element_text(color = "black", size = 13),
+      axis.title.y.right = element_text(color = "#69b3a2", size = 13, angle = 270),
+      legend.position = c(1, 1) # TODO can't get legend to work
     )
 
   quickPlot::Plot(carbonOutPlot, addTo = 'carbonOutPlot', title = "Yearly Emissions and Forest Products")
 }
 
 
-#' NPPplot
+#' `NPPplot`
 #'
 #' @param spatialDT TODO
-#' @param changeInNPP TODO
+#' @param NPP TODO
 #' @param masterRaster TODO
-#' @param time TODO
 #'
 #' @return TODO
 #'
@@ -138,7 +131,7 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
 #' @importFrom data.table merge.data.table setkey
 #' @importFrom quickPlot Plot
 #' @importFrom raster raster
-NPPplot <- function(spatialDT, NPP, masterRaster){
+NPPplot <- function(spatialDT, NPP, masterRaster) {
   # Calculate the avgNPP (MgC/ha) by pixel group.
   NPP[,avgNPP := mean(NPP), by = c("pixelGroup")]
   cols <- c("simYear", "NPP")
@@ -161,12 +154,12 @@ NPPplot <- function(spatialDT, NPP, masterRaster){
   pixSize <- prod(res(masterRaster))/10000
   temp[,pixNPP := avgNPP*pixSize]
   overallAvgNpp <- sum(temp$pixNPP)/(nrow(temp)*pixSize)
-  quickPlot::Plot(plotMaster, new = TRUE, title = paste0("Pixel-level average NPP MgC/ha/yr.",
-                                                         "\n Landscape average: ", round(overallAvgNpp,3), "  MgC/ha/yr."))
+  quickPlot::Plot(plotMaster, new = TRUE,
+                  title = paste0("Pixel-level average NPP MgC/ha/yr.",
+                                 "\n Landscape average: ", round(overallAvgNpp,3), "  MgC/ha/yr."))
 }
 
-
-#' barPlot
+#' `barPlot`
 #'
 #' @param cbmPools TODO
 #' @param masterRaster TODO
@@ -220,4 +213,3 @@ barPlot <- function(cbmPools, masterRaster) {
 
   quickPlot::Plot(barPlots, addTo = 'barPlots', title = "Proportion of C above and below ground compartments.")
 }
-

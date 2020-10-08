@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{barPlot}
 \alias{barPlot}
-\title{barPlot}
+\title{\code{barPlot}}
 \usage{
 barPlot(cbmPools, masterRaster)
 }
@@ -15,5 +15,5 @@ barPlot(cbmPools, masterRaster)
 TODO
 }
 \description{
-barPlot
+\code{barPlot}
 }

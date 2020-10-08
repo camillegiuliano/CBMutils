@@ -2,12 +2,14 @@
 % Please edit documentation in R/plotting.R
 \name{carbonOutPlot}
 \alias{carbonOutPlot}
-\title{carbonOutPlot}
+\title{\code{carbonOutPlot}}
 \usage{
 carbonOutPlot(cbmPools, emissionsProducts, masterRaster)
 }
 \arguments{
 \item{cbmPools}{TODO}
+
+\item{emissionsProducts}{TODO}
 
 \item{masterRaster}{TODO}
 }
@@ -15,5 +17,5 @@ carbonOutPlot(cbmPools, emissionsProducts, masterRaster)
 TODO
 }
 \description{
-carbonOutPlot
+\code{carbonOutPlot}
 }

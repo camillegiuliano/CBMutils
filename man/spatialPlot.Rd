@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{spatialPlot}
 \alias{spatialPlot}
-\title{spatialPlot}
+\title{\code{spatialPlot}}
 \usage{
 spatialPlot(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 }
@@ -21,5 +21,5 @@ spatialPlot(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 TODO
 }
 \description{
-spatialPlot
+\code{spatialPlot}
 }
