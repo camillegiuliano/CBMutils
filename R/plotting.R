@@ -133,7 +133,7 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
 #' @importFrom raster raster
 NPPplot <- function(spatialDT, NPP, masterRaster) {
   # Calculate the avgNPP (MgC/ha) by pixel group.
-  npp <- copy(NPP)
+  npp <- as.data.table(copy(NPP))
   npp[,avgNPP := mean(NPP), by = c("pixelGroup")]
   cols <- c("simYear", "NPP")
   avgNPP <- unique(npp[, (cols) := NULL])
