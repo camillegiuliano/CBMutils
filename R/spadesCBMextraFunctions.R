@@ -87,8 +87,8 @@ utils::globalVariables(c(
 #'   gcIn <- as.matrix(read.csv(f))
 #'   mySpu <- unique(gcIn[, 1])
 #' }
-spuDist <- function(mySpu = c(27, 28),
-                    dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
+spuDist <- function(mySpu,
+                    dbPath) {
   sqlite.driver <- dbDriver("SQLite")
   cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(cbmDefaults)
