@@ -229,7 +229,10 @@ domTurnOverMatrix <- function(turnoverParam, PoolCount) {
 #' @param spatialUnitIds DESCRIPTION NEEEDED
 #' @param spatialUnits DESCRIPTION NEEEDED
 #'
-#' @return DESCRIPTION NEEEDED
+#' @return  extracts the turnover rates for the specific SPU you are in.
+#' These are used to in the core module to calculate the specific rates, which
+#' are the used to calculate Net Primary Productivity (NPP) both in the core
+#' module and in the next function.
 #'
 #' @export
 #' @importFrom data.table as.data.table merge.data.table
