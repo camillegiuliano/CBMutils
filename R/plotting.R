@@ -68,7 +68,7 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   names(carbonStacks) <- paste0(poolsToPlot)
 
   temp <- unlist(carbonStacks)
-  quickPlot::Plot(temp, addTo = "temp", title = paste0(poolsToPlot, " in ", years, " MgC/ha"))
+  quickPlot::Plot(temp, title = paste0(poolsToPlot, " in ", years, " MgC/ha"))#addTo = "temp",
 }
 
 #' `carbonOutPlot`
@@ -133,9 +133,10 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
 #' @importFrom raster raster
 NPPplot <- function(spatialDT, NPP, masterRaster) {
   # Calculate the avgNPP (MgC/ha) by pixel group.
-  NPP[,avgNPP := mean(NPP), by = c("pixelGroup")]
+  npp <- as.data.table(copy(NPP))
+  npp[,avgNPP := mean(NPP), by = c("pixelGroup")]
   cols <- c("simYear", "NPP")
-  avgNPP <- unique(NPP[, (cols) := NULL])
+  avgNPP <- unique(npp[, (cols) := NULL])
   # link that to the pixels
   t <- spatialDT[, .(pixelIndex, pixelGroup)]
   setkey(t,pixelGroup)
