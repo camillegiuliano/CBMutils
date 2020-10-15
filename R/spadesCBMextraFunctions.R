@@ -57,7 +57,7 @@ utils::globalVariables(c(
 
 #' Identify the ID number (CBM-CFS3 legacy) possible in the current spatial unit
 #'
-#' You give is spatial units you are targetting `mySpu` and it gives you the disturbance matrix id
+#' You give is spatial units you are targeting `mySpu` and it gives you the disturbance matrix id
 #' that are possible/default in that specific spu and a descriptive name of that disturbance matrix
 #' it creates a `data.frame` of length number of disturbances, with three columns:
 #' `spatial_unit_is`, `disturbance_matrix_id`, and a `desciption` of the disturbance.
@@ -87,8 +87,7 @@ utils::globalVariables(c(
 #'   gcIn <- as.matrix(read.csv(f))
 #'   mySpu <- unique(gcIn[, 1])
 #' }
-spuDist <- function(mySpu,
-                    dbPath) {
+spuDist <- function(mySpu, dbPath) {
   sqlite.driver <- dbDriver("SQLite")
   cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(cbmDefaults)

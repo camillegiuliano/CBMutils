@@ -128,7 +128,7 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
 #' @return TODO
 #'
 #' @export
-#' @importFrom data.table merge.data.table setkey
+#' @importFrom data.table copy merge.data.table setkey
 #' @importFrom quickPlot Plot
 #' @importFrom raster raster
 NPPplot <- function(spatialDT, NPP, masterRaster) {

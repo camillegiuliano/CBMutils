@@ -14,7 +14,10 @@ calcTurnoverRates(turnoverRates, spatialUnitIds, spatialUnits)
 \item{spatialUnits}{DESCRIPTION NEEEDED}
 }
 \value{
-DESCRIPTION NEEEDED
+extracts the turnover rates for the specific SPU you are in.
+These are used to in the core module to calculate the specific rates, which
+are the used to calculate Net Primary Productivity (NPP) both in the core
+module and in the next function.
 }
 \description{
 For all spatial units in the simulation, calculate turnover rates.
