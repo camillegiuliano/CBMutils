@@ -188,6 +188,7 @@ computeSlowDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
 #' @export
 computeSlowMixingMatrix <- function(slowMixingRate, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
+  mat <- mat[-AboveGroundSlowSoil,]
   mat <- rbind(mat, c(AboveGroundSlowSoil, BelowGroundSlowSoil, slowMixingRate))
   mat <- rbind(mat, c(AboveGroundSlowSoil, AboveGroundSlowSoil, 1 - slowMixingRate))
   mat <- cbind(rep(1, nrow(mat)), mat)
