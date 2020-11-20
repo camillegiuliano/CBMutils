@@ -208,10 +208,10 @@ domTurnOverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
 
   # removing the double count for matrices
-  mat[-SoftwoodStemSnag, ]
-  mat[-SoftwoodBranchSnag, ]
-  mat[-HardwoodStemSnag, ]
-  mat[-HardwoodBranchSnag, ]
+  mat <- mat[-SoftwoodStemSnag, ]
+  mat <- mat[-SoftwoodBranchSnag, ]
+  mat <- mat[-HardwoodStemSnag, ]
+  mat <- mat[-HardwoodBranchSnag, ]
 
   mat <- rbind(mat, c(SoftwoodStemSnag, SoftwoodStemSnag, 1 - turnoverParam["StemSnagTurnoverRate"]))
   mat <- rbind(mat, c(SoftwoodStemSnag, MediumSoil, turnoverParam["StemSnagTurnoverRate"]))
@@ -282,6 +282,18 @@ computeDomTurnoverMatrices <- function(turnoverParameters, PoolCount) {
 #' @export
 biomassTurnoverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
+
+  # removing the double count for matrices
+  mat <- mat[-SoftwoodMerch, ]
+  mat <- mat[-SoftwoodFoliage, ]
+  mat <- mat[-SoftwoodOther, ]
+  mat <- mat[-SoftwoodCoarseRoots, ]
+  mat <- mat[-SoftwoodFineRoots, ]
+  mat <- mat[-HardwoodMerch, ]
+  mat <- mat[-HardwoodFoliage, ]
+  mat <- mat[-HardwoodOther, ]
+  mat <- mat[-HardwoodCoarseRoots, ]
+  mat <- mat[-HardwoodFineRoots, ]
 
   mat <- rbind(mat, c(SoftwoodMerch, SoftwoodMerch, 1 - turnoverParam["StemAnnualTurnoverRate"]))
   mat <- rbind(mat, c(SoftwoodMerch, SoftwoodStemSnag, turnoverParam["StemAnnualTurnoverRate"]))
