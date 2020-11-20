@@ -207,6 +207,12 @@ computeSlowMixingMatrix <- function(slowMixingRate, PoolCount) {
 domTurnOverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
 
+  # removing the double count for matrices
+  mat[-SoftwoodStemSnag, ]
+  mat[-SoftwoodBranchSnag, ]
+  mat[-HardwoodStemSnag, ]
+  mat[-HardwoodBranchSnag, ]
+
   mat <- rbind(mat, c(SoftwoodStemSnag, SoftwoodStemSnag, 1 - turnoverParam["StemSnagTurnoverRate"]))
   mat <- rbind(mat, c(SoftwoodStemSnag, MediumSoil, turnoverParam["StemSnagTurnoverRate"]))
 
