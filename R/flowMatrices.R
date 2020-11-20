@@ -320,10 +320,6 @@ biomassTurnoverMatrix <- function(turnoverParam, PoolCount) {
   mat <- rbind(mat, c(HardwoodFineRoots, HardwoodFineRoots, 1 - turnoverParam["FineRootTurnProp"]))
   mat <- rbind(mat, c(HardwoodFineRoots, AboveGroundVeryFastSoil,
                       turnoverParam["FineRootAGSplit"] * turnoverParam["FineRootTurnProp"]))
-  mat <- rbind(mat, c(HardwoodCoarseRoots, BelowGroundFastSoil,
-                      (1 - turnoverParam["CoarseRootAGSplit"]) * turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(HardwoodFineRoots, AboveGroundVeryFastSoil,
-                      turnoverParam["FineRootAGSplit"] * turnoverParam["FineRootTurnProp"]))
   mat <- rbind(mat, c(HardwoodFineRoots, BelowGroundVeryFastSoil,
                       (1 - turnoverParam["FineRootAGSplit"]) * turnoverParam["FineRootTurnProp"]))
   return(mat)
