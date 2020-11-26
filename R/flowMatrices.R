@@ -134,7 +134,25 @@ computeDomDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
   }
 
   colnames(matrices) <- c("id", "row", "col", "value")
-  return(matrices)
+
+  # this is the modification to prevent the doubling of proportions in the
+  # proportional transaction matrices
+  dMat <- as.data.table(matrices)
+  cols <- c("row","id")
+  dMat[,noLoss := sum(value), by = cols]
+  tryVec <- c(AboveGroundVeryFastSoil,BelowGroundVeryFastSoil,
+              AboveGroundFastSoil,BelowGroundFastSoil,MediumSoil,
+              AboveGroundSlowSoil,
+              BelowGroundSlowSoil,
+              SoftwoodStemSnag,
+              SoftwoodBranchSnag,
+              HardwoodStemSnag,
+              HardwoodBranchSnag)
+  dMat2 <- dMat[!(row %in% tryVec & value == 1),]
+  dMat2[,noLoss := NULL]
+  dMat3 <- as.matrix(dMat2)
+
+  return(dMat3)
 }
 
 #' Slow decay matrix
@@ -175,7 +193,15 @@ computeSlowDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
   }
 
   colnames(matrices) <- c("id", "row", "col", "value")
-  return(matrices)
+  dMat <- as.data.table(matrices)
+  cols <- c("row","id")
+  dMat[,noLoss := sum(value), by = cols]
+  tryVec <- c(AboveGroundSlowSoil,
+              BelowGroundSlowSoil)
+  dMat2 <- dMat[!(row %in% tryVec & value == 1),]
+  dMat2[,noLoss := NULL]
+  dMat3 <- as.matrix(dMat2)
+  return(dMat3)
 }
 
 #' Compute slow mixing matrix
@@ -206,12 +232,6 @@ computeSlowMixingMatrix <- function(slowMixingRate, PoolCount) {
 #' @export
 domTurnOverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
-
-  # removing the double count for matrices
-  mat <- mat[-SoftwoodStemSnag, ]
-  mat <- mat[-SoftwoodBranchSnag, ]
-  mat <- mat[-HardwoodStemSnag, ]
-  mat <- mat[-HardwoodBranchSnag, ]
 
   mat <- rbind(mat, c(SoftwoodStemSnag, SoftwoodStemSnag, 1 - turnoverParam["StemSnagTurnoverRate"]))
   mat <- rbind(mat, c(SoftwoodStemSnag, MediumSoil, turnoverParam["StemSnagTurnoverRate"]))
@@ -269,7 +289,18 @@ computeDomTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   }
 
   colnames(matrices) <- c("id", "row", "col", "value")
-  return(matrices)
+  # proportional transaction matrices
+  dMat <- as.data.table(matrices)
+  cols <- c("row","id")
+  dMat[,noLoss := sum(value), by = cols]
+  tryVec <- c(SoftwoodStemSnag,
+              SoftwoodBranchSnag,
+              HardwoodStemSnag,
+              HardwoodBranchSnag)
+  dMat2 <- dMat[!(row %in% tryVec & value == 1),]
+  dMat2[,noLoss := NULL]
+  dMat3 <- as.matrix(dMat2)
+  return(dMat3)
 }
 
 #' Biomass turnover matrix
@@ -282,18 +313,6 @@ computeDomTurnoverMatrices <- function(turnoverParameters, PoolCount) {
 #' @export
 biomassTurnoverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
-
-  # removing the double count for matrices
-  mat <- mat[-SoftwoodMerch, ]
-  mat <- mat[-SoftwoodFoliage, ]
-  mat <- mat[-SoftwoodOther, ]
-  mat <- mat[-SoftwoodCoarseRoots, ]
-  mat <- mat[-SoftwoodFineRoots, ]
-  mat <- mat[-HardwoodMerch, ]
-  mat <- mat[-HardwoodFoliage, ]
-  mat <- mat[-HardwoodOther, ]
-  mat <- mat[-HardwoodCoarseRoots, ]
-  mat <- mat[-HardwoodFineRoots, ]
 
   mat <- rbind(mat, c(SoftwoodMerch, SoftwoodMerch, 1 - turnoverParam["StemAnnualTurnoverRate"]))
   mat <- rbind(mat, c(SoftwoodMerch, SoftwoodStemSnag, turnoverParam["StemAnnualTurnoverRate"]))
@@ -354,7 +373,24 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   }
 
   colnames(matrices) <- c("id", "row", "col", "value")
-  return(matrices)
+  # proportional transaction matrices
+  dMat <- as.data.table(matrices)
+  cols <- c("row","id")
+  dMat[,noLoss := sum(value), by = cols]
+  tryVec <- c(SoftwoodMerch,
+              SoftwoodFoliage,
+              SoftwoodOther,
+              SoftwoodCoarseRoots,
+              SoftwoodFineRoots,
+              HardwoodMerch,
+              HardwoodFoliage,
+              HardwoodOther,
+              HardwoodCoarseRoots,
+              HardwoodFineRoots)
+  dMat2 <- dMat[!(row %in% tryVec & value == 1),]
+  dMat2[,noLoss := NULL]
+  dMat3 <- as.matrix(dMat2)
+  return(dMat3)
 }
 
 #' Calculate C transfer for disturbances and annual processes post-disturbance
