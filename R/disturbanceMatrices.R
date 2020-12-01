@@ -55,7 +55,7 @@ loadDisturbanceMatrixIds <- function(disturbanceMatrixValues, dbPools) {
   allMats[, actProp := value/noLoss]
   allMats[,noLoss2 := sum(actProp), by = cols]
   cols <- c("value", "actProp")
-  allMats[, (cols) := list((actProp),)]
+  allMats[, (cols) := list((actProp),NULL)]
   cols <- c("noLoss", "noLoss2")
   allMats[, (cols) := NULL]
   fixedDistMatrices <- as.matrix(allMats)
