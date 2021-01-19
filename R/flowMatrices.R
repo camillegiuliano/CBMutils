@@ -2,7 +2,7 @@ utils::globalVariables(c(
   "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil",
   "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil",
   "calcDist", "CH4", "CO", "CO2", "fluxOut",
-  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", ".N",
+  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", ".N", "noLoss",
   "Products", "SoftwoodBranchSnag", "SoftwoodStemSnag", "V1"
 ))
 
@@ -375,8 +375,8 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   colnames(matrices) <- c("id", "row", "col", "value")
   # proportional transaction matrices
   dMat <- as.data.table(matrices)
-  cols <- c("row","id")
-  dMat[,noLoss := sum(value), by = cols]
+  cols <- c("row", "id")
+  dMat[, noLoss := sum(value), by = cols]
   tryVec <- c(SoftwoodMerch,
               SoftwoodFoliage,
               SoftwoodOther,

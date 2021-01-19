@@ -1,14 +1,21 @@
-# functions used in assertions for checking proportional matrices
-### Function to make a data.table out of the carbon transfer matrices
+utils::globalVariables(c("name", "noLoss", "row", "value"))
 
-## these need to be used in an assertion after matrices are loaded
-matrixDT <- function(matricesIn,  indicesIn){
+#' Make a `data.table` out of the carbon transfer matrices
+#'
+#' @param matricesIn DESCRIPTION NEEDED
+#' @param indicesIn DESCRIPTION NEEDED
+#'
+#' @return a `data.table` object summarizing the carbon transfers
+#'
+#' @export
+#' @importFrom data.table rbindlist
+matrixDT <- function(matricesIn,  indicesIn) {
   matListDT <- lapply(matricesIn,as.data.table)
   matDT <- rbindlist(matListDT)
   matDTnrow <- lapply(matricesIn,nrow)
   matNrow <- do.call("rbind",matDTnrow)
   nameVec <- NULL
-  for(i in 1:length(indicesIn)){
+  for (i in 1:length(indicesIn)) {
     thisIndex <- rep(indicesIn[i], times = matNrow[i])
     nameVec <- c(nameVec,thisIndex)
   }
@@ -16,9 +23,16 @@ matrixDT <- function(matricesIn,  indicesIn){
   return(matDT)
 }
 
-### Function to check that the proportions add up to 1.
-checkProp <- function(DTofMatrices, tarCols){
-  cols <- c("row","name")
-  checkProp <- DTofMatrices[,noLoss := sum(value), by = cols][,.(name, row, noLoss)]
+#' check that the proportions add up to 1
+#'
+#' @param DTofMatrices DESCRIPTION NEEDED
+#' @param tarCols DESCRIPTION NEEEDED
+#'
+#' @return DESCRIPTION NEEDED
+#'
+#' @export
+checkProp <- function(DTofMatrices, tarCols) {
+  cols <- c("row", "name")
+  checkProp <- DTofMatrices[, noLoss := sum(value), by = cols][, .(name, row, noLoss)]
   return(checkProp)
 }

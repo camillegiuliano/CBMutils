@@ -1,3 +1,5 @@
+utils::globalVariables(c("actProp", "noLoss2"))
+
 #' Load disturbance matrix IDs
 #'
 #' @param disturbanceMatrixValues DESCRIPTION NEEDED

@@ -28,7 +28,8 @@ Imports:
     RSQLite,
     sf,
     sp,
-    SpaDES.core
+    SpaDES.core,
+    stringr
 Suggests:
     covr,
     knitr,
