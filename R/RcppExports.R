@@ -157,20 +157,20 @@ ComputeGrowthAndDeclineMatrices2 <- function(growthIncrements, ages, gcids, pool
 #' Stand then grows to inventory age, and is ready for CBM simulation.
 #'
 #' @param pools Matrix (DESCRIPTION NEEDED)
-#' @param opMatrix Matrix DESCRIPTION NEEDED
+#' @param opMatrix Matrix (DESCRIPTION NEEDED)
 #' @param constantProcesses a list of constant process C dynamics matrices
 #' @param growthIncrements a hash table of growth increments by `gcid`, by `age`
 #' @param ages the stand age, (the inventory age) stands will be simulated to this age in the final pass
 #' @param gcids the growth curve ids (referenced by `growthIncrements`)
-#' @param historicdmids DESCRIPTION NEEDED
-#' @param lastPassdmids DESCRIPTION NEEDED
-#' @param delays DESCRIPTION NEEDED
-#' @param minRotations DESCRIPTION NEEDED
-#' @param maxRotations DESCRIPTION NEEDED
-#' @param returnIntervals DESCRIPTION NEEDED
+#' @param historicdmids (DESCRIPTION NEEDED)
+#' @param lastPassdmids (DESCRIPTION NEEDED)
+#' @param delays (DESCRIPTION NEEDED)
+#' @param minRotations (DESCRIPTION NEEDED)
+#' @param maxRotations (DESCRIPTION NEEDED)
+#' @param returnIntervals (DESCRIPTION NEEDED)
 #' @param rootParameters `data.frame` specifying root parameters
 #' @param turnoverParams `data.frame` specifying turnover parameters
-#' @param biomassToCarbonRate DESCRIPTION NEEDED
+#' @param biomassToCarbonRate (DESCRIPTION NEEDED)
 #' @param debug logical indicating whether to run spinup in debug mode.
 #'
 #' @export

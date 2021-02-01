@@ -17,7 +17,7 @@ b_m <- function(table3, vol) {
   # flag is vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table3$volm))) {
     if (max(vol) > unique(table3$volm)) {
-      message("The volumes in the growth information provided are greater than the maximum volume",
+      message("The volumes in the growth information provided are greater than the maximum volume ",
               "the stem wood model was developed with.")
     }
   }
@@ -38,7 +38,7 @@ nmfac <- function(table4, eq1, vol) {
   # flag is vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table4$volm))) {
     if (max(vol) > unique(table4$volm)) {
-      message("The volumes in the growth information provided are greater than the maximum volume",
+      message("The volumes in the growth information provided are greater than the maximum volume ",
               "the non-merch sized tree model was developed with.")
     }
   }
@@ -63,7 +63,7 @@ sapfac <- function(table5, eq2, vol){
   # flag is vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table5$volm))) {
     if (max(vol) > unique(table5$volm)) {
-      message("The volumes in the growth information provided are greater than the maximum volume",
+      message("The volumes in the growth information provided are greater than the maximum volume ",
               "the sappling model was developed with.")
     }
   }
@@ -91,14 +91,14 @@ biomProp <- function(table6, table7, vol) {
   # the model was developed on
   if (!is.na(unique(table7$vol_min))) {
     if (min(vol) < unique(table7$vol_min)) {
-      message("Some volumes in the growth information provided are smaller than the minumum volume",
+      message("Some volumes in the growth information provided are smaller than the minumum volume ",
               "the proportions model was developed with.")
     }
   }
 
   if (!is.na(unique(table7$vol_max))) {
     if (max(vol) > unique(table7$vol_max)) {
-      message("Some volumes in the growth information provided are larger than the maximumum",
+      message("Some volumes in the growth information provided are larger than the maximumum ",
               "volume the proportions model was developed with.")
     }
   }
