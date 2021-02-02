@@ -20,7 +20,7 @@ TODO: confirm these
 }
 \details{
 NOTE: A reminder that indexing in R starts at 1, whereas in C++ it starts at 0.
-Several C++ data structures do not include the Inputs category, so the indices there are
+Several C++ data structures do not include the Input category, so the indices there are
 defined using \code{.poolids - 1}.
 }
 \keyword{datasets}
