@@ -21,7 +21,7 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   cbmPools[is.na(cbmPools)] <- 0
   colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
   if ("totalCarbon" %in% poolsToPlot) {
-    totalCarbon <- apply(cbmPools[,SoftwoodMerch:HardwoodBranchSnag], 1, 'sum')
+    totalCarbon <- apply(cbmPools[, SoftwoodMerch:HardwoodBranchSnag], 1, "sum")
     cbmPools <- cbind(cbmPools, totalCarbon)
   }
 

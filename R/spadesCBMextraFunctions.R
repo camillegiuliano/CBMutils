@@ -18,42 +18,50 @@ utils::globalVariables(c(
   "value", "variable"
 ))
 
-#' Disturbance matrix pool names
+#' Disturbance matrix pool names and ids
 #'
 #' TODO: confirm these
 #'
+#' NOTE: A reminder that indexing in R starts at 1, whereas in C++ it starts at 0.
+#' Several C++ data structures do not include the Input category, so the indices there are
+#' defined using `.poolids - 1`.
+#'
 #' @export
-.poolNames <- data.frame(
-  pool = c(
-    ## TODO: inputs should be pool 1?
-    "SoftwoodMerch",
-    "SoftwoodFoliage",
-    "SoftwoodOther",
-    "SoftwoodCoarseRoots",
-    "SoftwoodFineRoots",
-    "HardwoodMerch",
-    "HardwoodFoliage",
-    "HardwoodOther",
-    "HardwoodCoarseRoots",
-    "HardwoodFineRoots",
-    "AboveGroundVeryFastSoil",
-    "BelowGroundVeryFastSoil",
-    "AboveGroundFastSoil",
-    "BelowGroundFastSoil",
-    "MediumSoil",
-    "AboveGroundSlowSoil",
-    "BelowGroundSlowSoil",
-    "SoftwoodStemSnag",
-    "SoftwoodBranchSnag",
-    "HardwoodStemSnag",
-    "HardwoodBranchSnag",
-    "CO2",
-    "CH4",
-    "CO",
-    "Products"
-  ),
-  dmPoolId = c(1:24, 26)
+#' @rdname poolids
+.poolnames <- c(
+  "Input", ## TODO: Inputs not originally listed with pool ids
+  "SoftwoodMerch",
+  "SoftwoodFoliage",
+  "SoftwoodOther",
+  "SoftwoodCoarseRoots",
+  "SoftwoodFineRoots",
+  "HardwoodMerch",
+  "HardwoodFoliage",
+  "HardwoodOther",
+  "HardwoodCoarseRoots",
+  "HardwoodFineRoots",
+  "AboveGroundVeryFastSoil",
+  "BelowGroundVeryFastSoil",
+  "AboveGroundFastSoil",
+  "BelowGroundFastSoil",
+  "MediumSoil",
+  "AboveGroundSlowSoil",
+  "BelowGroundSlowSoil",
+  "SoftwoodStemSnag",
+  "SoftwoodBranchSnag",
+  "HardwoodStemSnag",
+  "HardwoodBranchSnag",
+  "CO2",
+  "CH4",
+  "CO",
+  "Products"
 )
+
+#' @export
+#' @rdname poolids
+.poolids <- as.list(1L:26L) # as.list(c(1L:24, 26L)) ## TODO: where/what is pool 25? should Inputs be included?
+names(.poolids) <- .poolnames
+.poolids <- list2env(.poolids, parent = emptyenv(), size = length(.poolnames))
 
 #' Identify the ID number (CBM-CFS3 legacy) possible in the current spatial unit
 #'
