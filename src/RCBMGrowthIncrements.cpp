@@ -510,35 +510,36 @@ struct PoolNames {
 	PoolNames() {
 		NPools = 26;
 
-		Rcpp::Environment globalEnv = Rcpp::Environment::global_env();
+		//Rcpp::Environment globalEnv = Rcpp::Environment::global_env();
+		Rcpp::Environment poolids = Rcpp::Environment::namespace_env("CBMutils")[".poolids"];
 
 		//set up the pool indices
-		Input = (int)globalEnv["Input"] - 1;
-		SoftwoodMerch = (int)globalEnv["SoftwoodMerch"] - 1;
-		SoftwoodFoliage = (int)globalEnv["SoftwoodFoliage"] - 1;
-		SoftwoodOther = (int)globalEnv["SoftwoodOther"] - 1;
-		SoftwoodCoarseRoots = (int)globalEnv["SoftwoodCoarseRoots"] - 1;
-		SoftwoodFineRoots = (int)globalEnv["SoftwoodFineRoots"] - 1;
-		HardwoodMerch = (int)globalEnv["HardwoodMerch"] - 1;
-		HardwoodFoliage = (int)globalEnv["HardwoodFoliage"] - 1;
-		HardwoodOther = (int)globalEnv["HardwoodOther"] - 1;
-		HardwoodCoarseRoots = (int)globalEnv["HardwoodCoarseRoots"] - 1;
-		HardwoodFineRoots = (int)globalEnv["HardwoodFineRoots"] - 1;
-		AboveGroundVeryFastSoil = (int)globalEnv["AboveGroundVeryFastSoil"] - 1;
-		BelowGroundVeryFastSoil = (int)globalEnv["BelowGroundVeryFastSoil"] - 1;
-		AboveGroundFastSoil = (int)globalEnv["AboveGroundFastSoil"] - 1;
-		BelowGroundFastSoil = (int)globalEnv["BelowGroundFastSoil"] - 1;
-		MediumSoil = (int)globalEnv["MediumSoil"] - 1;
-		AboveGroundSlowSoil = (int)globalEnv["AboveGroundSlowSoil"] - 1;
-		BelowGroundSlowSoil = (int)globalEnv["BelowGroundSlowSoil"] - 1;
-		SoftwoodStemSnag = (int)globalEnv["SoftwoodStemSnag"] - 1;
-		SoftwoodBranchSnag = (int)globalEnv["SoftwoodBranchSnag"] - 1;
-		HardwoodStemSnag = (int)globalEnv["HardwoodStemSnag"] - 1;
-		HardwoodBranchSnag = (int)globalEnv["HardwoodBranchSnag"] - 1;
-		CO2 = (int)globalEnv["CO2"] - 1;
-		CH4 = (int)globalEnv["CH4"] - 1;
-		CO = (int)globalEnv["CO"] - 1;
-		Products = (int)globalEnv["Products"] - 1;
+		Input = (int)poolids["Input"] - 1;
+		SoftwoodMerch = (int)poolids["SoftwoodMerch"] - 1;
+		SoftwoodFoliage = (int)poolids["SoftwoodFoliage"] - 1;
+		SoftwoodOther = (int)poolids["SoftwoodOther"] - 1;
+		SoftwoodCoarseRoots = (int)poolids["SoftwoodCoarseRoots"] - 1;
+		SoftwoodFineRoots = (int)poolids["SoftwoodFineRoots"] - 1;
+		HardwoodMerch = (int)poolids["HardwoodMerch"] - 1;
+		HardwoodFoliage = (int)poolids["HardwoodFoliage"] - 1;
+		HardwoodOther = (int)poolids["HardwoodOther"] - 1;
+		HardwoodCoarseRoots = (int)poolids["HardwoodCoarseRoots"] - 1;
+		HardwoodFineRoots = (int)poolids["HardwoodFineRoots"] - 1;
+		AboveGroundVeryFastSoil = (int)poolids["AboveGroundVeryFastSoil"] - 1;
+		BelowGroundVeryFastSoil = (int)poolids["BelowGroundVeryFastSoil"] - 1;
+		AboveGroundFastSoil = (int)poolids["AboveGroundFastSoil"] - 1;
+		BelowGroundFastSoil = (int)poolids["BelowGroundFastSoil"] - 1;
+		MediumSoil = (int)poolids["MediumSoil"] - 1;
+		AboveGroundSlowSoil = (int)poolids["AboveGroundSlowSoil"] - 1;
+		BelowGroundSlowSoil = (int)poolids["BelowGroundSlowSoil"] - 1;
+		SoftwoodStemSnag = (int)poolids["SoftwoodStemSnag"] - 1;
+		SoftwoodBranchSnag = (int)poolids["SoftwoodBranchSnag"] - 1;
+		HardwoodStemSnag = (int)poolids["HardwoodStemSnag"] - 1;
+		HardwoodBranchSnag = (int)poolids["HardwoodBranchSnag"] - 1;
+		CO2 = (int)poolids["CO2"] - 1;
+		CH4 = (int)poolids["CH4"] - 1;
+		CO = (int)poolids["CO"] - 1;
+		Products = (int)poolids["Products"] - 1;
 	}
 	int NPools;
 	int Input;
@@ -571,9 +572,7 @@ struct PoolNames {
 
 TotalBiomassIncrement GetTotalBiomassIncrement(PoolNames& pn, double* pools,
 	AGBiomassIncrement inc, RootParameter rootParam,
-	double biomassToCarbonRate, double sw_multiplier,
-	double hw_multiplier) {
-
+	double biomassToCarbonRate, double sw_multiplier, double hw_multiplier) {
 
 	double rb_hw_a = rootParam.rb_hw_a;
 	double rb_sw_a = rootParam.rb_sw_a;
@@ -1093,20 +1092,20 @@ SpinupState UpdateSpinupState(SpinupState current, int finalAge, int stepNum,
 //' Stand then grows to inventory age, and is ready for CBM simulation.
 //'
 //' @param pools Matrix (DESCRIPTION NEEDED)
-//' @param opMatrix Matrix DESCRIPTION NEEDED
+//' @param opMatrix Matrix (DESCRIPTION NEEDED)
 //' @param constantProcesses a list of constant process C dynamics matrices
 //' @param growthIncrements a hash table of growth increments by `gcid`, by `age`
 //' @param ages the stand age, (the inventory age) stands will be simulated to this age in the final pass
 //' @param gcids the growth curve ids (referenced by `growthIncrements`)
-//' @param historicdmids DESCRIPTION NEEDED
-//' @param lastPassdmids DESCRIPTION NEEDED
-//' @param delays DESCRIPTION NEEDED
-//' @param minRotations DESCRIPTION NEEDED
-//' @param maxRotations DESCRIPTION NEEDED
-//' @param returnIntervals DESCRIPTION NEEDED
+//' @param historicdmids (DESCRIPTION NEEDED)
+//' @param lastPassdmids (DESCRIPTION NEEDED)
+//' @param delays (DESCRIPTION NEEDED)
+//' @param minRotations (DESCRIPTION NEEDED)
+//' @param maxRotations (DESCRIPTION NEEDED)
+//' @param returnIntervals (DESCRIPTION NEEDED)
 //' @param rootParameters `data.frame` specifying root parameters
 //' @param turnoverParams `data.frame` specifying turnover parameters
-//' @param biomassToCarbonRate DESCRIPTION NEEDED
+//' @param biomassToCarbonRate (DESCRIPTION NEEDED)
 //' @param debug logical indicating whether to run spinup in debug mode.
 //'
 //' @export
@@ -1114,17 +1113,17 @@ SpinupState UpdateSpinupState(SpinupState current, int finalAge, int stepNum,
 Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 	Rcpp::IntegerMatrix opMatrix,
 	Rcpp::List& constantProcesses,
-	Rcpp::Environment& growthIncrements,
-	Rcpp::IntegerVector& ages,
-	Rcpp::IntegerVector& gcids,
+	Rcpp::Environment& growthIncrements,  //
+	Rcpp::IntegerVector& ages,            //
+	Rcpp::IntegerVector& gcids,           //
 	Rcpp::IntegerVector& historicdmids,
 	Rcpp::IntegerVector& lastPassdmids,
 	Rcpp::IntegerVector& delays,
 	Rcpp::IntegerVector& minRotations,
 	Rcpp::IntegerVector& maxRotations,
 	Rcpp::IntegerVector& returnIntervals,
-	Rcpp::DataFrame& rootParameters,
-	Rcpp::DataFrame& turnoverParams,
+	Rcpp::DataFrame& rootParameters,      //
+	Rcpp::DataFrame& turnoverParams,      //
 	double biomassToCarbonRate,
 	bool debug = false) {
 
