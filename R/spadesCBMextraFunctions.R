@@ -28,8 +28,8 @@ utils::globalVariables(c(
 #'
 #' @export
 #' @rdname poolids
-.poolnames <- c(
-  "Input", ## TODO: Inputs not originally listed with pool ids
+.pooldef <- c(
+  "Input",
   "SoftwoodMerch",
   "SoftwoodFoliage",
   "SoftwoodOther",
@@ -59,7 +59,17 @@ utils::globalVariables(c(
 
 #' @export
 #' @rdname poolids
-.poolids <- as.list(1L:26L) # as.list(c(1L:24, 26L)) ## TODO: where/what is pool 25? should Inputs be included?
+.pooldefids <- as.list(1L:26L)
+names(.pooldefids) <- .pooldef
+.pooldefids <- list2env(.pooldefids, parent = emptyenv(), size = length(.pooldef))
+
+#' @export
+#' @rdname poolids
+.poolnames <- .pooldef[2L:length(.pooldef)] ## without 'Input'
+
+#' @export
+#' @rdname poolids
+.poolids <- as.list(c(1L:24, 26L)) ## NOTE: pool 25 is NO2; not currently used
 names(.poolids) <- .poolnames
 .poolids <- list2env(.poolids, parent = emptyenv(), size = length(.poolnames))
 

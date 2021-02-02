@@ -508,38 +508,38 @@ struct RootParameter {
 
 struct PoolNames {
 	PoolNames() {
-		NPools = 26;
+		NPools = 26; // TODO: determine this based on length(.pooldefids)
 
 		//Rcpp::Environment globalEnv = Rcpp::Environment::global_env();
-		Rcpp::Environment poolids = Rcpp::Environment::namespace_env("CBMutils")[".poolids"];
+		Rcpp::Environment pooldefids = Rcpp::Environment::namespace_env("CBMutils")[".pooldefids"];
 
 		//set up the pool indices
-		Input = (int)poolids["Input"] - 1;
-		SoftwoodMerch = (int)poolids["SoftwoodMerch"] - 1;
-		SoftwoodFoliage = (int)poolids["SoftwoodFoliage"] - 1;
-		SoftwoodOther = (int)poolids["SoftwoodOther"] - 1;
-		SoftwoodCoarseRoots = (int)poolids["SoftwoodCoarseRoots"] - 1;
-		SoftwoodFineRoots = (int)poolids["SoftwoodFineRoots"] - 1;
-		HardwoodMerch = (int)poolids["HardwoodMerch"] - 1;
-		HardwoodFoliage = (int)poolids["HardwoodFoliage"] - 1;
-		HardwoodOther = (int)poolids["HardwoodOther"] - 1;
-		HardwoodCoarseRoots = (int)poolids["HardwoodCoarseRoots"] - 1;
-		HardwoodFineRoots = (int)poolids["HardwoodFineRoots"] - 1;
-		AboveGroundVeryFastSoil = (int)poolids["AboveGroundVeryFastSoil"] - 1;
-		BelowGroundVeryFastSoil = (int)poolids["BelowGroundVeryFastSoil"] - 1;
-		AboveGroundFastSoil = (int)poolids["AboveGroundFastSoil"] - 1;
-		BelowGroundFastSoil = (int)poolids["BelowGroundFastSoil"] - 1;
-		MediumSoil = (int)poolids["MediumSoil"] - 1;
-		AboveGroundSlowSoil = (int)poolids["AboveGroundSlowSoil"] - 1;
-		BelowGroundSlowSoil = (int)poolids["BelowGroundSlowSoil"] - 1;
-		SoftwoodStemSnag = (int)poolids["SoftwoodStemSnag"] - 1;
-		SoftwoodBranchSnag = (int)poolids["SoftwoodBranchSnag"] - 1;
-		HardwoodStemSnag = (int)poolids["HardwoodStemSnag"] - 1;
-		HardwoodBranchSnag = (int)poolids["HardwoodBranchSnag"] - 1;
-		CO2 = (int)poolids["CO2"] - 1;
-		CH4 = (int)poolids["CH4"] - 1;
-		CO = (int)poolids["CO"] - 1;
-		Products = (int)poolids["Products"] - 1;
+		Input = (int)pooldefids["Input"] - 1;
+		SoftwoodMerch = (int)pooldefids["SoftwoodMerch"] - 1;
+		SoftwoodFoliage = (int)pooldefids["SoftwoodFoliage"] - 1;
+		SoftwoodOther = (int)pooldefids["SoftwoodOther"] - 1;
+		SoftwoodCoarseRoots = (int)pooldefids["SoftwoodCoarseRoots"] - 1;
+		SoftwoodFineRoots = (int)pooldefids["SoftwoodFineRoots"] - 1;
+		HardwoodMerch = (int)pooldefids["HardwoodMerch"] - 1;
+		HardwoodFoliage = (int)pooldefids["HardwoodFoliage"] - 1;
+		HardwoodOther = (int)pooldefids["HardwoodOther"] - 1;
+		HardwoodCoarseRoots = (int)pooldefids["HardwoodCoarseRoots"] - 1;
+		HardwoodFineRoots = (int)pooldefids["HardwoodFineRoots"] - 1;
+		AboveGroundVeryFastSoil = (int)pooldefids["AboveGroundVeryFastSoil"] - 1;
+		BelowGroundVeryFastSoil = (int)pooldefids["BelowGroundVeryFastSoil"] - 1;
+		AboveGroundFastSoil = (int)pooldefids["AboveGroundFastSoil"] - 1;
+		BelowGroundFastSoil = (int)pooldefids["BelowGroundFastSoil"] - 1;
+		MediumSoil = (int)pooldefids["MediumSoil"] - 1;
+		AboveGroundSlowSoil = (int)pooldefids["AboveGroundSlowSoil"] - 1;
+		BelowGroundSlowSoil = (int)pooldefids["BelowGroundSlowSoil"] - 1;
+		SoftwoodStemSnag = (int)pooldefids["SoftwoodStemSnag"] - 1;
+		SoftwoodBranchSnag = (int)pooldefids["SoftwoodBranchSnag"] - 1;
+		HardwoodStemSnag = (int)pooldefids["HardwoodStemSnag"] - 1;
+		HardwoodBranchSnag = (int)pooldefids["HardwoodBranchSnag"] - 1;
+		CO2 = (int)pooldefids["CO2"] - 1;
+		CH4 = (int)pooldefids["CH4"] - 1;
+		CO = (int)pooldefids["CO"] - 1;
+		Products = (int)pooldefids["Products"] - 1;
 	}
 	int NPools;
 	int Input;
@@ -1189,9 +1189,9 @@ Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 					break;
 				case EndOfFinalRotationThenDelay:
 				  //turn off growth (do delay)
-				  opMatrix(i,0) = 0;//growth1
-				  opMatrix(i,3) = 0;//overmaturedecline
-				  opMatrix(i,4) = 0;//growth2
+				  opMatrix(i, 0) = 0;//growth1
+				  opMatrix(i, 3) = 0;//overmaturedecline
+				  opMatrix(i, 4) = 0;//growth2
 				  disturbanceMatrixIds(i, 0) = lastPassdmids[i]; //do last pass disturbance
 				  stepNum[i] = 0;
 				  break;

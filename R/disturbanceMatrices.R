@@ -13,17 +13,17 @@ loadDisturbanceMatrixIds <- function(disturbanceMatrixValues, dbPools) {
   # matches the pool def id by name for safety
   getPoolDefId <- function(dbPoolID) {
     dbPoolName <- dbPools[as.numeric(dbPools[, "id"]) == dbPoolID, "name"]
-    .poolids[[dbPoolName]]
+    .pooldefids[[dbPoolName]]
   }
 
   # fill in the neutral transfers not covered by the matrix data
   # i.e., the matrix will not withdraw from any of the following pools
   neutrals <- NULL
-  neutrals <- rbind(neutrals, c(.poolids[["Input"]], .poolids[["Input"]], 1))
-  neutrals <- rbind(neutrals, c(.poolids[["CO2"]], .poolids[["CO2"]], 1))
-  neutrals <- rbind(neutrals, c(.poolids[["CH4"]], .poolids[["CH4"]], 1))
-  neutrals <- rbind(neutrals, c(.poolids[["CO"]], .poolids[["CO"]], 1))
-  neutrals <- rbind(neutrals, c(.poolids[["Products"]], .poolids[["Products"]], 1))
+  neutrals <- rbind(neutrals, c(.pooldefids[["Input"]], .pooldefids[["Input"]], 1))
+  neutrals <- rbind(neutrals, c(.pooldefids[["CO2"]], .pooldefids[["CO2"]], 1))
+  neutrals <- rbind(neutrals, c(.pooldefids[["CH4"]], .pooldefids[["CH4"]], 1))
+  neutrals <- rbind(neutrals, c(.pooldefids[["CO"]], .pooldefids[["CO"]], 1))
+  neutrals <- rbind(neutrals, c(.pooldefids[["Products"]], .pooldefids[["Products"]], 1))
 
   loadMatrix <- function(dmid) {
     dbmat <- disturbanceMatrixValues[disturbanceMatrixValues[, "disturbance_matrix_id"] == dmid, ]

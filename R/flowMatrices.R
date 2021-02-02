@@ -81,7 +81,7 @@ spatialUnitDecayRates <- function(climate, decayparameters, domPools) {
 #'
 #' @export
 domDecayMatrixItem <- function(mat, decayRates, propToAtmosphere, src, dst, emission) {
-  offset <- .poolids[["HardwoodFineRoots"]]
+  offset <- .pooldefids[["HardwoodFineRoots"]]
   mat <- rbind(mat, c(src, src, 1 - decayRates[src - offset]))
   mat <- rbind(mat, c(src, dst, decayRates[src - offset] * (1 - propToAtmosphere[src - offset])))
   mat <- rbind(mat, c(src, emission, decayRates[src - offset] * propToAtmosphere[src - offset]))
@@ -101,41 +101,41 @@ domDecayMatrix <- function(decayRates, decayParameters, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
   propToAtmosphere <- decayParameters[, "PropToAtmosphere"]
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["AboveGroundVeryFastSoil"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["AboveGroundVeryFastSoil"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["BelowGroundVeryFastSoil"]],
-                            .poolids[["BelowGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["BelowGroundVeryFastSoil"]],
+                            .pooldefids[["BelowGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["AboveGroundFastSoil"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["AboveGroundFastSoil"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["BelowGroundFastSoil"]],
-                            .poolids[["BelowGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["BelowGroundFastSoil"]],
+                            .pooldefids[["BelowGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["MediumSoil"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["MediumSoil"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["SoftwoodStemSnag"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["SoftwoodStemSnag"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["SoftwoodBranchSnag"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["SoftwoodBranchSnag"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["HardwoodStemSnag"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["HardwoodStemSnag"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
   mat <- domDecayMatrixItem(mat, decayRates, propToAtmosphere,
-                            .poolids[["HardwoodBranchSnag"]],
-                            .poolids[["AboveGroundSlowSoil"]],
-                            .poolids[["CO2"]])
+                            .pooldefids[["HardwoodBranchSnag"]],
+                            .pooldefids[["AboveGroundSlowSoil"]],
+                            .pooldefids[["CO2"]])
 
   return(mat)
 }
@@ -167,12 +167,12 @@ computeDomDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
   dMat <- as.data.table(matrices)
   cols <- c("row","id")
   dMat[,noLoss := sum(value), by = cols]
-  tryVec <- c(.poolids[["AboveGroundVeryFastSoil"]], .poolids[["BelowGroundVeryFastSoil"]],
-              .poolids[["AboveGroundFastSoil"]], .poolids[["BelowGroundFastSoil"]],
-              .poolids[["MediumSoil"]],
-              .poolids[["AboveGroundSlowSoil"]], .poolids[["BelowGroundSlowSoil"]],
-              .poolids[["SoftwoodStemSnag"]], .poolids[["SoftwoodBranchSnag"]],
-              .poolids[["HardwoodStemSnag"]], .poolids[["HardwoodBranchSnag"]])
+  tryVec <- c(.pooldefids[["AboveGroundVeryFastSoil"]], .pooldefids[["BelowGroundVeryFastSoil"]],
+              .pooldefids[["AboveGroundFastSoil"]], .pooldefids[["BelowGroundFastSoil"]],
+              .pooldefids[["MediumSoil"]],
+              .pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["BelowGroundSlowSoil"]],
+              .pooldefids[["SoftwoodStemSnag"]], .pooldefids[["SoftwoodBranchSnag"]],
+              .pooldefids[["HardwoodStemSnag"]], .pooldefids[["HardwoodBranchSnag"]])
   dMat2 <- dMat[!(row %in% tryVec & value == 1),]
   dMat2[,noLoss := NULL]
   dMat3 <- as.matrix(dMat2)
@@ -190,19 +190,19 @@ computeDomDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
 #'
 #' @export
 slowDecayMatrix <- function(decayRates, decayParameters, PoolCount) {
-  offset <- .poolids[["HardwoodFineRoots"]]
+  offset <- .pooldefids[["HardwoodFineRoots"]]
   mat <- getIdentityCoordinateMatrix(PoolCount)
   propToAtmosphere <- decayParameters[, "PropToAtmosphere"]
-  mat <- rbind(mat, c(.poolids[["AboveGroundSlowSoil"]], .poolids[["AboveGroundSlowSoil"]],
-                      1 - decayRates[.poolids[["AboveGroundSlowSoil"]] - offset]))
-  mat <- rbind(mat, c(.poolids[["AboveGroundSlowSoil"]], .poolids[["CO2"]],
-                      decayRates[.poolids[["AboveGroundSlowSoil"]] - offset] *
-                        propToAtmosphere[.poolids[["AboveGroundSlowSoil"]] - offset]))
-  mat <- rbind(mat, c(.poolids[["BelowGroundSlowSoil"]], .poolids[["BelowGroundSlowSoil"]],
-                      1 - decayRates[.poolids[["BelowGroundSlowSoil"]] - offset]))
-  mat <- rbind(mat, c(.poolids[["BelowGroundSlowSoil"]], .poolids[["CO2"]],
-                      decayRates[.poolids[["BelowGroundSlowSoil"]] - offset] *
-                        propToAtmosphere[.poolids[["AboveGroundSlowSoil"]] - offset]))
+  mat <- rbind(mat, c(.pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["AboveGroundSlowSoil"]],
+                      1 - decayRates[.pooldefids[["AboveGroundSlowSoil"]] - offset]))
+  mat <- rbind(mat, c(.pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["CO2"]],
+                      decayRates[.pooldefids[["AboveGroundSlowSoil"]] - offset] *
+                        propToAtmosphere[.pooldefids[["AboveGroundSlowSoil"]] - offset]))
+  mat <- rbind(mat, c(.pooldefids[["BelowGroundSlowSoil"]], .pooldefids[["BelowGroundSlowSoil"]],
+                      1 - decayRates[.pooldefids[["BelowGroundSlowSoil"]] - offset]))
+  mat <- rbind(mat, c(.pooldefids[["BelowGroundSlowSoil"]], .pooldefids[["CO2"]],
+                      decayRates[.pooldefids[["BelowGroundSlowSoil"]] - offset] *
+                        propToAtmosphere[.pooldefids[["AboveGroundSlowSoil"]] - offset]))
   return(mat)
 }
 
@@ -227,7 +227,7 @@ computeSlowDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
   dMat <- as.data.table(matrices)
   cols <- c("row","id")
   dMat[,noLoss := sum(value), by = cols]
-  tryVec <- c(.poolids[["AboveGroundSlowSoil"]], .poolids[["BelowGroundSlowSoil"]])
+  tryVec <- c(.pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["BelowGroundSlowSoil"]])
   dMat2 <- dMat[!(row %in% tryVec & value == 1),]
   dMat2[,noLoss := NULL]
   dMat3 <- as.matrix(dMat2)
@@ -244,9 +244,9 @@ computeSlowDecayMatrices <- function(decayRates, decayParameters, PoolCount) {
 #' @export
 computeSlowMixingMatrix <- function(slowMixingRate, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
-  mat <- mat[-.poolids[["AboveGroundSlowSoil"]],]
-  mat <- rbind(mat, c(.poolids[["AboveGroundSlowSoil"]], .poolids[["BelowGroundSlowSoil"]], slowMixingRate))
-  mat <- rbind(mat, c(.poolids[["AboveGroundSlowSoil"]], .poolids[["AboveGroundSlowSoil"]], 1 - slowMixingRate))
+  mat <- mat[-.pooldefids[["AboveGroundSlowSoil"]],]
+  mat <- rbind(mat, c(.pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["BelowGroundSlowSoil"]], slowMixingRate))
+  mat <- rbind(mat, c(.pooldefids[["AboveGroundSlowSoil"]], .pooldefids[["AboveGroundSlowSoil"]], 1 - slowMixingRate))
   mat <- cbind(rep(1, nrow(mat)), mat)
   colnames(mat) <- c("id", "row", "col", "value")
   return(mat)
@@ -263,24 +263,24 @@ computeSlowMixingMatrix <- function(slowMixingRate, PoolCount) {
 domTurnOverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
 
-  mat <- rbind(mat, c(.poolids[["SoftwoodStemSnag"]], .poolids[["SoftwoodStemSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodStemSnag"]], .pooldefids[["SoftwoodStemSnag"]],
                       1 - turnoverParam["StemSnagTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodStemSnag"]], .poolids[["MediumSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodStemSnag"]], .pooldefids[["MediumSoil"]],
                       turnoverParam["StemSnagTurnoverRate"]))
 
-  mat <- rbind(mat, c(.poolids[["SoftwoodBranchSnag"]], .poolids[["SoftwoodBranchSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodBranchSnag"]], .pooldefids[["SoftwoodBranchSnag"]],
                       1 - turnoverParam["BranchSnagTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodBranchSnag"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodBranchSnag"]], .pooldefids[["AboveGroundFastSoil"]],
                       turnoverParam["BranchSnagTurnoverRate"]))
 
-  mat <- rbind(mat, c(.poolids[["HardwoodStemSnag"]], .poolids[["HardwoodStemSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodStemSnag"]], .pooldefids[["HardwoodStemSnag"]],
                       1 - turnoverParam["StemSnagTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodStemSnag"]], .poolids[["MediumSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodStemSnag"]], .pooldefids[["MediumSoil"]],
                       turnoverParam["StemSnagTurnoverRate"]))
 
-  mat <- rbind(mat, c(.poolids[["HardwoodBranchSnag"]], .poolids[["HardwoodBranchSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodBranchSnag"]], .pooldefids[["HardwoodBranchSnag"]],
                       1 - turnoverParam["BranchSnagTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodBranchSnag"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodBranchSnag"]], .pooldefids[["AboveGroundFastSoil"]],
                       turnoverParam["BranchSnagTurnoverRate"]))
 
   return(mat)
@@ -331,8 +331,8 @@ computeDomTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   dMat <- as.data.table(matrices)
   cols <- c("row","id")
   dMat[,noLoss := sum(value), by = cols]
-  tryVec <- c(.poolids[["SoftwoodStemSnag"]], .poolids[["SoftwoodBranchSnag"]],
-              .poolids[["HardwoodStemSnag"]], .poolids[["HardwoodBranchSnag"]])
+  tryVec <- c(.pooldefids[["SoftwoodStemSnag"]], .pooldefids[["SoftwoodBranchSnag"]],
+              .pooldefids[["HardwoodStemSnag"]], .pooldefids[["HardwoodBranchSnag"]])
   dMat2 <- dMat[!(row %in% tryVec & value == 1),]
   dMat2[,noLoss := NULL]
   dMat3 <- as.matrix(dMat2)
@@ -350,58 +350,58 @@ computeDomTurnoverMatrices <- function(turnoverParameters, PoolCount) {
 biomassTurnoverMatrix <- function(turnoverParam, PoolCount) {
   mat <- getIdentityCoordinateMatrix(PoolCount)
 
-  mat <- rbind(mat, c(.poolids[["SoftwoodMerch"]], .poolids[["SoftwoodMerch"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodMerch"]], .pooldefids[["SoftwoodMerch"]],
                       1 - turnoverParam["StemAnnualTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodMerch"]], .poolids[["SoftwoodStemSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodMerch"]], .pooldefids[["SoftwoodStemSnag"]],
                       turnoverParam["StemAnnualTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodFoliage"]], .poolids[["SoftwoodFoliage"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodFoliage"]], .pooldefids[["SoftwoodFoliage"]],
                       1 - turnoverParam["SoftwoodFoliageFallRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodFoliage"]], .poolids[["AboveGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodFoliage"]], .pooldefids[["AboveGroundVeryFastSoil"]],
                       turnoverParam["SoftwoodFoliageFallRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodOther"]], .poolids[["SoftwoodOther"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodOther"]], .pooldefids[["SoftwoodOther"]],
                       1 - turnoverParam["SoftwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodOther"]], .poolids[["SoftwoodBranchSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodOther"]], .pooldefids[["SoftwoodBranchSnag"]],
                       turnoverParam["OtherToBranchSnagSplit"] * turnoverParam["SoftwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodOther"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodOther"]], .pooldefids[["AboveGroundFastSoil"]],
                       (1 - turnoverParam["OtherToBranchSnagSplit"]) * turnoverParam["SoftwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodCoarseRoots"]], .poolids[["SoftwoodCoarseRoots"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodCoarseRoots"]], .pooldefids[["SoftwoodCoarseRoots"]],
                       1 - turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodCoarseRoots"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodCoarseRoots"]], .pooldefids[["AboveGroundFastSoil"]],
                       turnoverParam["CoarseRootAGSplit"] * turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodCoarseRoots"]], .poolids[["BelowGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodCoarseRoots"]], .pooldefids[["BelowGroundFastSoil"]],
                       (1 - turnoverParam["CoarseRootAGSplit"]) * turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodFineRoots"]], .poolids[["SoftwoodFineRoots"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodFineRoots"]], .pooldefids[["SoftwoodFineRoots"]],
                       1 - turnoverParam["FineRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodFineRoots"]], .poolids[["AboveGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodFineRoots"]], .pooldefids[["AboveGroundVeryFastSoil"]],
                       turnoverParam["FineRootAGSplit"] * turnoverParam["FineRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["SoftwoodFineRoots"]], .poolids[["BelowGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["SoftwoodFineRoots"]], .pooldefids[["BelowGroundVeryFastSoil"]],
                       (1 - turnoverParam["FineRootAGSplit"]) * turnoverParam["FineRootTurnProp"]))
 
-  mat <- rbind(mat, c(.poolids[["HardwoodMerch"]], .poolids[["HardwoodMerch"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodMerch"]], .pooldefids[["HardwoodMerch"]],
                       1 - turnoverParam["StemAnnualTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodMerch"]], .poolids[["HardwoodStemSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodMerch"]], .pooldefids[["HardwoodStemSnag"]],
                       turnoverParam["StemAnnualTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodFoliage"]], .poolids[["HardwoodFoliage"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodFoliage"]], .pooldefids[["HardwoodFoliage"]],
                       1 - turnoverParam["HardwoodFoliageFallRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodFoliage"]], .poolids[["AboveGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodFoliage"]], .pooldefids[["AboveGroundVeryFastSoil"]],
                       turnoverParam["HardwoodFoliageFallRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodOther"]], .poolids[["HardwoodOther"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodOther"]], .pooldefids[["HardwoodOther"]],
                       1 - turnoverParam["HardwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodOther"]], .poolids[["HardwoodBranchSnag"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodOther"]], .pooldefids[["HardwoodBranchSnag"]],
                       turnoverParam["OtherToBranchSnagSplit"] * turnoverParam["HardwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodOther"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodOther"]], .pooldefids[["AboveGroundFastSoil"]],
                       (1 - turnoverParam["OtherToBranchSnagSplit"]) * turnoverParam["HardwoodBranchTurnoverRate"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodCoarseRoots"]], .poolids[["HardwoodCoarseRoots"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodCoarseRoots"]], .pooldefids[["HardwoodCoarseRoots"]],
                       1 - turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodCoarseRoots"]], .poolids[["AboveGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodCoarseRoots"]], .pooldefids[["AboveGroundFastSoil"]],
                       turnoverParam["CoarseRootAGSplit"] * turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodCoarseRoots"]], .poolids[["BelowGroundFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodCoarseRoots"]], .pooldefids[["BelowGroundFastSoil"]],
                       (1 - turnoverParam["CoarseRootAGSplit"]) * turnoverParam["CoarseRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodFineRoots"]], .poolids[["HardwoodFineRoots"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodFineRoots"]], .pooldefids[["HardwoodFineRoots"]],
                       1 - turnoverParam["FineRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodFineRoots"]], .poolids[["AboveGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodFineRoots"]], .pooldefids[["AboveGroundVeryFastSoil"]],
                       turnoverParam["FineRootAGSplit"] * turnoverParam["FineRootTurnProp"]))
-  mat <- rbind(mat, c(.poolids[["HardwoodFineRoots"]], .poolids[["BelowGroundVeryFastSoil"]],
+  mat <- rbind(mat, c(.pooldefids[["HardwoodFineRoots"]], .pooldefids[["BelowGroundVeryFastSoil"]],
                       (1 - turnoverParam["FineRootAGSplit"]) * turnoverParam["FineRootTurnProp"]))
   return(mat)
 }
@@ -427,18 +427,18 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   dMat <- as.data.table(matrices)
   cols <- c("row", "id")
   dMat[, noLoss := sum(value), by = cols]
-  tryVec <- c(.poolids[["SoftwoodMerch"]],
-              .poolids[["SoftwoodFoliage"]],
-              .poolids[["SoftwoodOther"]],
-              .poolids[["SoftwoodCoarseRoots"]],
-              .poolids[["SoftwoodFineRoots"]],
-              .poolids[["HardwoodMerch"]],
-              .poolids[["HardwoodFoliage"]],
-              .poolids[["HardwoodOther"]],
-              .poolids[["HardwoodCoarseRoots"]],
-              .poolids[["HardwoodFineRoots"]])
+  tryVec <- c(.pooldefids[["SoftwoodMerch"]],
+              .pooldefids[["SoftwoodFoliage"]],
+              .pooldefids[["SoftwoodOther"]],
+              .pooldefids[["SoftwoodCoarseRoots"]],
+              .pooldefids[["SoftwoodFineRoots"]],
+              .pooldefids[["HardwoodMerch"]],
+              .pooldefids[["HardwoodFoliage"]],
+              .pooldefids[["HardwoodOther"]],
+              .pooldefids[["HardwoodCoarseRoots"]],
+              .pooldefids[["HardwoodFineRoots"]])
   dMat2 <- dMat[!(row %in% tryVec & value == 1),]
-  dMat2[,noLoss := NULL]
+  dMat2[, noLoss := NULL]
   dMat3 <- as.matrix(dMat2)
   return(dMat3)
 }
