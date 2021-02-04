@@ -4,10 +4,12 @@
 \alias{checkTransactions}
 \title{Verify and check transactions}
 \usage{
-checkTransactions(sim)
+checkTransactions(sim, n = 3)
 }
 \arguments{
 \item{sim}{A simulation (\code{simList}) object.}
+
+\item{n}{number of pixelGroups (i.e., size of subset) to check}
 }
 \description{
 Post-simulations, this function takes the last two years of simulations,

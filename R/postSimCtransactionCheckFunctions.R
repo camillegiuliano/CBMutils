@@ -25,12 +25,13 @@ utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
 #' TODO: there are still a bunch of checks that need to be changed to assertions (if statements?)
 #'
 #' @param sim A simulation (`simList`) object.
+#' @param n number of pixelGroups (i.e., size of subset) to check
 #'
 #' @export
 #' @importFrom data.table rbindlist setorderv
 #' @importFrom stats runif time
 #' @importFrom stringr str_replace_all
-checkTransactions <- function(sim) {
+checkTransactions <- function(sim, n = 3) {
   ### 1. Sim list and packages ################################
   # pick the two last years of the simulation
   poolsIn <- sim$cbmPools[simYear == time(sim) - 1, ]
@@ -38,7 +39,7 @@ checkTransactions <- function(sim) {
 
   ### 2. Randomly pick 3 pixelGroup for checking ###############################
   # this line for three randomly selected stands
-  checkPg <- round(runif(3, min = min(poolsOut$pixelGroup), max = max(poolsOut$pixelGroup)), digits = 0)
+  checkPg <- round(runif(n, min = min(poolsOut$pixelGroup), max = max(poolsOut$pixelGroup)), digits = 0)
   # need to check one that was disturbed, add this
   # checkPg[3] <- max(poolsIn$pixelGroup)+20
   # checking hardwood pixelGroup processing
@@ -58,7 +59,7 @@ checkTransactions <- function(sim) {
   # need to match the carbon for the disturbed pools with IN ORDER
   # figure out the matching pixelGroup for disturbed pixels to get the right initial carbon values
   # are there any disturbed pixelGroups?
-  if (dim(inCcheck)[1] != 3) {
+  if (dim(inCcheck)[1] != n) {
     pKeep <- unique(sim$pixelKeep[, (dim(sim$pixelKeep)[2] - 1):(dim(sim$pixelKeep)[2])])
     names(pKeep) <- c("inC", "outC")
     distCcheck <- poolsIn[pixelGroup %in%
