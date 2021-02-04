@@ -3,6 +3,30 @@ utils::globalVariables(c(
   "pixelCount", "pixNPP", "pool", "products", "res", "snags", "soil", "weight"
 ))
 
+#' `m3ToBiomIncOnlyPlots`
+#'
+#' @param inc TODO
+#'
+#' @return TODO
+#'
+#' @export
+#' @importFrom data.table as.data.table melt
+#' @importFrom ggplot2 aes geom_lines
+m3ToBiomIncOnlyPlots <- function(inc){
+  gInc <- as.data.table(inc)
+  idSim <- unique(gInc$id)
+  gcSim <- gInc[id %in% idSim,]
+  gc <- data.table::melt(gcSim, id.vars = c("id", "age"), measure.vars = 3:dim(gInc)[2])
+  names(idSim) <- idSim
+  plots <- lapply(idSim, function(idLoop) {
+    ggplot(data=gc[id == idLoop],
+           aes(x=age,y=value,group=variable,colour=variable)) + geom_line()
+  })
+  names(plots) <- paste0("id",names(plots))
+  return(plots)
+}
+
+
 #' `spatialPlot`
 #'
 #' @param pixelkeep TODO
