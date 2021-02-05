@@ -108,37 +108,51 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
 #' @importFrom ggplot2 scale_fill_discrete scale_y_continuous sec_axis theme xlab
 #' @importFrom quickPlot Plot
 carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
-  pixelCount <- cbmPools[,.(simYear, pixelGroup, pixelCount)]
+  pixelCount <- cbmPools[, .(simYear, pixelGroup, pixelCount)]
   cols <- c("simYear", "pixelGroup")
-  productEmissions <- merge(pixelCount,emissionsProducts, by = cols)
+  productEmissions <- merge(pixelCount, emissionsProducts,
+                            by = cols)
+  totalOutByYr <- productEmissions[, .(
+    CO2 = sum(CO2 *(prod(res(masterRaster))/10000) * pixelCount),
+    CH4 = sum(CH4 *(prod(res(masterRaster))/10000) * pixelCount),
+    CO = sum(CO *(prod(res(masterRaster))/10000) * pixelCount),
+    Products = sum(Products *(prod(res(masterRaster))/10000) * pixelCount)), by = .(simYear)]
+  # Units: these are absolute values the total products and emissions, not per ha.
 
-  # get total emissions (right now it is carbon/ha for a pixelGroup)
-  totalOutByYr <- productEmissions[, .(Products = sum(Products*(prod(res(masterRaster)) / 10000)*pixelCount),
-                                       CH4 = sum(CH4*(prod(res(masterRaster))/10000)*pixelCount),
-                                       CO = sum(CO*(prod(res(masterRaster))/10000)*pixelCount),
-                                       CO2 = sum(CO2*(prod(res(masterRaster))/10000)*pixelCount)),
-                                   by = .(simYear)]
+  # the CH4 and CO are so small compared to the CO2 that we will add all gases
+  # and call it emissions
+  totalOutByYr[ , Emissions:= (CO2 + CH4 + CO), by = .(simYear)]
+  cols <- c("CO2", "CH4", "CO")
+  totalOutByYr[ , (cols) := NULL]
 
-  coeff <- 1000
+  # Emissions only
+  # a <- ggplot(data = totalOutByYr, aes(x = simYear)) +
+  #   +     geom_line(aes(y = Emissions), size = 1.5, colour = "#69b3a2")
+  # Emissions/4 + products
+  #a + geom_line(aes(y = Products), size = 1.5, colour = "darkred")
 
-  carbonOutPlot <- ggplot(data = totalOutByYr, aes(x = simYear)) +
-    geom_col(aes(y = Products/coeff), size = 0.1, fill = "#69b3a2") +
-    geom_line(aes(y = CH4), size = 1.5, colour = "darkred") +
-    geom_line(aes(y = CO), size = 1.5, colour = "steelblue", linetype = "twodash") +
-    geom_line(aes(y = CO2), size = 1.5, colour = "forestgreen", linetype = "dotted") +
+  # emissions seem to be 4X bigger then products
+  if(max(totalOutByYr$Emissions) > max(totalOutByYr$Products)){
+    coeff <- round(max(totalOutByYr$Emissions)/max(totalOutByYr$Products),digits = 0)
+  } else coeff <- round(max(totalOutByYr$Products)/max(totalOutByYr$Emissions),digits = 0)
+
+  absCbyYrPlot <-
+    ggplot(data = totalOutByYr, aes(x = simYear, y = Products)) +
+    geom_line(colour = "darkred", size = 1.5) +
+    geom_line(aes(y = Emissions/coeff), size = 1.5, colour = "#69b3a2") +
     scale_y_continuous(
-      name = "Emissions in MgC", # features of the first axis
-      sec.axis = sec_axis(~.*coeff, name = "Products in kgC") # add 2nd axis; specify its features
+      # Features of the first axis
+      name = "Products in MgC",
+      # Add a second axis and specify its features
+      sec.axis = sec_axis(trans = ~.*coeff, name = "Emissions (CO2+CH4+CO) in MgC")
     ) +
     xlab("Simulation Years") +
-    #theme_bw() + labs(colour = "Legend") + scale_colour_manual(values = colours) +
-    theme(
-      axis.title.y = element_text(color = "black", size = 13),
-      axis.title.y.right = element_text(color = "#69b3a2", size = 13, angle = 270),
-      legend.position = c(1, 1) # TODO can't get legend to work
-    )
+    theme(axis.title.y = element_text(color = "darkred",size = 13),
+          axis.title.y.right = element_text(color = "#69b3a2",size = 13, angle = 270))
+  #ggtitle("Yearly Emissions and Forest Products")
 
-  quickPlot::Plot(carbonOutPlot, addTo = 'carbonOutPlot', title = "Yearly Emissions and Forest Products")
+  quickPlot::Plot(absCbyYrPlot, addTo = "absCbyYrPlot",
+                  title = "Yearly Emissions and Forest Products")
 }
 
 
