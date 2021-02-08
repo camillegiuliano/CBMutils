@@ -1,5 +1,6 @@
 utils::globalVariables(c(
-  "AGB", "AGlive", "BGB", "BGlive", "carbon", "DOM", "emissionsCH4", "emissionsCO", "emissionsCO2",
+  "AGB", "AGlive", "BGB", "BGlive", "carbon", "DOM",
+  "Emissions", "emissionsCH4", "emissionsCO", "emissionsCO2",
   "pixelCount", "pixNPP", "pool", "products", "res", "snags", "soil", "weight"
 ))
 
