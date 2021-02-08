@@ -113,15 +113,15 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
   productEmissions <- merge(pixelCount, emissionsProducts,
                             by = cols)
   totalOutByYr <- productEmissions[, .(
-    CO2 = sum(CO2 *(prod(res(masterRaster))/10000) * pixelCount),
-    CH4 = sum(CH4 *(prod(res(masterRaster))/10000) * pixelCount),
-    CO = sum(CO *(prod(res(masterRaster))/10000) * pixelCount),
-    Products = sum(Products *(prod(res(masterRaster))/10000) * pixelCount)), by = .(simYear)]
+    CO2 = sum(CO2 * (prod(res(masterRaster)) / 10000) * pixelCount),
+    CH4 = sum(CH4 * (prod(res(masterRaster)) / 10000) * pixelCount),
+    CO = sum(CO * (prod(res(masterRaster)) / 10000) * pixelCount),
+    Products = sum(Products * (prod(res(masterRaster)) / 10000) * pixelCount)), by = .(simYear)]
   # Units: these are absolute values the total products and emissions, not per ha.
 
   # the CH4 and CO are so small compared to the CO2 that we will add all gases
   # and call it emissions
-  totalOutByYr[ , Emissions:= (CO2 + CH4 + CO), by = .(simYear)]
+  totalOutByYr[ , Emissions := (CO2 + CH4 + CO), by = .(simYear)]
   cols <- c("CO2", "CH4", "CO")
   totalOutByYr[ , (cols) := NULL]
 
@@ -132,12 +132,13 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
   #a + geom_line(aes(y = Products), size = 1.5, colour = "darkred")
 
   # emissions seem to be 4X bigger then products
-  if(max(totalOutByYr$Emissions) > max(totalOutByYr$Products)){
-    coeff <- round(max(totalOutByYr$Emissions)/max(totalOutByYr$Products),digits = 0)
-  } else coeff <- round(max(totalOutByYr$Products)/max(totalOutByYr$Emissions),digits = 0)
+  if (max(totalOutByYr$Emissions) > max(totalOutByYr$Products)) {
+    coeff <- round(max(totalOutByYr$Emissions) / max(totalOutByYr$Products), digits = 0)
+  } else {
+    coeff <- round(max(totalOutByYr$Products) / max(totalOutByYr$Emissions), digits = 0)
+  }
 
-  absCbyYrPlot <-
-    ggplot(data = totalOutByYr, aes(x = simYear, y = Products)) +
+  absCbyYrPlot <- ggplot(data = totalOutByYr, aes(x = simYear, y = Products)) +
     geom_line(colour = "darkred", size = 1.5) +
     geom_line(aes(y = Emissions/coeff), size = 1.5, colour = "#69b3a2") +
     scale_y_continuous(
@@ -147,14 +148,13 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
       sec.axis = sec_axis(trans = ~.*coeff, name = "Emissions (CO2+CH4+CO) in MgC")
     ) +
     xlab("Simulation Years") +
-    theme(axis.title.y = element_text(color = "darkred",size = 13),
-          axis.title.y.right = element_text(color = "#69b3a2",size = 13, angle = 270))
+    theme(axis.title.y = element_text(color = "darkred", size = 13),
+          axis.title.y.right = element_text(color = "#69b3a2", size = 13, angle = 270))
   #ggtitle("Yearly Emissions and Forest Products")
 
   quickPlot::Plot(absCbyYrPlot, addTo = "absCbyYrPlot",
                   title = "Yearly Emissions and Forest Products")
 }
-
 
 #' `NPPplot`
 #'
@@ -229,7 +229,6 @@ barPlot <- function(cbmPools, masterRaster) {
                                                  HardwoodStemSnag, HardwoodBranchSnag),
                                      weight = pixelCount/pixelNo),
                                  by = .(pixelGroup, simYear)]
-
 
   outTable <- carbonCompartments[, .(soil = sum(soil * weight),
                                      AGlive = sum(AGlive * weight),
