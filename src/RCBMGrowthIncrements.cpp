@@ -508,37 +508,38 @@ struct RootParameter {
 
 struct PoolNames {
 	PoolNames() {
-		NPools = 26;
+		NPools = 26; // TODO: determine this based on length(.pooldefids)
 
-		Rcpp::Environment globalEnv = Rcpp::Environment::global_env();
+		//Rcpp::Environment globalEnv = Rcpp::Environment::global_env();
+		Rcpp::Environment pooldefids = Rcpp::Environment::namespace_env("CBMutils")[".pooldefids"];
 
 		//set up the pool indices
-		Input = (int)globalEnv["Input"] - 1;
-		SoftwoodMerch = (int)globalEnv["SoftwoodMerch"] - 1;
-		SoftwoodFoliage = (int)globalEnv["SoftwoodFoliage"] - 1;
-		SoftwoodOther = (int)globalEnv["SoftwoodOther"] - 1;
-		SoftwoodCoarseRoots = (int)globalEnv["SoftwoodCoarseRoots"] - 1;
-		SoftwoodFineRoots = (int)globalEnv["SoftwoodFineRoots"] - 1;
-		HardwoodMerch = (int)globalEnv["HardwoodMerch"] - 1;
-		HardwoodFoliage = (int)globalEnv["HardwoodFoliage"] - 1;
-		HardwoodOther = (int)globalEnv["HardwoodOther"] - 1;
-		HardwoodCoarseRoots = (int)globalEnv["HardwoodCoarseRoots"] - 1;
-		HardwoodFineRoots = (int)globalEnv["HardwoodFineRoots"] - 1;
-		AboveGroundVeryFastSoil = (int)globalEnv["AboveGroundVeryFastSoil"] - 1;
-		BelowGroundVeryFastSoil = (int)globalEnv["BelowGroundVeryFastSoil"] - 1;
-		AboveGroundFastSoil = (int)globalEnv["AboveGroundFastSoil"] - 1;
-		BelowGroundFastSoil = (int)globalEnv["BelowGroundFastSoil"] - 1;
-		MediumSoil = (int)globalEnv["MediumSoil"] - 1;
-		AboveGroundSlowSoil = (int)globalEnv["AboveGroundSlowSoil"] - 1;
-		BelowGroundSlowSoil = (int)globalEnv["BelowGroundSlowSoil"] - 1;
-		SoftwoodStemSnag = (int)globalEnv["SoftwoodStemSnag"] - 1;
-		SoftwoodBranchSnag = (int)globalEnv["SoftwoodBranchSnag"] - 1;
-		HardwoodStemSnag = (int)globalEnv["HardwoodStemSnag"] - 1;
-		HardwoodBranchSnag = (int)globalEnv["HardwoodBranchSnag"] - 1;
-		CO2 = (int)globalEnv["CO2"] - 1;
-		CH4 = (int)globalEnv["CH4"] - 1;
-		CO = (int)globalEnv["CO"] - 1;
-		Products = (int)globalEnv["Products"] - 1;
+		Input = (int)pooldefids["Input"] - 1;
+		SoftwoodMerch = (int)pooldefids["SoftwoodMerch"] - 1;
+		SoftwoodFoliage = (int)pooldefids["SoftwoodFoliage"] - 1;
+		SoftwoodOther = (int)pooldefids["SoftwoodOther"] - 1;
+		SoftwoodCoarseRoots = (int)pooldefids["SoftwoodCoarseRoots"] - 1;
+		SoftwoodFineRoots = (int)pooldefids["SoftwoodFineRoots"] - 1;
+		HardwoodMerch = (int)pooldefids["HardwoodMerch"] - 1;
+		HardwoodFoliage = (int)pooldefids["HardwoodFoliage"] - 1;
+		HardwoodOther = (int)pooldefids["HardwoodOther"] - 1;
+		HardwoodCoarseRoots = (int)pooldefids["HardwoodCoarseRoots"] - 1;
+		HardwoodFineRoots = (int)pooldefids["HardwoodFineRoots"] - 1;
+		AboveGroundVeryFastSoil = (int)pooldefids["AboveGroundVeryFastSoil"] - 1;
+		BelowGroundVeryFastSoil = (int)pooldefids["BelowGroundVeryFastSoil"] - 1;
+		AboveGroundFastSoil = (int)pooldefids["AboveGroundFastSoil"] - 1;
+		BelowGroundFastSoil = (int)pooldefids["BelowGroundFastSoil"] - 1;
+		MediumSoil = (int)pooldefids["MediumSoil"] - 1;
+		AboveGroundSlowSoil = (int)pooldefids["AboveGroundSlowSoil"] - 1;
+		BelowGroundSlowSoil = (int)pooldefids["BelowGroundSlowSoil"] - 1;
+		SoftwoodStemSnag = (int)pooldefids["SoftwoodStemSnag"] - 1;
+		SoftwoodBranchSnag = (int)pooldefids["SoftwoodBranchSnag"] - 1;
+		HardwoodStemSnag = (int)pooldefids["HardwoodStemSnag"] - 1;
+		HardwoodBranchSnag = (int)pooldefids["HardwoodBranchSnag"] - 1;
+		CO2 = (int)pooldefids["CO2"] - 1;
+		CH4 = (int)pooldefids["CH4"] - 1;
+		CO = (int)pooldefids["CO"] - 1;
+		Products = (int)pooldefids["Products"] - 1;
 	}
 	int NPools;
 	int Input;
@@ -571,9 +572,7 @@ struct PoolNames {
 
 TotalBiomassIncrement GetTotalBiomassIncrement(PoolNames& pn, double* pools,
 	AGBiomassIncrement inc, RootParameter rootParam,
-	double biomassToCarbonRate, double sw_multiplier,
-	double hw_multiplier) {
-
+	double biomassToCarbonRate, double sw_multiplier, double hw_multiplier) {
 
 	double rb_hw_a = rootParam.rb_hw_a;
 	double rb_sw_a = rootParam.rb_sw_a;
@@ -1093,20 +1092,20 @@ SpinupState UpdateSpinupState(SpinupState current, int finalAge, int stepNum,
 //' Stand then grows to inventory age, and is ready for CBM simulation.
 //'
 //' @param pools Matrix (DESCRIPTION NEEDED)
-//' @param opMatrix Matrix DESCRIPTION NEEDED
+//' @param opMatrix Matrix (DESCRIPTION NEEDED)
 //' @param constantProcesses a list of constant process C dynamics matrices
 //' @param growthIncrements a hash table of growth increments by `gcid`, by `age`
 //' @param ages the stand age, (the inventory age) stands will be simulated to this age in the final pass
 //' @param gcids the growth curve ids (referenced by `growthIncrements`)
-//' @param historicdmids DESCRIPTION NEEDED
-//' @param lastPassdmids DESCRIPTION NEEDED
-//' @param delays DESCRIPTION NEEDED
-//' @param minRotations DESCRIPTION NEEDED
-//' @param maxRotations DESCRIPTION NEEDED
-//' @param returnIntervals DESCRIPTION NEEDED
+//' @param historicdmids (DESCRIPTION NEEDED)
+//' @param lastPassdmids (DESCRIPTION NEEDED)
+//' @param delays (DESCRIPTION NEEDED)
+//' @param minRotations (DESCRIPTION NEEDED)
+//' @param maxRotations (DESCRIPTION NEEDED)
+//' @param returnIntervals (DESCRIPTION NEEDED)
 //' @param rootParameters `data.frame` specifying root parameters
 //' @param turnoverParams `data.frame` specifying turnover parameters
-//' @param biomassToCarbonRate DESCRIPTION NEEDED
+//' @param biomassToCarbonRate (DESCRIPTION NEEDED)
 //' @param debug logical indicating whether to run spinup in debug mode.
 //'
 //' @export
@@ -1114,17 +1113,17 @@ SpinupState UpdateSpinupState(SpinupState current, int finalAge, int stepNum,
 Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 	Rcpp::IntegerMatrix opMatrix,
 	Rcpp::List& constantProcesses,
-	Rcpp::Environment& growthIncrements,
-	Rcpp::IntegerVector& ages,
-	Rcpp::IntegerVector& gcids,
+	Rcpp::Environment& growthIncrements,  //
+	Rcpp::IntegerVector& ages,            //
+	Rcpp::IntegerVector& gcids,           //
 	Rcpp::IntegerVector& historicdmids,
 	Rcpp::IntegerVector& lastPassdmids,
 	Rcpp::IntegerVector& delays,
 	Rcpp::IntegerVector& minRotations,
 	Rcpp::IntegerVector& maxRotations,
 	Rcpp::IntegerVector& returnIntervals,
-	Rcpp::DataFrame& rootParameters,
-	Rcpp::DataFrame& turnoverParams,
+	Rcpp::DataFrame& rootParameters,      //
+	Rcpp::DataFrame& turnoverParams,      //
 	double biomassToCarbonRate,
 	bool debug = false) {
 
@@ -1190,9 +1189,9 @@ Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 					break;
 				case EndOfFinalRotationThenDelay:
 				  //turn off growth (do delay)
-				  opMatrix(i,0) = 0;//growth1
-				  opMatrix(i,3) = 0;//overmaturedecline
-				  opMatrix(i,4) = 0;//growth2
+				  opMatrix(i, 0) = 0;//growth1
+				  opMatrix(i, 3) = 0;//overmaturedecline
+				  opMatrix(i, 4) = 0;//growth2
 				  disturbanceMatrixIds(i, 0) = lastPassdmids[i]; //do last pass disturbance
 				  stepNum[i] = 0;
 				  break;

@@ -4,10 +4,7 @@
 \alias{spuDist}
 \title{Identify the ID number (CBM-CFS3 legacy) possible in the current spatial unit}
 \usage{
-spuDist(
-  mySpu = c(27, 28),
-  dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")
-)
+spuDist(mySpu, dbPath)
 }
 \arguments{
 \item{mySpu}{Numeric spatial unit id(s).}
@@ -15,7 +12,7 @@ spuDist(
 \item{dbPath}{Path to sqlite database file.}
 }
 \description{
-You give is spatial units you are targetting \code{mySpu} and it gives you the disturbance matrix id
+You give is spatial units you are targeting \code{mySpu} and it gives you the disturbance matrix id
 that are possible/default in that specific spu and a descriptive name of that disturbance matrix
 it creates a \code{data.frame} of length number of disturbances, with three columns:
 \code{spatial_unit_is}, \code{disturbance_matrix_id}, and a \code{desciption} of the disturbance.

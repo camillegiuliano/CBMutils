@@ -18,46 +18,64 @@ utils::globalVariables(c(
   "value", "variable"
 ))
 
-#' Disturbance matrix pool names
+#' Disturbance matrix pool names and ids
 #'
 #' TODO: confirm these
 #'
+#' NOTE: A reminder that indexing in R starts at 1, whereas in C++ it starts at 0.
+#' Several C++ data structures do not include the Input category, so the indices there are
+#' defined using `.poolids - 1`.
+#'
 #' @export
-.poolNames <- data.frame(
-  pool = c(
-    ## TODO: inputs should be pool 1?
-    "SoftwoodMerch",
-    "SoftwoodFoliage",
-    "SoftwoodOther",
-    "SoftwoodCoarseRoots",
-    "SoftwoodFineRoots",
-    "HardwoodMerch",
-    "HardwoodFoliage",
-    "HardwoodOther",
-    "HardwoodCoarseRoots",
-    "HardwoodFineRoots",
-    "AboveGroundVeryFastSoil",
-    "BelowGroundVeryFastSoil",
-    "AboveGroundFastSoil",
-    "BelowGroundFastSoil",
-    "MediumSoil",
-    "AboveGroundSlowSoil",
-    "BelowGroundSlowSoil",
-    "SoftwoodStemSnag",
-    "SoftwoodBranchSnag",
-    "HardwoodStemSnag",
-    "HardwoodBranchSnag",
-    "CO2",
-    "CH4",
-    "CO",
-    "Products"
-  ),
-  dmPoolId = c(1:24, 26)
+#' @rdname poolids
+.pooldef <- c(
+  "Input",
+  "SoftwoodMerch",
+  "SoftwoodFoliage",
+  "SoftwoodOther",
+  "SoftwoodCoarseRoots",
+  "SoftwoodFineRoots",
+  "HardwoodMerch",
+  "HardwoodFoliage",
+  "HardwoodOther",
+  "HardwoodCoarseRoots",
+  "HardwoodFineRoots",
+  "AboveGroundVeryFastSoil",
+  "BelowGroundVeryFastSoil",
+  "AboveGroundFastSoil",
+  "BelowGroundFastSoil",
+  "MediumSoil",
+  "AboveGroundSlowSoil",
+  "BelowGroundSlowSoil",
+  "SoftwoodStemSnag",
+  "SoftwoodBranchSnag",
+  "HardwoodStemSnag",
+  "HardwoodBranchSnag",
+  "CO2",
+  "CH4",
+  "CO",
+  "Products"
 )
+
+#' @export
+#' @rdname poolids
+.pooldefids <- as.list(1L:26L)
+names(.pooldefids) <- .pooldef
+.pooldefids <- list2env(.pooldefids, parent = emptyenv(), size = length(.pooldef))
+
+#' @export
+#' @rdname poolids
+.poolnames <- .pooldef[2L:length(.pooldef)] ## without 'Input'
+
+#' @export
+#' @rdname poolids
+.poolids <- as.list(c(1L:24, 26L)) ## NOTE: pool 25 is NO2; not currently used
+names(.poolids) <- .poolnames
+.poolids <- list2env(.poolids, parent = emptyenv(), size = length(.poolnames))
 
 #' Identify the ID number (CBM-CFS3 legacy) possible in the current spatial unit
 #'
-#' You give is spatial units you are targetting `mySpu` and it gives you the disturbance matrix id
+#' You give is spatial units you are targeting `mySpu` and it gives you the disturbance matrix id
 #' that are possible/default in that specific spu and a descriptive name of that disturbance matrix
 #' it creates a `data.frame` of length number of disturbances, with three columns:
 #' `spatial_unit_is`, `disturbance_matrix_id`, and a `desciption` of the disturbance.
@@ -87,8 +105,7 @@ utils::globalVariables(c(
 #'   gcIn <- as.matrix(read.csv(f))
 #'   mySpu <- unique(gcIn[, 1])
 #' }
-spuDist <- function(mySpu = c(27, 28),
-                    dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
+spuDist <- function(mySpu, dbPath) {
   sqlite.driver <- dbDriver("SQLite")
   cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(cbmDefaults)

@@ -6,8 +6,8 @@ Description: Implementation of several components of the Carbon Budget Model of 
 URL:
     https://CBMutils.predictiveecology.org/,
     https://github.com/PredictiveEcology/CBMutils
-Date: 2020-09-25
-Version: 0.0.4
+Date: 2021-02-05
+Version: 0.0.6.9000
 Authors@R: c(
     person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
     person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("aut")),
@@ -28,7 +28,8 @@ Imports:
     RSQLite,
     sf,
     sp,
-    SpaDES.core
+    SpaDES.core,
+    stringr
 Suggests:
     covr,
     knitr,

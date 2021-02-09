@@ -26,7 +26,7 @@ Spinup(
 \arguments{
 \item{pools}{Matrix (DESCRIPTION NEEDED)}
 
-\item{opMatrix}{Matrix DESCRIPTION NEEDED}
+\item{opMatrix}{Matrix (DESCRIPTION NEEDED)}
 
 \item{constantProcesses}{a list of constant process C dynamics matrices}
 
@@ -36,23 +36,23 @@ Spinup(
 
 \item{gcids}{the growth curve ids (referenced by \code{growthIncrements})}
 
-\item{historicdmids}{DESCRIPTION NEEDED}
+\item{historicdmids}{(DESCRIPTION NEEDED)}
 
-\item{lastPassdmids}{DESCRIPTION NEEDED}
+\item{lastPassdmids}{(DESCRIPTION NEEDED)}
 
-\item{delays}{DESCRIPTION NEEDED}
+\item{delays}{(DESCRIPTION NEEDED)}
 
-\item{minRotations}{DESCRIPTION NEEDED}
+\item{minRotations}{(DESCRIPTION NEEDED)}
 
-\item{maxRotations}{DESCRIPTION NEEDED}
+\item{maxRotations}{(DESCRIPTION NEEDED)}
 
-\item{returnIntervals}{DESCRIPTION NEEDED}
+\item{returnIntervals}{(DESCRIPTION NEEDED)}
 
 \item{rootParameters}{\code{data.frame} specifying root parameters}
 
 \item{turnoverParams}{\code{data.frame} specifying turnover parameters}
 
-\item{biomassToCarbonRate}{DESCRIPTION NEEDED}
+\item{biomassToCarbonRate}{(DESCRIPTION NEEDED)}
 
 \item{debug}{logical indicating whether to run spinup in debug mode.}
 }
