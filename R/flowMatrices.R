@@ -1,9 +1,5 @@
 utils::globalVariables(c(
-  "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil",
-  "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil",
-  "calcDist", "CH4", "CO", "CO2", "fluxOut",
-  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", "noLoss",
-  "Products", "SoftwoodBranchSnag", "SoftwoodStemSnag"
+  "calcDist", "fluxOut", "noLoss"
 ))
 
 #' Calculate the decay rate based on mean annual temperature and other parameters
@@ -442,6 +438,3 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   dMat3 <- as.matrix(dMat2)
   return(dMat3)
 }
-
-
-

@@ -1,7 +1,10 @@
 utils::globalVariables(c(
-  "AGB", "AGlive", "BGB", "BGlive", "carbon", "DOM",
-  "Emissions", "emissionsCH4", "emissionsCO", "emissionsCO2",
-  "pixelCount", "pixNPP", "pool", "products", "res", "snags", "soil", "weight"
+  "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil", "AGB", "AGlive",
+  "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil", "BGB", "BGlive",
+  "carbon", "CH4", "CO", "CO2",  "DOM", "Emissions", "emissionsCH4", "emissionsCO", "emissionsCO2",
+  "HardwoodBranchSnag", "HardwoodStemSnag", "MediumSoil",
+  "pixelCount", "pixNPP", "pool", "products", "Products",
+  "res", "snags", "SoftwoodBranchSnag", "SoftwoodStemSnag", "soil", "weight"
 ))
 
 #' `m3ToBiomIncOnlyPlots`
