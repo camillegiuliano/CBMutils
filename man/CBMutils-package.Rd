@@ -18,12 +18,17 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID}) [contributor]
+\strong{Maintainer}: Alex M Chubaty \email{achubaty@for-cast.ca} (\href{https://orcid.org/0000-0001-7146-8135}{ORCID})
 
 Authors:
 \itemize{
   \item Celine Boisvenue \email{celine.boisvenue@canada.ca}
-  \item Ian Eddy \email{ian.eddy@canada.ca}
+  \item Eliot McIntire \email{eliot.mcintire@canada.ca}
+}
+
+Other contributors:
+\itemize{
+  \item Ian Eddy \email{ian.eddy@canada.ca} [contributor]
 }
 
 }

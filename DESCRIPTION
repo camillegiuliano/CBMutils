@@ -11,10 +11,10 @@ Version: 0.0.7.9002
 Authors@R: c(
     person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-7146-8135"))
-    ),
+           comment = c(ORCID = "0000-0001-7146-8135")),
     person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("ctb")),
     person("Eliot", "McIntire", email = "eliot.mcintire@canada.ca", role = c("aut"))
+    )
 License: GPL-3
 Depends: R (>= 3.5)
 Imports:
