@@ -34,19 +34,21 @@ utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
 checkTransactions <- function(sim, n = 3) {
   ### 1. Sim list and packages ################################
   # pick the two last years of the simulation
+
   poolsIn <- sim$cbmPools[simYear == time(sim) - 1, ]
   poolsOut <- sim$cbmPools[simYear == time(sim), ]
 
   ### 2. Randomly pick 3 pixelGroup for checking ###############################
-  # this line for three randomly selected stands
-  checkPg <- round(runif(n, min = min(poolsOut$pixelGroup), max = max(poolsOut$pixelGroup)), digits = 0)
+  # this line for three randomly selected pixelGroups
+  whichPg <- round(runif(n, min = 1, max = length(poolsOut$pixelGroup)), digits = 0)
   # need to check one that was disturbed, add this
   # checkPg[3] <- max(poolsIn$pixelGroup)+20
   # checking hardwood pixelGroup processing
   # hwGc <- sim$gcMeta[forest_type_id == 3, growth_curve_component_id]
   # hwPg <- sim$pixelGroupC[growth_curve_component_id %in% hwGc,pixelGroup]
   # checkPg <-  round(runif(3, min = min(hwPg), max = max(hwPg)),digits = 0)
-  checkPg <- sort(checkPg)
+
+  checkPg <- sort(poolsOut$pixelGroup[whichPg])
 
   ### 3. Get correct carbon for pre-carbon transfers for the three randomly
   # the carbon for the three randomly selected pixelGroups after transactions###################
@@ -65,6 +67,7 @@ checkTransactions <- function(sim, n = 3) {
     distCcheck <- poolsIn[pixelGroup %in%
       pKeep$inC[which(pKeep$outC %in%
         checkPg[which(!checkPg %in% poolsIn$pixelGroup)])], ]
+
     # match the order of the pixelGroups matches
     pKeep <- pKeep[match(checkPg[which(!checkPg %in% poolsIn$pixelGroup)], pKeep$outC), ]
     setnames(pKeep, "inC", "pixelGroup")
@@ -109,7 +112,7 @@ checkTransactions <- function(sim, n = 3) {
   # table will have carbon transactions described by the 889th matrix in the
   # processes$Growth1 and processes$Growth2.
   processes <- sim$allProcesses
-  #message("There are ", length(names(processes)), " transactions that will be applied to the carbon pools.")
+  message("There are ", length(names(processes)), " transactions that will be applied to the carbon pools.")
 
   ### 5. Matrices into a data.table #############
   transactionsDT <- list()
@@ -131,6 +134,7 @@ checkTransactions <- function(sim, n = 3) {
   rmNames <- c("Growth1", "OvermatureDecline", "Growth2")
   colnames(theseOpMatrices) <- str_replace_all(colnames(theseOpMatrices), c(" " = ""))
   colnames(theseOpMatrices)[grep("overmature", colnames(theseOpMatrices))] <- "overmaturedecline"
+
   for (i in setdiff(names(processes), rmNames)) {
     makeDT <- matrixDT(matricesIn = processes[[i]], indicesIn = names(processes[[i]]))
     colNum <- grep(i, colnames(theseOpMatrices), ignore.case = TRUE)
@@ -141,7 +145,11 @@ checkTransactions <- function(sim, n = 3) {
   }
   # deal with the matrices who's indicies == pixelGroups
   for (i in setdiff(names(processes), setdiff(names(processes), rmNames))) {
-    makeDT <- matrixDT(matricesIn = processes[[i]], indicesIn = 1:(length(poolsOut$pixelGroup)))
+    pgs <- rep(1:length(sim$pixelGroupC$pixelGroup), lengths(processes[[i]])/3)
+    makeDT <- do.call(rbind, processes[[i]])
+    makeDT <- as.data.table(makeDT)
+    set(makeDT, NULL, "name", pgs)
+    #makeDT <- matrixDT(matricesIn = processes[[i]], indicesIn = 1:(length(poolsOut$pixelGroup)))
     indices <- theseOpMatrices[[tolower(i)]]
     makeDT <- makeDT[name %in% indices, ]
     makeDT$type <- rep(grep(i, colnames(theseOpMatrices), ignore.case = TRUE, value = TRUE), dim(makeDT)[1])
@@ -489,6 +497,11 @@ checkTransactions <- function(sim, n = 3) {
   cols <- c("pixelGroup", "row", "pool")
   compareC <- merge(calcCout, pgOUT1, by = cols)
   compareC$match <- round(compareC$simC, 5) == round(compareC$calcC, 5)
+
+  message("\n\nIf you get an empty data.table, congratulations, ",
+          "\n this means your carbon transactions happened as expected. ",
+          "\n\nIf not, there is something wrong with the carbon transactions in your simulation.",
+          "\n you can explore the comparison in this function as a starting point.")
 
   return(compareC[match == "FALSE", ])
 }
