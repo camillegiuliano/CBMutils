@@ -3,7 +3,7 @@ utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
 #' Verify and check transactions
 #'
 #' Post-simulations, this function takes the last two years of simulations,
-#' and verifies that the C transfers are as expected.
+#' and verifies that the C transfers are as expected on n random pixelGroups.
 #' It randomly selects three `pixelGroups`, calculated the expected transactions from time
 #' `end(sim)` and time `end(sim) - 1`, and compares them to the last year of simulations.
 #' Cases of disturbed, non disturbed, sw, hw, young and old stands were tested.
@@ -79,7 +79,9 @@ checkTransactions <- function(sim, n = 3) {
 
   # assertion
   if (!identical(dim(inCcheck), dim(outCcheck))) {
-    stop("There is a problem with the pixelGroup section for verification of the carbon transfers.")
+    stop("There is a problem with the pixelGroup selecction for verification of the carbon transfers.")
+  } else{
+    message("The two years of simulation selected are comparable.")
   }
 
   ### 4. Pull out all the matrices applied for each randomly selected pixelGroup #########
@@ -107,6 +109,7 @@ checkTransactions <- function(sim, n = 3) {
   # table will have carbon transactions described by the 889th matrix in the
   # processes$Growth1 and processes$Growth2.
   processes <- sim$allProcesses
+  #message("There are ", length(names(processes)), " transactions that will be applied to the carbon pools.")
 
   ### 5. Matrices into a data.table #############
   transactionsDT <- list()

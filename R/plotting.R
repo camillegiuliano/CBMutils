@@ -100,7 +100,6 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
 
 #' `carbonOutPlot`
 #'
-#' @param cbmPools TODO
 #' @param emissionsProducts TODO
 #' @param masterRaster TODO
 #'
@@ -111,21 +110,22 @@ spatialPlot <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
 #' @importFrom ggplot2 aes element_text ggplot geom_col labs
 #' @importFrom ggplot2 scale_fill_discrete scale_y_continuous sec_axis theme xlab
 #' @importFrom quickPlot Plot
-carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
-  pixelCount <- cbmPools[, .(simYear, pixelGroup, pixelCount)]
-  cols <- c("simYear", "pixelGroup")
-  productEmissions <- merge(pixelCount, emissionsProducts,
-                            by = cols)
-  totalOutByYr <- productEmissions[, .(
-    CO2 = sum(CO2 * (prod(res(masterRaster)) / 10000) * pixelCount),
-    CH4 = sum(CH4 * (prod(res(masterRaster)) / 10000) * pixelCount),
-    CO = sum(CO * (prod(res(masterRaster)) / 10000) * pixelCount),
-    Products = sum(Products * (prod(res(masterRaster)) / 10000) * pixelCount)), by = .(simYear)]
+carbonOutPlot <- function(emissionsProducts, masterRaster) {
+  # pixelCount <- cbmPools[, .(simYear, pixelGroup, pixelCount)]
+  # cols <- c("simYear", "pixelGroup")
+  # productEmissions <- merge(pixelCount, emissionsProducts,
+  #                           by = cols)
+  # totalOutByYr <- productEmissions[, .(
+  #   CO2 = sum(CO2 * (prod(res(masterRaster)) / 10000) * pixelCount),
+  #   CH4 = sum(CH4 * (prod(res(masterRaster)) / 10000) * pixelCount),
+  #   CO = sum(CO * (prod(res(masterRaster)) / 10000) * pixelCount),
+  #   Products = sum(Products * (prod(res(masterRaster)) / 10000) * pixelCount)), by = .(simYear)]
   # Units: these are absolute values the total products and emissions, not per ha.
 
   # the CH4 and CO are so small compared to the CO2 that we will add all gases
   # and call it emissions
-  totalOutByYr[ , Emissions := (CO2 + CH4 + CO), by = .(simYear)]
+  totalOutByYr <- as.data.table(emissionsProducts)
+  totalOutByYr[ , Emissions := (CO2 + CH4 + CO)]
   cols <- c("CO2", "CH4", "CO")
   totalOutByYr[ , (cols) := NULL]
 
@@ -135,29 +135,39 @@ carbonOutPlot <- function(cbmPools, emissionsProducts, masterRaster) {
   # Emissions/4 + products
   #a + geom_line(aes(y = Products), size = 1.5, colour = "darkred")
 
-  # emissions seem to be 4X bigger then products
-  if (max(totalOutByYr$Emissions) > max(totalOutByYr$Products)) {
-    coeff <- round(max(totalOutByYr$Emissions) / max(totalOutByYr$Products), digits = 0)
-  } else {
-    coeff <- round(max(totalOutByYr$Products) / max(totalOutByYr$Emissions), digits = 0)
-  }
 
-  absCbyYrPlot <- ggplot(data = totalOutByYr, aes(x = simYear, y = Products)) +
+  absCbyYrProducts <- ggplot(data = totalOutByYr, aes(x = simYear, y = Products)) +
     geom_line(colour = "darkred", size = 1.5) +
-    geom_line(aes(y = Emissions/coeff), size = 1.5, colour = "#69b3a2") +
+    geom_line(aes(y = Products), size = 1.5, colour = "#69b3a2") +
     scale_y_continuous(
       # Features of the first axis
       name = "Products in MgC",
       # Add a second axis and specify its features
-      sec.axis = sec_axis(trans = ~.*coeff, name = "Emissions (CO2+CH4+CO) in MgC")
+    #  sec.axis = sec_axis(trans = ~.*coeff, name = "Emissions (CO2+CH4+CO) in MgC")
     ) +
     xlab("Simulation Years") +
     theme(axis.title.y = element_text(color = "darkred", size = 13),
           axis.title.y.right = element_text(color = "#69b3a2", size = 13, angle = 270))
   #ggtitle("Yearly Emissions and Forest Products")
+  absCbyYrEmissions <- ggplot(data = totalOutByYr, aes(x = simYear, y = Emissions)) +
+    geom_line(colour = "darkred", size = 1.5) +
+    geom_line(aes(y = Emissions), size = 1.5, colour = "#69b3a2") +
+    scale_y_continuous(
+      # Features of the first axis
+      name = "Emissions (CO2+CH4+CO) in MgC",
+      # Add a second axis and specify its features
+      #sec.axis = sec_axis(trans = ~.*coeff, name = "Emissions (CO2+CH4+CO) in MgC")
+    ) +
+    xlab("Simulation Years") +
+    theme(axis.title.y = element_text(color = "darkred", size = 13),
+          axis.title.y.right = element_text(color = "#69b3a2", size = 13, angle = 270))
 
-  quickPlot::Plot(absCbyYrPlot, addTo = "absCbyYrPlot",
-                  title = "Yearly Emissions and Forest Products")
+  quickPlot::Plot(absCbyYrProducts, addTo = "absCbyYrProducts",
+                  title = "Yearly Forest Products")
+  quickPlot::Plot(absCbyYrEmissions, addTo = "absCbyYrEmissions",
+                  title = "Yearly Emissions")
+
+
 }
 
 #' `NPPplot`
@@ -214,7 +224,6 @@ NPPplot <- function(spatialDT, NPP, masterRaster) {
 #' @importFrom quickPlot Plot
 barPlot <- function(cbmPools, masterRaster) {
   #This needs to change to belowground living, aboveground living, soil, snag
-  colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
   #Need to first average values per ha
   cbmPools <- as.data.table(cbmPools)
   cbmPools$pixelGroup <- as.character(cbmPools$pixelGroup)
