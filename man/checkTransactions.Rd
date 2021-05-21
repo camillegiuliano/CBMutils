@@ -13,7 +13,7 @@ checkTransactions(sim, n = 3)
 }
 \description{
 Post-simulations, this function takes the last two years of simulations,
-and verifies that the C transfers are as expected.
+and verifies that the C transfers are as expected on n random pixelGroups.
 It randomly selects three \code{pixelGroups}, calculated the expected transactions from time
 \code{end(sim)} and time \code{end(sim) - 1}, and compares them to the last year of simulations.
 Cases of disturbed, non disturbed, sw, hw, young and old stands were tested.
