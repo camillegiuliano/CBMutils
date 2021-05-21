@@ -4,11 +4,9 @@
 \alias{carbonOutPlot}
 \title{\code{carbonOutPlot}}
 \usage{
-carbonOutPlot(cbmPools, emissionsProducts, masterRaster)
+carbonOutPlot(emissionsProducts, masterRaster)
 }
 \arguments{
-\item{cbmPools}{TODO}
-
 \item{emissionsProducts}{TODO}
 
 \item{masterRaster}{TODO}

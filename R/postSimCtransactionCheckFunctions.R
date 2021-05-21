@@ -28,7 +28,7 @@ utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
 #' @param n number of pixelGroups (i.e., size of subset) to check
 #'
 #' @export
-#' @importFrom data.table rbindlist setorderv
+#' @importFrom data.table rbindlist set setnames setorderv
 #' @importFrom stats runif time
 #' @importFrom stringr str_replace_all
 checkTransactions <- function(sim, n = 3) {
