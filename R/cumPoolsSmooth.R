@@ -12,12 +12,20 @@
 #' A data.table with original columns plus new columns named \code{colsToUseNew}.
 cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"),
                            colsToUseNew = paste0(colsToUse, "_New"))  {
+  message(crayon::red("The translation of m3/ha using the Boudewyn et al. stand level translation, ",
+          "often results in some curves having peaks and/or swiggles. ",
+          "We have built-in an automatic smoothing algorithm that uses a Chapman-Richards ",
+          "function form to smooth the resulting curves. There are four attempts at ",
+          "smoothing with a Chapman Richards in this algorithm. At the end of the fourth attempt, ",
+          " the original curve is used. It is the users' responsibility to inspect curves. ",
+          "This process is highly likely to require user intervention."))
   cpr <- cumPoolsRaw # no copy -- just convenience
   cpr[, (colsToUse) := lapply(.SD, as.numeric), .SDcols = colsToUse]
 
   outInd <- character()
 
   outerInd <- 0
+  ## debugging tools
   #cpr <- cpr[gcids %in% unique(cpr$gcids)[(198)]]
   #message("REMOVE PREVIOUS LINE TO GET BACK ALL GCIDS")
   lenUniqueID_ecozone <- length(unique(cpr[["gcids"]]))
@@ -65,12 +73,13 @@ cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"
           SD[override == TRUE, (c2u) := NA]
           SD[is.na(get(c2u)),
              (c2u) := list(
-               approx(SD$age, SD[[c2u]], xout = SD$age[is.na(SD[[c2u]])])$y#,♣
+               approx(SD$age, SD[[c2u]], xout = SD$age[is.na(SD[[c2u]])])$y#,
                #approx(SD$age, SD$fol, xout = SD$age[is.na(SD$fol)])$y,
                #approx(SD$age, SD$other, xout = SD$age[is.na(SD$other)])$y
              )
           ]
         }
+        ## debugging tools
         # Visualize wts with following
         # plot(.SD$age, .SD[[c2u]], pch = 19)
         # points(SD$age, SD[[c2u]], col = wts + 1, pch = 19)
@@ -81,8 +90,6 @@ cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"
                               data = SD, #maxit = 200,
                               weights = wts,
                               maxit = 200,
-                              # control = nls.control(maxiter = 100),
-                              # control = nls.control(maxiter = 150, tol = 1e-05, minFactor = 1e-3),
                               start = list(A = Astart,
                                            k = runif(1, 0.0001, 0.13),
                                            p = runif(1, 1, 80)),
@@ -165,10 +172,10 @@ cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"
         newVals
 
       }
-
+      ## debuggin tools
+      # plot(SD$age, SD[[c2u]], type = "p")
       # with(list(A = coef(nlsout)[["A"]], k = coef(nlsout)[["k"]], p = coef(nlsout)[["p"]]), lines(age, A * (1 - exp(-k * age))^p))
-      #}
-
+      #
     })
 
     newVals
