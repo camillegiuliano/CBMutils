@@ -67,7 +67,7 @@ cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"
 
       for (chopitoff in 1:4) {
         # Gets rid of wiggles and huge peak
-        # if (outInd == 198) browser()
+        #if (outInd > 17) browser()
         if (length(firstInflection) > 0) {
           SD[, override := ind > firstInflection & ind < firstMin]
           SD[override == TRUE, (c2u) := NA]
@@ -140,14 +140,14 @@ cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"
         }
 
       }
-
+      #browser()
       ind <- seq(N)
       if (is(nlsout, "try-error")) {
       #   stop("This gcid ", .SD$gcids, " failed to converge while estimating Chapman Richards smoothing")
         warning(c2u, " of gcid ", as.character(gcids), " (item ",outerInd,") failed to converge while estimating Chapman Richards smoothing; ",
                 "Using original curve")
-        # browser()
-        .SD[[c2u]]
+        #if (outInd > 17) browser()
+        newVals <- .SD[[c2u]]
       } else {
         fittedNew <- predict(nlsout, newdata = .SD)
         # Because Chapman Richards is monotonic increasing, it can't have decreasing at right tail
