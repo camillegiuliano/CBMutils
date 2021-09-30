@@ -184,17 +184,18 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   #eq3[which(is.na(eq3))] <- 0
   # middle box flowchart3: total stem wood biomass (tonnes) /ha for all live trees
 
-  merch <- eq1 + eq2[,1] + eq3
-  merch[which(is.nan(merch))] <- NA
+  totalStemWood <- eq1 + eq2[,1] + eq3
+  totalStemWood[which(is.nan(totalStemWood))] <- NA
   # calculate the 4 proportions that should be returned: proportion for
   # stemwood, prop for bark, prop for branches, and prop for foliage.
   pVect <- biomProp(table6 = params6, table7 = params7, vol = oneCurve$MerchVolume)
   # translating this into biomass values for the carbon pools
-  totMerch <- merch / pVect[, 1]
-  bark <- totMerch * pVect[, 2]
-  branch <- totMerch * pVect[, 3]
-  fol <- totMerch * pVect[,4]
-  other <- branch + bark
+  totMerch <- eq1
+  totTree <- totalStemWood / pVect[, 1]
+  bark <- totTree * pVect[, 2]
+  branch <- totTree * pVect[, 3]
+  fol <- totTree * pVect[,4]
+  other <- branch + bark + eq2[,1] + eq3
   biomCumulative <- as.matrix(cbind(totMerch,fol,other))
   return(biomCumulative)
 }
