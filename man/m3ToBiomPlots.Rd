@@ -10,7 +10,7 @@ m3ToBiomPlots(
   nrow = 5,
   ncol = 5,
   filenameBase = "rawCumBiomass_",
-  path = figPath,
+  path = NULL,
   title = "Cumulative merch fol other by gc id",
   scales = "free_y"
 )
