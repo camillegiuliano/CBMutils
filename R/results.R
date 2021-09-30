@@ -1,12 +1,26 @@
-# - raster plotting function for paper -----------------------------------------
-# the CBMutils::spatialPlot function plot rasters directly, but does not return
-# rasters. Here I modify it to return rasters for more flexibility in presenting
-# results
+utils::globalVariables(c(
+  ":=", "..colsAG", "..colsBG", "absCarbon"
+))
 
-
+#' Plot
+#'
+#' the `spatialPlot` function plots rasters directly, but does not return rasters, whereas
+#' it does so here.
+#'
+#' @param pixelkeep DESCRIPTION NEEDED
+#' @param cbmPools DESCRIPTION NEEDED
+#' @param poolsToPlot DESCRIPTION NEEDED
+#' @param years DESCRIPTION NEEDED
+#' @param masterRaster DESCRIPTION NEEDED
+#'
+#' @return `RasterLayer` but invoked for its side-effect of plotting the rasters.
+#' @export
+#' @importFrom stats na.omit
+#' @seealso spatialPlot
+#'
 spatialRaster <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   cbmPools[is.na(cbmPools)] <- 0
-  colnames(cbmPools)[c(1,3,4)] <- c("simYear", "pixelGroup", "age")
+  colnames(cbmPools)[c(1, 3, 4)] <- c("simYear", "pixelGroup", "age")
   # totalCarbon
   if ("totalCarbon" %in% poolsToPlot) {
     totalCarbon <- apply(cbmPools[, SoftwoodMerch:HardwoodBranchSnag], 1, "sum")
@@ -79,8 +93,17 @@ spatialRaster <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 }
 # END raster plotting function for paper -----------------------------------------
 
-## function to sum carbon for totalCarbon or aboveGround or belowGround -------------
-calcC <- function(cbmPools, poolToSum, masterRaster){
+#' Sum carbon for `totalCarbon` or `aboveGround` or `belowGround`
+#'
+#' @param cbmPools DESCRIPTION NEEDED
+#' @param poolToSum  DESCRIPTION NEEDED
+#' @param masterRaster  DESCRIPTION NEEDED
+#'
+#' @return DESCRIPTION NEEDED
+#'
+#' @export
+#' @importFrom raster res
+calcC <- function(cbmPools, poolToSum, masterRaster) {
   #targetPool <- poolToSum
   # year <- time(RIApresentDayRuns)
   # cbmPools <- RIApresentDayRuns$cbmPools
@@ -112,9 +135,9 @@ calcC <- function(cbmPools, poolToSum, masterRaster){
     cbmPools <- cbind(cbmPools, targetPool)
   }
 
-  sumColsOnly <- cbmPools[,.(simYear,pixelCount, pixelGroup, targetPool)]
+  sumColsOnly <- cbmPools[, .(simYear,pixelCount, pixelGroup, targetPool)]
   ## check that all is good
-  sumColsOnly[,sum(pixelCount), by=simYear]
+  sumColsOnly[, sum(pixelCount), by = simYear]
   # simYear      V1
   # 1:    1985 3112425
   # 2:    1990 3112425
@@ -125,11 +148,10 @@ calcC <- function(cbmPools, poolToSum, masterRaster){
   # 7:    2013 3112425
   # 8:    2014 3112425
   # 9:    2015 3112425
-  resInHa <- res(masterRaster)[1]*res(masterRaster)[2]/10000
-  sumColsOnly[, absCarbon := (pixelCount*resInHa*targetPool)]
-  landscapeCarbon <- sumColsOnly[,sum(absCarbon)/1000000, by = simYear]
+  resInHa <- res(masterRaster)[1] * res(masterRaster)[2] / 10000
+  sumColsOnly[, absCarbon := (pixelCount * resInHa * targetPool)]
+  landscapeCarbon <- sumColsOnly[, sum(absCarbon) / 1000000, by = simYear]
   return(landscapeCarbon)
-
 }
 ## END function to sum carbon----------------------------------------------
 
@@ -143,7 +165,7 @@ calcTotalC <- function(cbmPools, masterRaster){
   cbmPools <- cbind(cbmPools, totalCarbon)
   totColsOnly <- cbmPools[,.(simYear,pixelCount, pixelGroup, totalCarbon)]
   ## check that all is good
-  totColsOnly[,sum(pixelCount), by=simYear]
+  totColsOnly[, sum(pixelCount), by = simYear]
   # simYear      V1
   # 1:    1985 3112425
   # 2:    1990 3112425
@@ -160,4 +182,3 @@ calcTotalC <- function(cbmPools, masterRaster){
   return(landscapeCarbon)
 
 }
-## END Same function just for summing total carbon -----------------

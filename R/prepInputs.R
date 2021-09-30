@@ -54,10 +54,8 @@ prepInputsVRI <- function(url, dPath, rasterToMatch) {
   return(VRIraster)
 }
 
-#' `prepInputsVRIage`
-#' @Alex - Celine's attempt to fill-in info here
 #' Read in the BC VRI, with growth curve information (from `ws3`), and creates a raster stack of
-#' the age.
+#' the age
 #'
 #' @param VRIurl A url to the data
 #' @param dPath destination path
@@ -69,9 +67,10 @@ prepInputsVRI <- function(url, dPath, rasterToMatch) {
 #'
 #' @export
 #' @importFrom fasterize fasterize
-#' @importFrom raster stack
-#' @importFrom sf st_read st_transform
-prepInputsVRIage <- function(VRIurl, dPath, rasterToMatch, targetFile, field = "PROJ_AGE_1"){
+#' @importFrom raster crs crs<- stack
+#' @importFrom sf st_crs st_read st_transform
+#' @importFrom reproducible prepInputs
+prepInputsVRIage <- function(VRIurl, dPath, rasterToMatch, targetFile, field = "PROJ_AGE_1") {
   sa <- as(extent(rasterToMatch), "SpatialPolygons")
   crs(sa) <- crs(rasterToMatch)
   VRIin <- prepInputs(url = VRIurl,
@@ -79,8 +78,7 @@ prepInputsVRIage <- function(VRIurl, dPath, rasterToMatch, targetFile, field = "
                       archive = NA,
                       fun = NA,
                       destinationPath = dPath,
-                      studyArea = sa
-                      )
+                      studyArea = sa)
   vriAge2015 <- sf::st_read(paste0(dPath, "/", targetFile))
   RIA_VRI <- sf::st_transform(vriAge2015, st_crs(sa))
  # RIA_VRI <- st_transform(VRIin, crs = st_crs(rasterToMatch))
