@@ -89,15 +89,17 @@ sapfac <- function(table5, eq2, vol){
 biomProp <- function(table6, table7, vol) {
   # flag if vol in below vol_min or above vol_max (when not NA)
   # the model was developed on
-  if (!is.na(unique(table7$vol_min))) {
-    if (min(vol) < unique(table7$vol_min)) {
+  if (length(is.na(unique(table7$vol_min)))>0) {
+    testVec <- min(vol) < unique(table7$vol_min)
+    if (any(testVec)) {
       message("Some volumes in the growth information provided are smaller than the minumum volume ",
               "the proportions model was developed with.")
     }
   }
 
-  if (!is.na(unique(table7$vol_max))) {
-    if (max(vol) > unique(table7$vol_max)) {
+  if (length(is.na(unique(table7$vol_max)))>0) {
+    testVec <- max(vol) > unique(table7$vol_max)
+    if (any(testVec)) {
       message("Some volumes in the growth information provided are larger than the maximumum ",
               "volume the proportions model was developed with.")
     }
@@ -108,29 +110,29 @@ biomProp <- function(table6, table7, vol) {
                   exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
                   exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
   # caps
-  pstem[which(vol < unique(table7$vol_min))] <- unique(table7$p_sw_low)
-  pstem[which(vol > unique(table7$vol_max))] <- unique(table7$p_sw_high)
+  pstem[which(vol < table7$vol_min)] <- table7$p_sw_low
+  pstem[which(vol > table7$vol_max)] <- table7$p_sw_high
 
   pbark <- exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) /
     (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
        exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
        exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pbark[which(vol < unique(table7$vol_min))] <- unique(table7$p_sb_low)
-  pbark[which(vol > unique(table7$vol_max))] <- unique(table7$p_sb_high)
+  pbark[which(vol < table7$vol_min)] <- table7$p_sb_low
+  pbark[which(vol > table7$vol_max)] <- table7$p_sb_high
 
   pbranches <- exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) /
     (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
        exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
        exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pbranches[which(unique(vol < table7$vol_min))] <- unique(table7$p_br_low)
-  pbranches[which(unique(vol > table7$vol_max))] <- unique(table7$p_br_high)
+  pbranches[which(vol < table7$vol_min)] <- table7$p_br_low
+  pbranches[which(vol > table7$vol_max)] <- table7$p_br_high
 
   pfol <- exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol) /
     (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
        exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
        exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pfol[which(vol < unique(table7$vol_min))] <- unique(table7$p_fl_low)
-  pfol[which(vol > unique(table7$vol_max))] <- unique(table7$p_fl_high)
+  pfol[which(vol < table7$vol_min)] <- table7$p_fl_low
+  pfol[which(vol > table7$vol_max)] <- table7$p_fl_high
 
   propVect <- cbind(pstem,pbark,pbranches,pfol)
   return(propVect)
