@@ -185,16 +185,19 @@ seeDist <- function(distId = c(161, 230, 313, 361),
   # one copy of each distId
   matNum <- unique(distId)
   lookDists <- vector("list", length = length(matNum))
+  c1 <- .poolnames
+  c2 <- c(1L:24, 26L)
+  poolNames <- as.data.table(cbind(c1,c2))
 
   # for each matNum, create a data.frame that explains the pool transfers
   for (i in 1:length(matNum)) {
     # get the lines specific to the distMatrix in question
     matD <- as.data.frame(cbmTables[[8]][which(cbmTables[[8]][, 1] == matNum[i]), ])
-    names(.poolNames) <- c("sinkName", "sink_pool_id")
-    sinkNames <- merge.data.frame(.poolNames, matD)
+    names(poolNames) <- c("sinkName", "sink_pool_id")
+    sinkNames <- merge.data.frame(poolNames, matD)
 
-    names(.poolNames) <- c("sourceName", "source_pool_id")
-    sourceNames <- merge.data.frame(.poolNames, sinkNames)
+    names(poolNames) <- c("sourceName", "source_pool_id")
+    sourceNames <- merge.data.frame(poolNames, sinkNames)
     lookDists[[i]] <- sourceNames[, c(5, 1:4, 6)]
   }
   # each data.frame gets a descriptive name
