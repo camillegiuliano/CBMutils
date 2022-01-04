@@ -170,7 +170,7 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   params6 <- params6[canfi_species == spec & ecozone == ez,]
   params7 <- params7[canfi_species == spec & ecozone == ez,]
   # Equations are numbered following the flowchart of the biomass model application in
-  # Boudewyn et al 2007 p7 (Fig3)
+  # Boudewyn et al. 2007 p7 (Fig3)
   # eq1 returns the total stem wood biomass in metric tonnes/ha, when you give it
   # the gross merchantable volume/ha. Parameters a and b are in table3
   eq1 <- b_m(params3, oneCurve$MerchVolume)
@@ -196,8 +196,8 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   totTree <- totalStemWood / pVect[, 1]
   bark <- totTree * pVect[, 2]
   branch <- totTree * pVect[, 3]
-  fol <- totTree * pVect[,4]
-  other <- branch + bark + eq2[,1] + eq3
+  fol <- totTree * pVect[, 4]
+  other <- branch + bark + eq2[, 1] + eq3
   biomCumulative <- as.matrix(cbind(totMerch,fol,other))
   return(biomCumulative)
 }
