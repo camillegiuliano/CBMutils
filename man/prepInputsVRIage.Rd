@@ -14,13 +14,13 @@ prepInputsVRIage(
 )
 }
 \arguments{
-\item{VRIurl}{A url to the data}
+\item{VRIurl}{a URL to the data}
 
 \item{dPath}{destination path}
 
-\item{rasterToMatch}{A raster with NAs reprsenting "off study area" and otherwise
+\item{rasterToMatch}{A raster with NAs representing "off study area" and otherwise
 any arbitrary value for "in study area".
-Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible]{prepInputs}}.}
+Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible:prepInputs]{reproducible::prepInputs()}}.}
 
 \item{targetFile}{A gdb.zip that is the inventory file.}
 

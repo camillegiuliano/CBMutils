@@ -7,13 +7,13 @@
 prepInputsEcozones(url, dPath, rasterToMatch)
 }
 \arguments{
-\item{url}{A url to the data}
+\item{url}{A URL to the data}
 
 \item{dPath}{destination path}
 
-\item{rasterToMatch}{A raster with NAs reprsenting "off study area" and otherwise
+\item{rasterToMatch}{A raster with NAs representing "off study area" and otherwise
 any arbitrary value for "in study area".
-Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible]{prepInputs}}.}
+Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible:prepInputs]{reproducible::prepInputs()}}.}
 }
 \description{
 \code{prepInputsEcozones}

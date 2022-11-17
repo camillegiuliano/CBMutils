@@ -73,7 +73,7 @@ spatialUnitDecayRates <- function(climate, decayparameters, domPools) {
 #' @param dst the integer code for the dom pool receiving non-emitted decayed matter
 #' @param emission the integer code for the CO2 pool
 #'
-#' @return A modified copy of the input \code{mat}
+#' @return A modified copy of the input `mat`
 #'
 #' @export
 domDecayMatrixItem <- function(mat, decayRates, propToAtmosphere, src, dst, emission) {

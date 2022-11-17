@@ -1,15 +1,15 @@
 #' `prepInputsEcozones`
 #'
-#' @param url A url to the data
+#' @param url A URL to the data
 #' @param dPath destination path
-#' @param rasterToMatch A raster with NAs reprsenting "off study area" and otherwise
+#' @param rasterToMatch A raster with NAs representing "off study area" and otherwise
 #'   any arbitrary value for "in study area".
-#'   Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible]{prepInputs}}.
+#'   Equivalent to `rasterToMatch` argument in [reproducible::prepInputs()].
 #'
 #' @export
-#' @importFrom reproducible prepInputs
-#' @importFrom sf st_transform st_crop st_crs st_as_sf
 #' @importFrom fasterize fasterize
+#' @importFrom reproducible prepInputs
+#' @importFrom sf st_as_sf st_crop st_crs st_transform
 prepInputsEcozones <- function(url, dPath, rasterToMatch) {
     ecozones <- prepInputs(
     # this website https://sis.agr.gc.ca/cansis/index.html is hosted by the Canadian Government
@@ -57,19 +57,19 @@ prepInputsVRI <- function(url, dPath, rasterToMatch) {
 #' Read in the BC VRI, with growth curve information (from `ws3`), and creates a raster stack of
 #' the age
 #'
-#' @param VRIurl A url to the data
+#' @param VRIurl a URL to the data
 #' @param dPath destination path
-#' @param rasterToMatch A raster with NAs reprsenting "off study area" and otherwise
+#' @param rasterToMatch A raster with NAs representing "off study area" and otherwise
 #'   any arbitrary value for "in study area".
-#'   Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible]{prepInputs}}.
+#'   Equivalent to `rasterToMatch` argument in [reproducible::prepInputs()].
 #' @param targetFile A gdb.zip that is the inventory file.
 #' @param field The age column name in the inventory file.
 #'
 #' @export
 #' @importFrom fasterize fasterize
 #' @importFrom raster crs crs<- stack
-#' @importFrom sf st_crs st_read st_transform
 #' @importFrom reproducible prepInputs
+#' @importFrom sf st_crs st_read st_transform
 prepInputsVRIage <- function(VRIurl, dPath, rasterToMatch, targetFile, field = "PROJ_AGE_1") {
   sa <- as(extent(rasterToMatch), "SpatialPolygons")
   crs(sa) <- crs(rasterToMatch)
@@ -79,9 +79,9 @@ prepInputsVRIage <- function(VRIurl, dPath, rasterToMatch, targetFile, field = "
                       fun = NA,
                       destinationPath = dPath,
                       studyArea = sa)
-  vriAge2015 <- sf::st_read(paste0(dPath, "/", targetFile))
+  vriAge2015 <- sf::st_read(file.path(dPath, targetFile))
   RIA_VRI <- sf::st_transform(vriAge2015, st_crs(sa))
- # RIA_VRI <- st_transform(VRIin, crs = st_crs(rasterToMatch))
+  # RIA_VRI <- st_transform(VRIin, crs = st_crs(rasterToMatch))
   ageRaster <- fasterize::fasterize(RIA_VRI, rasterToMatch, field = "PROJ_AGE_1")
   ageRaster[] <- as.integer(ageRaster[])
   mrWdata <- !is.na(rasterToMatch)
