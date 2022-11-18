@@ -9,7 +9,7 @@ URL:
 Date: 2022-11-17
 Version: 0.0.7.9005
 Authors@R: c(
-    person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
+    person("Celine", "Boisvenue", email = "celine.boisvenue@nrcan-rncan.gc.ca", role = c("aut")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7146-8135")),
     person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("ctb")),
