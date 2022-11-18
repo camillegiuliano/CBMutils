@@ -7,7 +7,7 @@ URL:
     https://CBMutils.predictiveecology.org/,
     https://github.com/PredictiveEcology/CBMutils
 Date: 2022-11-17
-Version: 0.0.7.9005
+Version: 0.0.7.9006
 Authors@R: c(
     person("Celine", "Boisvenue", email = "celine.boisvenue@nrcan-rncan.gc.ca", role = c("aut")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("aut", "cre"),
@@ -16,7 +16,7 @@ Authors@R: c(
     person("Eliot", "McIntire", email = "eliot.mcintire@canada.ca", role = c("aut"))
     )
 License: GPL-3
-Depends: R (>= 3.5)
+Depends: R (>= 4.0)
 LinkingTo: 
     Rcpp
 Imports:
@@ -45,6 +45,8 @@ Suggests:
     testthat
 Remotes:
     PredictiveEcology/LandR@development,
+    PredictiveEcology/quickPlot@development,
+    PredictiveEcology/reproducible@development,
     PredictiveEcology/SpaDES.core@development
 VignetteBuilder: knitr
 Encoding: UTF-8
