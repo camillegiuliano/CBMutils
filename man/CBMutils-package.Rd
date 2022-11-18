@@ -22,7 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Celine Boisvenue \email{celine.boisvenue@canada.ca}
+  \item Celine Boisvenue \email{celine.boisvenue@nrcan-rncan.gc.ca}
   \item Eliot McIntire \email{eliot.mcintire@canada.ca}
 }
 
