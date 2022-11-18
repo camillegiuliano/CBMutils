@@ -4,7 +4,7 @@
 \alias{prepInputsEcozones}
 \title{\code{prepInputsEcozones}}
 \usage{
-prepInputsEcozones(url, dPath, rasterToMatch)
+prepInputsEcozones(url = NULL, dPath, rasterToMatch)
 }
 \arguments{
 \item{url}{A URL to the data}

@@ -10,25 +10,8 @@
 #' @importFrom fasterize fasterize
 #' @importFrom reproducible prepInputs
 #' @importFrom sf st_as_sf st_crop st_crs st_transform
-prepInputsEcozones <- function(url, dPath, rasterToMatch) {
-    ecozones <- prepInputs(
-    # this website https://sis.agr.gc.ca/cansis/index.html is hosted by the Canadian Government
-    url = url,
-    alsoExtract = "similar",
-    destinationPath = dPath,
-    # rasterToMatch = rasterToMatch,
-    # studyArea = sim$studyArea,
-    # useSAcrs = TRUE,
-    overwrite = TRUE,
-    fun = "sf::st_read",
-    filename2 = TRUE
-  )
-  ecozones <- st_transform(ecozones, st_crs(rasterToMatch))
-  ecozones <- st_crop(ecozones, st_as_sf(as(extent(rasterToMatch), "SpatialPolygons")))
-  ecozones <- ecozones[!ecozones$ZONE_NAME %in% "Pacific Maritime",]
-  ecozoneRaster <- fasterize::fasterize(ecozones, rasterToMatch, field = "ECOZONE")
-  ecozoneRaster[is.na(rasterToMatch[])] <- NA
-  ecozoneRaster
+prepInputsEcozones <- function(url = NULL, dPath, rasterToMatch) {
+  .Defunct("LandR::prepEcozonesRst")
 }
 
 #' `prepInputsVRI`
