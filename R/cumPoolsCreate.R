@@ -1,3 +1,19 @@
+#' Create `cumPools` data.table
+#'
+#' @param fullSpecies DESCRIPTION NEEDED
+#' @param gcMeta DESCRIPTION NEEDED
+#' @param userGcM3 DESCRIPTION NEEDED
+#' @param stable3 DESCRIPTION NEEDED
+#' @param stable4 DESCRIPTION NEEDED
+#' @param stable5 DESCRIPTION NEEDED
+#' @param stable6 DESCRIPTION NEEDED
+#' @param stable7 DESCRIPTION NEEDED
+#' @param thisAdmin DESCRIPTION NEEDED
+#'
+#' @return `cumPools` data.table
+#'
+#' @export
+#' @importFrom data.table data.table rbindlist
 cumPoolsCreate <- function(fullSpecies, gcMeta, userGcM3,
                            stable3, stable4, stable5, stable6, stable7, thisAdmin) {
 
@@ -12,10 +28,11 @@ cumPoolsCreate <- function(fullSpecies, gcMeta, userGcM3,
 
       meta <- speciesMeta[j, ]
       ecozone <- meta$ecozones
-      id <- userGcM3$GrowthCurveComponentID[which(userGcM3$GrowthCurveComponentID == meta$growth_curve_component_id)][-1]
-      ## IMPORTANT BOURDEWYN PARAMETERS FOR NOT HANDLE AGE 0 ##
+      id <- userGcM3$GrowthCurveComponentID[which(userGcM3$GrowthCurveComponentID ==
+                                                    meta$growth_curve_component_id)][-1]
+      ## IMPORTANT BOUDEWYN PARAMETERS FOR NOT HANDLE AGE 0 ##
       age <- userGcM3[GrowthCurveComponentID == meta$growth_curve_component_id, Age]
-      age <- age[which(age>0)]
+      age <- age[which(age > 0)]
       # series of fncts results in curves of merch, foliage and other (SW or HW)
 
       cumBiom <- as.matrix(convertM3biom(
