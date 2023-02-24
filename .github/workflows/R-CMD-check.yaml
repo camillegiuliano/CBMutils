@@ -58,6 +58,11 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: false
 
+      - name: Install sf from r-universe
+        run: |
+          install.packages("sf")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
