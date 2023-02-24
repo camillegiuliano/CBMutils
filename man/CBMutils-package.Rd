@@ -22,13 +22,13 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Celine Boisvenue \email{celine.boisvenue@nrcan-rncan.gc.ca}
-  \item Eliot McIntire \email{eliot.mcintire@canada.ca}
+  \item Céline Boisvenue \email{celine.boisvenue@nrcan-rncan.gc.ca}
+  \item Eliot McIntire \email{eliot.mcintire@nrcan-rncan.gc.ca}
 }
 
 Other contributors:
 \itemize{
-  \item Ian Eddy \email{ian.eddy@canada.ca} [contributor]
+  \item Ian Eddy \email{ian.eddy@nrcan-rncan.gc.ca} [contributor]
 }
 
 }
