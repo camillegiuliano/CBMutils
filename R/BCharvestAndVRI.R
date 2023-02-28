@@ -7,7 +7,7 @@ utils::globalVariables("events")
 #' This function reads-in the file structure, pulls in all the TSA-level rasters,
 #' knits them together and post-processes them to match the `rasterToMatch`.
 #'
-#' @param masterRaster `RasterLayer` object akin to `rasterToMatch` (i.e., the template raster)
+#' @template masterRaster
 #' @param tsaDirs character vector of paths to the TSA directories
 #' @param years numeric or integer vector specifying the years for the data
 #' @param pathsTifs character vector of paths for the geotiff files
@@ -44,19 +44,18 @@ ws3Build <- function(masterRaster, tsaDirs, years, pathsTifs) {
     fireList$fun <- mean
     fireList$na.rm <- TRUE
     fireRast0 <- do.call(raster::mosaic, fireList)
-    fireRast1yr <- postProcess(fireRast0, rasterToMatch = masterRaster)
+    fireRast1yr <- postProcess(fireRast0, rasterToMatch = raster(masterRaster))
     fireDT1yr <- data.table(pixelIndex = 1:ncell(fireRast1yr), year = years[i], events = fireRast1yr[])
-    fireDistsDT <- rbindlist(list(fireDistsDT,fireDT1yr[!is.na(events)]))
+    fireDistsDT <- rbindlist(list(fireDistsDT, fireDT1yr[!is.na(events)]))
 
     cutList$fun <- mean
     cutList$na.rm <- TRUE
     cutRast0 <- do.call(mosaic, cutList)
-    cutRast1yr <- postProcess(cutRast0,
-                              rasterToMatch = masterRaster)
+    cutRast1yr <- postProcess(cutRast0, rasterToMatch = raster(masterRaster))
     cutDT1yr <- data.table(pixelIndex = 1:ncell(cutRast1yr), year = years[i], events = cutRast1yr[])
     # cut events = 2
     cutDT1yr[!is.na(events)]$events <- 2
-    cutDistsDT <- rbindlist(list(cutDistsDT,cutDT1yr[!is.na(events)]))
+    cutDistsDT <- rbindlist(list(cutDistsDT, cutDT1yr[!is.na(events)]))
   }
 
   distList <- rbindlist(list(fireDistsDT, cutDistsDT))

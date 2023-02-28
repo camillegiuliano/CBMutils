@@ -11,7 +11,7 @@ prepInputsVRI(url, dPath, rasterToMatch)
 
 \item{dPath}{destination path}
 
-\item{rasterToMatch}{A raster with NAs representing "off study area" and otherwise
+\item{rasterToMatch}{A \code{RasterLayer} with \code{NA} representing "off study area" and otherwise
 any arbitrary value for "in study area".
 Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible:prepInputs]{reproducible::prepInputs()}}.}
 }

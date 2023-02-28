@@ -7,7 +7,7 @@
 ws3Build(masterRaster, tsaDirs, years, pathsTifs)
 }
 \arguments{
-\item{masterRaster}{\code{RasterLayer} object akin to \code{rasterToMatch} (i.e., the template raster)}
+\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 
 \item{tsaDirs}{character vector of paths to the TSA directories}
 

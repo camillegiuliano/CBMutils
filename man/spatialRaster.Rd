@@ -15,7 +15,7 @@ spatialRaster(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 
 \item{years}{DESCRIPTION NEEDED}
 
-\item{masterRaster}{DESCRIPTION NEEDED}
+\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 \code{RasterLayer} but invoked for its side-effect of plotting the rasters.

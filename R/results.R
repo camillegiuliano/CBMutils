@@ -11,11 +11,13 @@ utils::globalVariables(c(
 #' @param cbmPools DESCRIPTION NEEDED
 #' @param poolsToPlot DESCRIPTION NEEDED
 #' @param years DESCRIPTION NEEDED
-#' @param masterRaster DESCRIPTION NEEDED
+#' @template masterRaster
 #'
 #' @return `RasterLayer` but invoked for its side-effect of plotting the rasters.
+#'
 #' @export
 #' @importFrom stats na.omit
+#' @importFrom terra rast
 #' @seealso spatialPlot
 #'
 spatialRaster <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
@@ -74,9 +76,9 @@ spatialRaster <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
       pixelKeep <- merge(pixelKeep, poolsDT, by = "pixelGroup", all.x = TRUE) %>% #join with pixelKeep
         .[order(pixelIndex)] #order by rowOrder for raster prep
       #pixelKeep <- pixelKeep[poolsDT, on = c("pixelGroup")] %>% #join with pixelKeep
-      pixels <- getValues(masterRaster)
+      pixels <- values(masterRaster)
 
-      plotMaster <- raster(masterRaster)
+      plotMaster <- rast(masterRaster)
       plotMaster[] <- 0
       plotMaster[pixelKeep$pixelIndex] <- pixelKeep$var
       # masterRaster[masterRaster == 0] <- NA #Species has zeroes instead of NA. Revisit if masterRaster changes
@@ -97,14 +99,14 @@ spatialRaster <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 #'
 #' @param cbmPools DESCRIPTION NEEDED
 #' @param poolToSum  DESCRIPTION NEEDED
-#' @param masterRaster  DESCRIPTION NEEDED
+#' @template masterRaster
 #'
 #' @return DESCRIPTION NEEDED
 #'
 #' @export
-#' @importFrom raster res
+#' @importFrom terra res
 calcC <- function(cbmPools, poolToSum, masterRaster) {
-  #targetPool <- poolToSum
+  # targetPool <- poolToSum
   # year <- time(RIApresentDayRuns)
   # cbmPools <- RIApresentDayRuns$cbmPools
   # masterRaster <- RIApresentDayRuns$masterRaster

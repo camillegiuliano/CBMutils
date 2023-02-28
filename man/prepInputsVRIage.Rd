@@ -18,11 +18,11 @@ prepInputsVRIage(
 
 \item{dPath}{destination path}
 
-\item{rasterToMatch}{A raster with NAs representing "off study area" and otherwise
+\item{rasterToMatch}{A \code{RasterLayer} with \code{NA} representing "off study area" and otherwise
 any arbitrary value for "in study area".
 Equivalent to \code{rasterToMatch} argument in \code{\link[reproducible:prepInputs]{reproducible::prepInputs()}}.}
 
-\item{targetFile}{A gdb.zip that is the inventory file.}
+\item{targetFile}{A \code{gdb.zip} file that is the inventory file.}
 
 \item{field}{The age column name in the inventory file.}
 }

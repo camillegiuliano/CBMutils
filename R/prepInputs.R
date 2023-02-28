@@ -2,9 +2,7 @@
 #'
 #' @param url A URL to the data
 #' @param dPath destination path
-#' @param rasterToMatch A raster with NAs representing "off study area" and otherwise
-#'   any arbitrary value for "in study area".
-#'   Equivalent to `rasterToMatch` argument in [reproducible::prepInputs()].
+#' @template rasterToMatch
 #'
 #' @export
 #' @importFrom fasterize fasterize
@@ -42,10 +40,8 @@ prepInputsVRI <- function(url, dPath, rasterToMatch) {
 #'
 #' @param VRIurl a URL to the data
 #' @param dPath destination path
-#' @param rasterToMatch A raster with NAs representing "off study area" and otherwise
-#'   any arbitrary value for "in study area".
-#'   Equivalent to `rasterToMatch` argument in [reproducible::prepInputs()].
-#' @param targetFile A gdb.zip that is the inventory file.
+#' @template rasterToMatch
+#' @param targetFile A `gdb.zip` file that is the inventory file.
 #' @param field The age column name in the inventory file.
 #'
 #' @export

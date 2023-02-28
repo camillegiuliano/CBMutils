@@ -369,6 +369,11 @@ void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix,
     std::vector<double> currentPools(_currentPools.begin(), _currentPools.end());
 
     for(auto col = 0; col < opMatrix.ncol(); col ++) {
+      // debugging: print col and row info
+      //Rcpp::Rcout << "row: " << row << std::endl;
+      //Rcpp::Rcout << "col: " << col << std::endl;
+      // BREAK
+
       size_t id = opMatrix(row, col);
       if (id <= 0) {
         continue;
@@ -1159,7 +1164,7 @@ Rcpp::NumericMatrix Spinup(Rcpp::NumericMatrix& pools,
 			constantProcesses["slowMixingMatrix"]
 		);
 
-		// #TODO: apply the growth/annual processes step function call here
+		// TODO: apply the growth/annual processes step function call here
 		StepPoolsRef(poolsClone, opMatrix, annualprocesses);
 
 		for (R_len_t i = 0; i < nstands; i++){

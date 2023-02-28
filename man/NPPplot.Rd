@@ -11,7 +11,7 @@ NPPplot(spatialDT, NPP, masterRaster)
 
 \item{NPP}{TODO}
 
-\item{masterRaster}{TODO}
+\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 TODO

@@ -11,7 +11,7 @@ calcC(cbmPools, poolToSum, masterRaster)
 
 \item{poolToSum}{DESCRIPTION NEEDED}
 
-\item{masterRaster}{DESCRIPTION NEEDED}
+\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 DESCRIPTION NEEDED

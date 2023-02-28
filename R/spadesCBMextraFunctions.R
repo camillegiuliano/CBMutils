@@ -95,9 +95,9 @@ names(.poolids) <- .poolnames
 #' @examples
 #' \dontrun{
 #'   ## using raster
-#'   library(raster)
-#'   spuRaster <- raster(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
-#'   spatial_unit_id <- getValues(spuRaster) # 28 27
+#'   library(terra)
+#'   spuRaster <- rast(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
+#'   spatial_unit_id <- values(spuRaster) # 28 27
 #'   mySpu <- unique(spatial_unit_id)
 #'
 #'   ## using growth curves
@@ -253,7 +253,7 @@ simDist <- function(sim) {
 #' @param cbmPools DESCRIPTION NEEDED
 #' @param poolsToPlot DESCRIPTION NEEDED
 #' @param years DESCRIPTION NEEDED
-#' @param masterRaster DESCRIPTION NEEDED
+#' @template masterRaster
 #'
 #' @export
 #' @importFrom data.table as.data.table setnames
@@ -271,11 +271,6 @@ simDist <- function(sim) {
 #'   years = c(1990, 2000, 2005)
 #' )
 #' }
-# masterRaster is now saved in the sim (sim$masterRaster)
-# and cbmPools is also saved in the sim$
-# this function will eventually be an event in the simulations but for now, this will plot post simulation
-# making the preliminary function here:
-# TODO: change this so it doesnt' use sim, but rather pixelKeep and cbmPools.
 plotCarbonRasters <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   if ("totalCarbon" %in% poolsToPlot) {
     totalCarbon <- apply(cbmPools[, 5:25], 1, "sum")
