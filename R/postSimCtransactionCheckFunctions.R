@@ -35,7 +35,10 @@ checkTransactions <- function(sim, n = 3) {
   ### 1. Sim list and packages ################################
   # pick the two last years of the simulation
 
-  poolsIn <- sim$cbmPools[simYear == time(sim) - 1, ]
+  allOuts <- as.data.table(outputs(sim))
+  lastYrPools <- allOuts[saveTime == time(sim) - 1 & objectName == "cbmPools", file]
+  poolsIn <- readRDS(file = lastYrPools)
+  #poolsIn <- sim$cbmPools[simYear == time(sim) - 1, ]
   poolsOut <- sim$cbmPools[simYear == time(sim), ]
 
   ### 2. Randomly pick 3 pixelGroup for checking ###############################
