@@ -1,26 +1,29 @@
-utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
+utils::globalVariables(c("colC", "disturbance", "noLoss", "objectName", "saveTime", "type", "value"))
 
 #' Verify and check transactions
 #'
 #' Post-simulations, this function takes the last two years of simulations,
-#' and verifies that the C transfers are as expected on n random pixelGroups.
+#' and verifies that the C transfers are as expected on n random `pixelGroups.`
 #' It randomly selects three `pixelGroups`, calculated the expected transactions from time
 #' `end(sim)` and time `end(sim) - 1`, and compares them to the last year of simulations.
 #' Cases of disturbed, non disturbed, sw, hw, young and old stands were tested.
 #'
 #' @section Structure:
 #' 1. Read-in data
-#' 2. randomly select 3 pixelGroups
-#' 3. read-in carbon pools at time(sim) and time(sim) - 1 for the three pixelGroup
-#' 4. pull-out matrices applied to these three pixelGroups between t0 and t1
-#' 5. matrices into a data table
-#' 6. prep pools at t0
-#' 7. merge three pools at t0 with their respective transaction matrices ids
-#' 8. apply all matrices (8.1:8.9)
+#' 2. randomly select 3 `pixelGroups`
+#' 3. read-in carbon pools at `time(sim)` and `time(sim) - 1 `for the three `pixelGroup`
+#' 4. pull-out matrices applied to these three `pixelGroups` between `t0` and `t1`
+#' 5. matrices into a `data.table`
+#' 6. prep pools at `t0`
+#' 7. merge three pools at `t0` with their respective transaction matrices ids
+#' 8. apply all matrices (`8.1:8.9`)
 #'
-#' TODO: I am passing a whole sim list here for simplification, but only four
-#' objects are needed from the simList: $cbmPools, $pixelKeep, $opMatrixCBM,
-#' $allProcesses, and $pooldef.
+#' TODO: I am passing a whole `simList` here for simplification, but only these objects needed:
+#' 1. `$cbmPools`;
+#' 2. `$pixelKeep`;
+#' 3. `$opMatrixCBM`;
+#' 4. `$allProcesses`;
+#' 5. `$pooldef`.
 #'
 #' TODO: there are still a bunch of checks that need to be changed to assertions (if statements?)
 #'
@@ -28,7 +31,8 @@ utils::globalVariables(c("colC", "disturbance", "noLoss", "type", "value"))
 #' @param n number of pixelGroups (i.e., size of subset) to check
 #'
 #' @export
-#' @importFrom data.table rbindlist set setnames setorderv
+#' @importFrom data.table as.data.table rbindlist set setnames setorderv
+#' @importFrom SpaDES.core outputs
 #' @importFrom stats runif time
 #' @importFrom stringr str_replace_all
 checkTransactions <- function(sim, n = 3) {

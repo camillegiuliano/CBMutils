@@ -13,7 +13,7 @@ checkTransactions(sim, n = 3)
 }
 \description{
 Post-simulations, this function takes the last two years of simulations,
-and verifies that the C transfers are as expected on n random pixelGroups.
+and verifies that the C transfers are as expected on n random \code{pixelGroups.}
 It randomly selects three \code{pixelGroups}, calculated the expected transactions from time
 \code{end(sim)} and time \code{end(sim) - 1}, and compares them to the last year of simulations.
 Cases of disturbed, non disturbed, sw, hw, young and old stands were tested.
@@ -22,18 +22,23 @@ Cases of disturbed, non disturbed, sw, hw, young and old stands were tested.
 
 \enumerate{
 \item Read-in data
-\item randomly select 3 pixelGroups
-\item read-in carbon pools at time(sim) and time(sim) - 1 for the three pixelGroup
-\item pull-out matrices applied to these three pixelGroups between t0 and t1
-\item matrices into a data table
-\item prep pools at t0
-\item merge three pools at t0 with their respective transaction matrices ids
-\item apply all matrices (8.1:8.9)
+\item randomly select 3 \code{pixelGroups}
+\item read-in carbon pools at \code{time(sim)} and \code{time(sim) - 1 }for the three \code{pixelGroup}
+\item pull-out matrices applied to these three \code{pixelGroups} between \code{t0} and \code{t1}
+\item matrices into a \code{data.table}
+\item prep pools at \code{t0}
+\item merge three pools at \code{t0} with their respective transaction matrices ids
+\item apply all matrices (\code{8.1:8.9})
 }
 
-TODO: I am passing a whole sim list here for simplification, but only four
-objects are needed from the simList: $cbmPools, $pixelKeep, $opMatrixCBM,
-$allProcesses, and $pooldef.
+TODO: I am passing a whole \code{simList} here for simplification, but only these objects needed:
+\enumerate{
+\item \verb{$cbmPools};
+\item \verb{$pixelKeep};
+\item \verb{$opMatrixCBM};
+\item \verb{$allProcesses};
+\item \verb{$pooldef}.
+}
 
 TODO: there are still a bunch of checks that need to be changed to assertions (if statements?)
 }
