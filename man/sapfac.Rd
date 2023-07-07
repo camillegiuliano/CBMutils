@@ -2,17 +2,31 @@
 % Please edit documentation in R/growthCurves.R
 \name{sapfac}
 \alias{sapfac}
-\title{sapfac}
+\title{Expansion factor for sapling-sized trees}
 \usage{
 sapfac(table5, eq2, vol)
 }
 \arguments{
-\item{table5}{DESCRIPTION NEEDED}
+\item{table5}{\code{data.frame} corresponding to Table 5 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table5.csv}.}
 
-\item{eq2}{DESCRIPTION NEEDED}
+\item{eq2}{two-column matrix giving stemwood biomass of non-merchantable trees
+(i.e., \eqn{b_n} given in units \eqn{T/ha}), and merchantable + non-merchantable trees
+(i.e., \eqn{b_{nm}} given in units \eqn{T/ha}), from equation 2 of Boudewyn et al. (2007)
+(i.e., the result of \code{\link[=nmfac]{nmfac()}}).}
 
-\item{vol}{DESCRIPTION NEEDED}
+\item{vol}{gross merchantable volume per hectare (\eqn{m^3/ha})}
+}
+\value{
+stemwood biomass of sapling-sized trees (\eqn{b_s} in units \eqn{T/ha})
 }
 \description{
-\code{eq3} is for the saplings and it needs \code{b_nm} from the previous \code{eq2}
+Implements equation 3 of Boudewyn et al. (2007), used to determine the total stem wood biomass
+(in metric tonnes per hectare; \eqn{T/ha}) of sapling-sized trees (\eqn{B_s}),
+using parameters \eqn{a}, \eqn{b}, and \eqn{k} from Table 5 (\code{table5}).
+}
+\references{
+Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+Pacific Forestry Centre. \url{https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf}
 }

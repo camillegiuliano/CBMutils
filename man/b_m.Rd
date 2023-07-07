@@ -2,16 +2,26 @@
 % Please edit documentation in R/growthCurves.R
 \name{b_m}
 \alias{b_m}
-\title{b_m}
+\title{Calculate stemwood biomass (per ha) of live merchantable trees}
 \usage{
 b_m(table3, vol)
 }
 \arguments{
-\item{table3}{DESCRIPTION NEEDED}
+\item{table3}{\code{data.frame} corresponding to Table 3 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table3.csv}.}
 
-\item{vol}{DESCRIPTION NEEDED}
+\item{vol}{gross merchantable volume per hectare (\eqn{m^3/ha})}
+}
+\value{
+stemwood biomass of merchantable trees (\eqn{b_m} in units \eqn{T/ha})
 }
 \description{
-eq1 gives the total stem wood biomass in metric tonnes/ha, when you give it
-the gross merchantable volume/ha. Parameters a and b are in table3.
+Implements equation 1 of Boudewyn et al. (2007) to determines the total stemwood biomass of
+merchantable trees (in metric tonnes per hectare; \eqn{T/ha}),
+using parameters \eqn{a} and \eqn{b} from Table 3 (\code{table3}).
+}
+\references{
+Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+Pacific Forestry Centre. \url{https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/growthCurves.R
 \name{convertM3biom}
 \alias{convertM3biom}
-\title{convertM3biom}
+\title{Calculate biomass from gross merchantable volume}
 \usage{
 convertM3biom(
   meta,
@@ -25,16 +25,31 @@ convertM3biom(
 
 \item{ecozones}{DESCRIPTION NEEDED}
 
-\item{params3}{DESCRIPTION NEEDED}
+\item{params3}{\code{data.frame} corresponding to Table 3 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table3.csv}.}
 
-\item{params4}{DESCRIPTION NEEDED}
+\item{params4}{\code{data.frame} corresponding to Table 4 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table4.csv}.}
 
-\item{params5}{DESCRIPTION NEEDED}
+\item{params5}{\code{data.frame} corresponding to Table 5 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table5.csv}.}
 
-\item{params6}{DESCRIPTION NEEDED}
+\item{params6}{\code{data.frame} corresponding to Table 6 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv}.}
 
-\item{params7}{DESCRIPTION NEEDED}
+\item{params7}{\code{data.frame} corresponding to Table 7 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv}.}
+}
+\value{
+three-column matrix with columns corresponding to biomass (\eqn{T/ha}) for
+total merchantable, foliage, and other.
 }
 \description{
-DESCRIPTION NEEDED
+Implements the flowchart from figure 3 of Boudewyn et al. (2007) to determined the
+total above ground biomass (\eqn{T/ha}) from gross merchantable volume (\eqn{m^3/ha}).
+}
+\references{
+Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+Pacific Forestry Centre. \url{https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf}
 }
