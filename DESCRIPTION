@@ -6,43 +6,45 @@ Description: Implementation of several components of the Carbon Budget Model of 
 URL:
     https://CBMutils.predictiveecology.org/,
     https://github.com/PredictiveEcology/CBMutils
-Date: 2021-02-09
-Version: 0.0.7
+Date: 2023-02-28
+Version: 0.0.7.9011
 Authors@R: c(
-    person("Celine", "Boisvenue", email = "celine.boisvenue@canada.ca", role = c("aut")),
-    person("Ian", "Eddy", email = "ian.eddy@canada.ca", role = c("aut")),
-    person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("ctb", "cre"),
-           comment = c(ORCID = "0000-0001-7146-8135"))
+    person("Céline", "Boisvenue", email = "celine.boisvenue@nrcan-rncan.gc.ca", role = c("aut")),
+    person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7146-8135")),
+    person("Ian", "Eddy", email = "ian.eddy@nrcan-rncan.gc.ca", role = c("ctb")),
+    person("Eliot", "McIntire", email = "eliot.mcintire@nrcan-rncan.gc.ca", role = c("aut"))
     )
 License: GPL-3
-Depends: R (>= 3.5)
+Depends: R (>= 4.2)
+LinkingTo: 
+    Rcpp
 Imports:
+    crayon,
     data.table,
     fasterize,
+    ggforce,
     ggplot2,
     magrittr,
     methods,
-    quickPlot,
+    quickPlot (>= 0.1.8.9001),
     raster,
+    reproducible,
+    robustbase,
     Rcpp,
     RSQLite,
     sf,
     sp,
-    SpaDES.core,
-    stringr
+    terra
 Suggests:
     covr,
     knitr,
-    LandR,
     rmarkdown,
     testthat
 Remotes:
-    PredictiveEcology/LandR@development,
-    PredictiveEcology/SpaDES.core@development
+    PredictiveEcology/quickPlot@development,
+    PredictiveEcology/reproducible@development
+VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
-LinkingTo: 
-    Rcpp
-VignetteBuilder: knitr
+RoxygenNote: 7.2.3

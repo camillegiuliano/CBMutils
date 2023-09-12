@@ -15,7 +15,7 @@ spatialPlot(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
 
 \item{years}{TODO}
 
-\item{masterRaster}{TODO}
+\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 TODO

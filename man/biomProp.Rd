@@ -2,19 +2,35 @@
 % Please edit documentation in R/growthCurves.R
 \name{biomProp}
 \alias{biomProp}
-\title{calculate the 4 proportions that should be returned}
+\title{Proportions of total tree biomass in stemwood, bark, branches, and foliage}
 \usage{
 biomProp(table6, table7, vol)
 }
 \arguments{
-\item{table6}{DESCRIPTION NEEDED}
+\item{table6}{\code{data.frame} corresponding to Table 6 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv}.}
 
-\item{table7}{DESCRIPTION NEEDED}
+\item{table7}{\code{data.frame} corresponding to Table 7 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv}.}
 
-\item{vol}{DESCRIPTION NEEDED}
+\item{vol}{gross merchantable volume per hectare (\eqn{m^3/ha})}
+}
+\value{
+four-column matrix will columns corresponding to \eqn{p_{stemwood}}, \eqn{p_{bark}},
+\eqn{p_{branches}}, and \eqn{p_{foliage}}
 }
 \description{
-will eventually add species, ecozone
-vol = gross merchantable volume per ha
-lvol = natural logarithm of (vol+5)
+Implements equations 4-7 of Boudewyn et al. (2007), used to determine the proportions
+of total tree biomass in stemwood, bark, branches, and foliage
+(\eqn{p_{stemwood}}, \eqn{p_{bark}}, \eqn{p_{branches}}, \eqn{p_{foliage}}, respectively),
+using parameters \eqn{a}, \eqn{b} from Table 6 (\code{table6}) and volume-proportion caps
+from Table 7 (\code{table7}).
+}
+\details{
+TODO: will eventually add species, ecozone
+}
+\references{
+Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+Pacific Forestry Centre. \url{https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf}
 }

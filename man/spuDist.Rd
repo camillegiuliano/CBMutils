@@ -28,9 +28,9 @@ These can be changed by feeding in other SPU.
 \examples{
 \dontrun{
   ## using raster
-  library(raster)
-  spuRaster <- raster(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
-  spatial_unit_id <- getValues(spuRaster) # 28 27
+  library(terra)
+  spuRaster <- rast(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
+  spatial_unit_id <- values(spuRaster) # 28 27
   mySpu <- unique(spatial_unit_id)
 
   ## using growth curves

@@ -4,17 +4,27 @@ utils::globalVariables(c(
   "spatialUnitID", "species", "speciesName"
 ))
 
-#' b_m
+#' Calculate stemwood biomass (per ha) of live merchantable trees
 #'
-#' eq1 gives the total stem wood biomass in metric tonnes/ha, when you give it
-#' the gross merchantable volume/ha. Parameters a and b are in table3.
+#' Implements equation 1 of Boudewyn et al. (2007) to determines the total stemwood biomass of
+#' merchantable trees (in metric tonnes per hectare; \eqn{T/ha}),
+#' using parameters \eqn{a} and \eqn{b} from Table 3 (`table3`).
 #'
-#' @param table3 DESCRIPTION NEEDED
-#' @param vol DESCRIPTION NEEDED
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param table3 `data.frame` corresponding to Table 3 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table3.csv>.
+#'
+#' @param vol gross merchantable volume per hectare (\eqn{m^3/ha})
+#'
+#' @return stemwood biomass of merchantable trees (\eqn{b_m} in units \eqn{T/ha})
 #'
 #' @export
 b_m <- function(table3, vol) {
-  # flag is vol in growth curve is above the max vol the model was developed on
+  # flag if vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table3$volm))) {
     if (max(vol) > unique(table3$volm)) {
       message("The volumes in the growth information provided are greater than the maximum volume ",
@@ -25,17 +35,31 @@ b_m <- function(table3, vol) {
   return(b_m)
 }
 
-#' nmfac
+#' Expansion factor for non-merchantable live tree biomass
 #'
-#' eq2 is for non-merch sized trees.
+#' Implements equation 2 of Boudewyn et al. (2007), used to determine the total stem wood biomass
+#' (in metric tonnes per hectare; \eqn{T/ha}) of non-merchantable trees (\eqn{B_n}), together
+#' with the stemwood biomass of live merchantable and non-merchantable trees (\eqn{B_{nm}}),
+#' using parameters \eqn{a}, \eqn{b}, and \eqn{k} from Table 4 (`table4`).
 #'
-#' @param table4 DESCRIPTION NEEDED
-#' @param eq1 DESCRIPTION NEEDED
-#' @param vol DESCRIPTION NEEDED
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param table4 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table4.csv>.
+#'
+#' @param eq1 stemwood biomass of merchantable trees (\eqn{T/ha}) from equation 1 of
+#' Boudewyn et al. (2007) (i.e., the result of [b_m()]).
+#'
+#' @param vol gross merchantable volume per hectare (\eqn{m^3/ha})
+#'
+#' @return two-column matrix with columns corresponding to \eqn{b_n} and \eqn{b_{nm}}
 #'
 #' @export
 nmfac <- function(table4, eq1, vol) {
-  # flag is vol in growth curve is above the max vol the model was developed on
+  # flag if vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table4$volm))) {
     if (max(vol) > unique(table4$volm)) {
       message("The volumes in the growth information provided are greater than the maximum volume ",
@@ -47,20 +71,35 @@ nmfac <- function(table4, eq1, vol) {
   nmFac[which(nmFac > table4$cap)] <- unique(table4$cap)
   b_nm <- nmFac * eq1
   b_n <- b_nm - eq1
-  return(cbind(b_n, b_nm))
+  return(cbind(b_n = b_n, b_nm = b_nm))
 }
 
-#' sapfac
+#' Expansion factor for sapling-sized trees
 #'
-#' `eq3` is for the saplings and it needs `b_nm` from the previous `eq2`
+#' Implements equation 3 of Boudewyn et al. (2007), used to determine the total stem wood biomass
+#' (in metric tonnes per hectare; \eqn{T/ha}) of sapling-sized trees (\eqn{B_s}),
+#' using parameters \eqn{a}, \eqn{b}, and \eqn{k} from Table 5 (`table5`).
 #'
-#' @param table5 DESCRIPTION NEEDED
-#' @param eq2 DESCRIPTION NEEDED
-#' @param vol DESCRIPTION NEEDED
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param table5 `data.frame` corresponding to Table 5 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table5.csv>.
+#'
+#' @param eq2 two-column matrix giving stemwood biomass of non-merchantable trees
+#' (i.e., \eqn{b_n} given in units \eqn{T/ha}), and merchantable + non-merchantable trees
+#' (i.e., \eqn{b_{nm}} given in units \eqn{T/ha}), from equation 2 of Boudewyn et al. (2007)
+#' (i.e., the result of [nmfac()]).
+#'
+#' @param vol gross merchantable volume per hectare (\eqn{m^3/ha})
+#'
+#' @return stemwood biomass of sapling-sized trees (\eqn{b_s} in units \eqn{T/ha})
 #'
 #' @export
 sapfac <- function(table5, eq2, vol){
-  # flag is vol in growth curve is above the max vol the model was developed on
+  # flag if vol in growth curve is above the max vol the model was developed on
   if (!is.na(unique(table5$volm))) {
     if (max(vol) > unique(table5$volm)) {
       message("The volumes in the growth information provided are greater than the maximum volume ",
@@ -68,87 +107,125 @@ sapfac <- function(table5, eq2, vol){
     }
   }
   # caps on sapling fraction provided in table5
-  sapFac <- unique(table5$k) + (unique(table5$a) * eq2[,2] ^ unique(table5$b))
+  sapFac <- unique(table5$k) + (unique(table5$a) * eq2[, 2] ^ unique(table5$b))
   sapFac[which(sapFac > table5$cap)] <- unique(table5$cap)
-  b_snm <- sapFac * eq2[,2]
+  b_snm <- sapFac * eq2[, 2]
   b_s <- b_snm - eq2[, 2]
   return(b_s)
 }
 
-#' calculate the 4 proportions that should be returned
+#' Proportions of total tree biomass in stemwood, bark, branches, and foliage
 #'
-#' will eventually add species, ecozone
-#' vol = gross merchantable volume per ha
-#' lvol = natural logarithm of (vol+5)
+#' Implements equations 4-7 of Boudewyn et al. (2007), used to determine the proportions
+#' of total tree biomass in stemwood, bark, branches, and foliage
+#' (\eqn{p_{stemwood}}, \eqn{p_{bark}}, \eqn{p_{branches}}, \eqn{p_{foliage}}, respectively),
+#' using parameters \eqn{a}, \eqn{b} from Table 6 (`table6`) and volume-proportion caps
+#' from Table 7 (`table7`).
 #'
-#' @param table6 DESCRIPTION NEEDED
-#' @param table7 DESCRIPTION NEEDED
-#' @param vol DESCRIPTION NEEDED
+#' TODO: will eventually add species, ecozone
+#'
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param table6 `data.frame` corresponding to Table 6 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv>.
+#'
+#' @param table7 `data.frame` corresponding to Table 7 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv>.
+#'
+#' @param vol gross merchantable volume per hectare (\eqn{m^3/ha})
+#'
+#' @return four-column matrix will columns corresponding to \eqn{p_{stemwood}}, \eqn{p_{bark}},
+#' \eqn{p_{branches}}, and \eqn{p_{foliage}}
 #'
 #' @export
 biomProp <- function(table6, table7, vol) {
   # flag if vol in below vol_min or above vol_max (when not NA)
   # the model was developed on
-  if (!is.na(unique(table7$vol_min))) {
-    if (min(vol) < unique(table7$vol_min)) {
+  if (length(is.na(unique(table7$vol_min))) > 0) {
+    testVec <- min(vol) < unique(table7$vol_min)
+    if (any(testVec)) {
       message("Some volumes in the growth information provided are smaller than the minumum volume ",
               "the proportions model was developed with.")
     }
   }
 
-  if (!is.na(unique(table7$vol_max))) {
-    if (max(vol) > unique(table7$vol_max)) {
+  if (length(is.na(unique(table7$vol_max))) > 0) {
+    testVec <- max(vol) > unique(table7$vol_max)
+    if (any(testVec)) {
       message("Some volumes in the growth information provided are larger than the maximumum ",
               "volume the proportions model was developed with.")
     }
   }
 
   lvol <- log(vol + 5)
-  pstem <- 1 / (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
-                  exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
-                  exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  # caps
-  pstem[which(vol < unique(table7$vol_min))] <- unique(table7$p_sw_low)
-  pstem[which(vol > unique(table7$vol_max))] <- unique(table7$p_sw_high)
 
-  pbark <- exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) /
-    (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
-       exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
-       exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pbark[which(vol < unique(table7$vol_min))] <- unique(table7$p_sb_low)
-  pbark[which(vol > unique(table7$vol_max))] <- unique(table7$p_sb_high)
+  ## denominator is the same for all 4 equations
+  denom <- (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
+              exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
+              exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
 
-  pbranches <- exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) /
-    (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
-       exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
-       exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pbranches[which(unique(vol < table7$vol_min))] <- unique(table7$p_br_low)
-  pbranches[which(unique(vol > table7$vol_max))] <- unique(table7$p_br_high)
+  ## for each proportion, enforce caps per table 7
+  pstem <- 1 / denom
+  pstem[which(vol < table7$vol_min)] <- table7$p_sw_low
+  pstem[which(vol > table7$vol_max)] <- table7$p_sw_high
 
-  pfol <- exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol) /
-    (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
-       exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
-       exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-  pfol[which(vol < unique(table7$vol_min))] <- unique(table7$p_fl_low)
-  pfol[which(vol > unique(table7$vol_max))] <- unique(table7$p_fl_high)
+  pbark <- exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) / denom
+  pbark[which(vol < table7$vol_min)] <- table7$p_sb_low
+  pbark[which(vol > table7$vol_max)] <- table7$p_sb_high
 
-  propVect <- cbind(pstem,pbark,pbranches,pfol)
+  pbranches <- exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) / denom
+  pbranches[which(vol < table7$vol_min)] <- table7$p_br_low
+  pbranches[which(vol > table7$vol_max)] <- table7$p_br_high
+
+  pfol <- exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol) / denom
+  pfol[which(vol < table7$vol_min)] <- table7$p_fl_low
+  pfol[which(vol > table7$vol_max)] <- table7$p_fl_high
+
+  propVect <- cbind(pstem = pstem, pbark = pbark, pbranches = pbranches, pfol = pfol)
+
+  ## TODO: sanity check that propVect sums to 1
+
   return(propVect)
 }
 
-#' convertM3biom
+#' Calculate biomass from gross merchantable volume
 #'
-#' DESCRIPTION NEEDED
+#' Implements the flowchart from figure 3 of Boudewyn et al. (2007) to determined the
+#' total above ground biomass (\eqn{T/ha}) from gross merchantable volume (\eqn{m^3/ha}).
+#'
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
 #'
 #' @param meta DESCRIPTION NEEDED
+#'
 #' @param gCvalues DESCRIPTION NEEDED
+#'
 #' @param spsMatch DESCRIPTION NEEDED
+#'
 #' @param ecozones DESCRIPTION NEEDED
-#' @param params3 DESCRIPTION NEEDED
-#' @param params4 DESCRIPTION NEEDED
-#' @param params5 DESCRIPTION NEEDED
-#' @param params6 DESCRIPTION NEEDED
-#' @param params7 DESCRIPTION NEEDED
+#'
+#' @param params3 `data.frame` corresponding to Table 3 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table3.csv>.
+#'
+#' @param params4 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table4.csv>.
+#'
+#' @param params5 `data.frame` corresponding to Table 5 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table5.csv>.
+#'
+#' @param params6 `data.frame` corresponding to Table 6 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv>.
+#'
+#' @param params7 `data.frame` corresponding to Table 7 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv>.
+#'
+#' @return three-column matrix with columns corresponding to biomass (\eqn{T/ha}) for
+#' total merchantable, foliage, and other.
 #'
 #' @export
 convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, params5, params6,
@@ -156,10 +233,10 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   oneCurve <- gCvalues[GrowthCurveComponentID == meta$growth_curve_component_id, ]
   # the Boudewyn models do not deal with 0s
   oneCurve <- oneCurve[Age != 0,]
-  spec <- unique(spsMatch[species == meta$species,]$canfi_species)
+  spec <- unique(spsMatch[species == meta$species, ]$canfi_species)
   ## might have to put in a loop here for each ecozone?
-  ez <- ecozones[SpatialUnitID == meta$spatial_unit_id,]$EcoBoundaryID
-  gen <- unique(spsMatch[species == meta$species,]$genus)
+  ez <- ecozones[SpatialUnitID == meta$spatial_unit_id, ]$EcoBoundaryID
+  gen <- unique(spsMatch[species == meta$species, ]$genus)
 
   params3 <- params3[canfi_species == spec & ecozone == ez,]
   params4 <- params4[canfi_species == spec & ecozone == ez,]
@@ -168,7 +245,7 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   params6 <- params6[canfi_species == spec & ecozone == ez,]
   params7 <- params7[canfi_species == spec & ecozone == ez,]
   # Equations are numbered following the flowchart of the biomass model application in
-  # Boudewyn et al 2007 p7 (Fig3)
+  # Boudewyn et al. 2007 p7 (Fig3)
   # eq1 returns the total stem wood biomass in metric tonnes/ha, when you give it
   # the gross merchantable volume/ha. Parameters a and b are in table3
   eq1 <- b_m(params3, oneCurve$MerchVolume)
@@ -184,17 +261,18 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   #eq3[which(is.na(eq3))] <- 0
   # middle box flowchart3: total stem wood biomass (tonnes) /ha for all live trees
 
-  merch <- eq1 + eq2[,1] + eq3
-  merch[which(is.nan(merch))] <- NA
+  totalStemWood <- eq1 + eq2[,1] + eq3
+  totalStemWood[which(is.nan(totalStemWood))] <- NA
   # calculate the 4 proportions that should be returned: proportion for
   # stemwood, prop for bark, prop for branches, and prop for foliage.
   pVect <- biomProp(table6 = params6, table7 = params7, vol = oneCurve$MerchVolume)
   # translating this into biomass values for the carbon pools
-  totMerch <- merch / pVect[, 1]
-  bark <- totMerch * pVect[, 2]
-  branch <- totMerch * pVect[, 3]
-  fol <- totMerch * pVect[,4]
-  other <- branch + bark
-  biomCumulative <- as.matrix(cbind(totMerch,fol,other))
+  totMerch <- eq1
+  totTree <- totalStemWood / pVect[, 1]
+  bark <- totTree * pVect[, 2]
+  branch <- totTree * pVect[, 3]
+  fol <- totTree * pVect[, 4]
+  other <- branch + bark + eq2[, 1] + eq3
+  biomCumulative <- as.matrix(cbind(totMerch = totMerch, fol = fol, other = other))
   return(biomCumulative)
 }

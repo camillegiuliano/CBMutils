@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // StepPoolsRef
 void StepPoolsRef(Rcpp::NumericMatrix& pools, Rcpp::IntegerMatrix& opMatrix, Rcpp::List& flowMatrices);
 RcppExport SEXP _CBMutils_StepPoolsRef(SEXP poolsSEXP, SEXP opMatrixSEXP, SEXP flowMatricesSEXP) {

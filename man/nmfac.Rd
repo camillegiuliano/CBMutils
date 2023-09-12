@@ -2,17 +2,30 @@
 % Please edit documentation in R/growthCurves.R
 \name{nmfac}
 \alias{nmfac}
-\title{nmfac}
+\title{Expansion factor for non-merchantable live tree biomass}
 \usage{
 nmfac(table4, eq1, vol)
 }
 \arguments{
-\item{table4}{DESCRIPTION NEEDED}
+\item{table4}{\code{data.frame} corresponding to Table 4 from Boudewyn et al. (2007),
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table4.csv}.}
 
-\item{eq1}{DESCRIPTION NEEDED}
+\item{eq1}{stemwood biomass of merchantable trees (\eqn{T/ha}) from equation 1 of
+Boudewyn et al. (2007) (i.e., the result of \code{\link[=b_m]{b_m()}}).}
 
-\item{vol}{DESCRIPTION NEEDED}
+\item{vol}{gross merchantable volume per hectare (\eqn{m^3/ha})}
+}
+\value{
+two-column matrix with columns corresponding to \eqn{b_n} and \eqn{b_{nm}}
 }
 \description{
-eq2 is for non-merch sized trees.
+Implements equation 2 of Boudewyn et al. (2007), used to determine the total stem wood biomass
+(in metric tonnes per hectare; \eqn{T/ha}) of non-merchantable trees (\eqn{B_n}), together
+with the stemwood biomass of live merchantable and non-merchantable trees (\eqn{B_{nm}}),
+using parameters \eqn{a}, \eqn{b}, and \eqn{k} from Table 4 (\code{table4}).
+}
+\references{
+Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+Pacific Forestry Centre. \url{https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf}
 }

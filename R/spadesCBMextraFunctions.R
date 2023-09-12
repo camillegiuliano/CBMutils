@@ -95,9 +95,9 @@ names(.poolids) <- .poolnames
 #' @examples
 #' \dontrun{
 #'   ## using raster
-#'   library(raster)
-#'   spuRaster <- raster(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
-#'   spatial_unit_id <- getValues(spuRaster) # 28 27
+#'   library(terra)
+#'   spuRaster <- rast(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
+#'   spatial_unit_id <- values(spuRaster) # 28 27
 #'   mySpu <- unique(spatial_unit_id)
 #'
 #'   ## using growth curves
@@ -185,16 +185,19 @@ seeDist <- function(distId = c(161, 230, 313, 361),
   # one copy of each distId
   matNum <- unique(distId)
   lookDists <- vector("list", length = length(matNum))
+  c1 <- .poolnames
+  c2 <- c(1L:24, 26L)
+  poolNames <- as.data.table(cbind(c1,c2))
 
   # for each matNum, create a data.frame that explains the pool transfers
   for (i in 1:length(matNum)) {
     # get the lines specific to the distMatrix in question
     matD <- as.data.frame(cbmTables[[8]][which(cbmTables[[8]][, 1] == matNum[i]), ])
-    names(.poolNames) <- c("sinkName", "sink_pool_id")
-    sinkNames <- merge.data.frame(.poolNames, matD)
+    names(poolNames) <- c("sinkName", "sink_pool_id")
+    sinkNames <- merge.data.frame(poolNames, matD)
 
-    names(.poolNames) <- c("sourceName", "source_pool_id")
-    sourceNames <- merge.data.frame(.poolNames, sinkNames)
+    names(poolNames) <- c("sourceName", "source_pool_id")
+    sourceNames <- merge.data.frame(poolNames, sinkNames)
     lookDists[[i]] <- sourceNames[, c(5, 1:4, 6)]
   }
   # each data.frame gets a descriptive name
@@ -250,7 +253,7 @@ simDist <- function(sim) {
 #' @param cbmPools DESCRIPTION NEEDED
 #' @param poolsToPlot DESCRIPTION NEEDED
 #' @param years DESCRIPTION NEEDED
-#' @param masterRaster DESCRIPTION NEEDED
+#' @template masterRaster
 #'
 #' @export
 #' @importFrom data.table as.data.table setnames
@@ -268,11 +271,6 @@ simDist <- function(sim) {
 #'   years = c(1990, 2000, 2005)
 #' )
 #' }
-# masterRaster is now saved in the sim (sim$masterRaster)
-# and cbmPools is also saved in the sim$
-# this function will eventually be an event in the simulations but for now, this will plot post simulation
-# making the preliminary function here:
-# TODO: change this so it doesnt' use sim, but rather pixelKeep and cbmPools.
 plotCarbonRasters <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRaster) {
   if ("totalCarbon" %in% poolsToPlot) {
     totalCarbon <- apply(cbmPools[, 5:25], 1, "sum")
@@ -335,11 +333,6 @@ plotCarbonRasters <- function(pixelkeep, cbmPools, poolsToPlot, years, masterRas
 #'   out1 <- retrieveSpuRaster(UserArea = test1, rasterRes = c(250, 250))
 #'   if (interactive()) Plot(out1)
 #'
-#'   if (require(LandR)) {
-#'     test2 <- LandR::randomStudyArea(seed = 100, size = 10000 * 100 * 300)
-#'     out2 <- retrieveSpuRaster(UserArea = test2, rasterRes = c(250, 250))
-#'     if (interactive())Plot(out2)
-#'   }
 #' }
 #'
 retrieveSpuRaster <- function(spatialUnitsFile = shapefile("data/spUnit_Locator.shp"),

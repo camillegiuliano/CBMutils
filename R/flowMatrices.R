@@ -1,9 +1,5 @@
 utils::globalVariables(c(
-  "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil",
-  "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil",
-  "calcDist", "CH4", "CO", "CO2", "fluxOut",
-  "HardwoodBranchSnag", "HardwoodStemSnag", "Input", "MediumSoil", ".N", "noLoss",
-  "Products", "SoftwoodBranchSnag", "SoftwoodStemSnag", "V1"
+  "calcDist", "fluxOut", "noLoss"
 ))
 
 #' Calculate the decay rate based on mean annual temperature and other parameters
@@ -77,7 +73,7 @@ spatialUnitDecayRates <- function(climate, decayparameters, domPools) {
 #' @param dst the integer code for the dom pool receiving non-emitted decayed matter
 #' @param emission the integer code for the CO2 pool
 #'
-#' @return A modified copy of the input \code{mat}
+#' @return A modified copy of the input `mat`
 #'
 #' @export
 domDecayMatrixItem <- function(mat, decayRates, propToAtmosphere, src, dst, emission) {
@@ -441,66 +437,4 @@ computeBioTurnoverMatrices <- function(turnoverParameters, PoolCount) {
   dMat2[, noLoss := NULL]
   dMat3 <- as.matrix(dMat2)
   return(dMat3)
-}
-
-#' Calculate C transfer for disturbances and annual processes post-disturbance
-#'
-#' Mismatch in C transfers when disturbance happens in C++ processing so bypassing it
-#' C transfer functions: one for the disturbance (so small decimals errors in
-#' matrices are corrected), and one for the annual processes.
-#'
-#' @param standIn DESCRIPTION NEEDED
-#' @param transProp  DESCRIPTION NEEDED
-#'
-#' @return DESCRIPTION NEEDED
-#'
-#' @export
-#' @importFrom data.table as.data.table
-#' @rdname cTransfer
-cTransfer <- function(standIn, transProp) {
-  standIn <- as.data.table(cbind(standIn, row = c(1:length(standIn))))
-  names(standIn) <- c("V1","row")
-  transProp <- as.data.table(transProp)
-  rowJoin <- standIn[transProp, on = "row"][, fluxOut := (V1*value)]
-
-  # calculate carbon out and in
-  outC <- rowJoin[, .(outC = sum(fluxOut)), by = row]
-  inC <-  rowJoin[, .(inC = sum(fluxOut)), by = col]
-  names(inC) <- c("row", "inC")
-  fluxes <- merge(outC, inC, by = "row", all = TRUE)
-  # no NAs allowed
-  fluxes$inC[which(is.na(fluxes$inC))] <- 0
-
-  standOut <- standIn[fluxes, on = "row"][, .(calcDist = V1 - outC + inC), by = "row"]
-
-  return(standOut)
-}
-
-#' @export
-#' @importFrom data.table as.data.table
-#' @rdname cTransfer
-cTransferDist <- function(standIn, transProp) {
-  standIn <- as.data.table(cbind(standIn, row = c(1:length(standIn))))
-  names(standIn) <- c("V1","row")
-  transProp <- as.data.table(transProp)
-  rowJoin <- standIn[transProp, on = "row"][, fluxOut := (V1*value)]
-
-  # calculate carbon out and in
-  outC <- rowJoin[, .(outC = sum(fluxOut)), by = row]
-  inC <-  rowJoin[, .(inC = sum(fluxOut)), by = col]
-  names(inC) <- c("row", "inC")
-  fluxes <- merge(outC, inC, by = "row", all = TRUE)
-  # no NAs allowed
-  fluxes$inC[which(is.na(fluxes$inC))] <- 0
-
-  standOut <- standIn[fluxes, on = "row"][, .(calcDist = V1 - outC + inC), by = "row"]
-
-  # these two lines are "fixes for small decimal differences that should not be there
-  # pools can't go negative
-  standOut[calcDist < 0, "calcDist"] <- 0
-  # if it does not transfer to itself it has to end-up empty
-  rowsTofix <- transProp[row == col, .N, by = "row"]
-  standOut[!(row %in% rowsTofix$row), "calcDist"] <- 0
-
-  return(standOut)
 }
