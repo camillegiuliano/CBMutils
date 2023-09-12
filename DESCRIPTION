@@ -35,8 +35,6 @@ Imports:
     RSQLite,
     sf,
     sp,
-    SpaDES.core,
-    stringr,
     terra
 Suggests:
     covr,
