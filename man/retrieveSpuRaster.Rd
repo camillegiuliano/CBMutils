@@ -26,11 +26,6 @@ Produce a raster with \code{spUnits}
   out1 <- retrieveSpuRaster(UserArea = test1, rasterRes = c(250, 250))
   if (interactive()) Plot(out1)
 
-  if (require(LandR)) {
-    test2 <- LandR::randomStudyArea(seed = 100, size = 10000 * 100 * 300)
-    out2 <- retrieveSpuRaster(UserArea = test2, rasterRes = c(250, 250))
-    if (interactive())Plot(out2)
-  }
 }
 
 }

@@ -39,11 +39,9 @@ Imports:
 Suggests:
     covr,
     knitr,
-    LandR,
     rmarkdown,
     testthat
 Remotes:
-    PredictiveEcology/LandR@development,
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development
 VignetteBuilder: knitr, rmarkdown
