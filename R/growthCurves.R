@@ -273,6 +273,6 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   branch <- totTree * pVect[, 3]
   fol <- totTree * pVect[, 4]
   other <- branch + bark + eq2[, 1] + eq3
-  biomCumulative <- as.matrix(cbind(totalMerch = totMerch, foliage = fol, other = other))
+  biomCumulative <- as.matrix(cbind(totMerch = totMerch, fol = fol, other = other))
   return(biomCumulative)
 }
