@@ -1,6 +1,6 @@
 utils::globalVariables(c(
   "a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3",
-  "Age", "canfi_species", "eco", "ecozone", "genus", "GrowthCurveComponentID",
+  "Age", "canfi_species", "eco", "ecozone", "genus", "gcids",
   "spatialUnitID", "species", "speciesName"
 ))
 
@@ -230,7 +230,8 @@ biomProp <- function(table6, table7, vol) {
 #' @export
 convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, params5, params6,
                           params7) {
-  oneCurve <- gCvalues[GrowthCurveComponentID == meta$growth_curve_component_id, ]
+
+  oneCurve <- gCvalues[gcids == meta$gcids, ]
   # the Boudewyn models do not deal with 0s
   oneCurve <- oneCurve[Age != 0,]
   spec <- unique(spsMatch[species == meta$species, ]$canfi_species)

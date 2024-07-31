@@ -28,8 +28,7 @@ cumPoolsCreate <- function(fullSpecies, gcMeta, userGcM3,
 
       meta <- speciesMeta[j, ]
       ecozone <- meta$ecozones
-      id <- userGcM3$gcids[which(userGcM3$gcids ==
-                                                    meta$gcids)][-1]
+      id <- userGcM3$gcids[which(userGcM3$gcids ==  meta$gcids)][-1]
       ## IMPORTANT BOUDEWYN PARAMETERS FOR NOT HANDLE AGE 0 ##
       age <- userGcM3[gcids == meta$gcids, Age]
       age <- age[which(age > 0)]
