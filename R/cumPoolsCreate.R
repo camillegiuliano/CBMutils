@@ -28,10 +28,10 @@ cumPoolsCreate <- function(fullSpecies, gcMeta, userGcM3,
 
       meta <- speciesMeta[j, ]
       ecozone <- meta$ecozones
-      id <- userGcM3$GrowthCurveComponentID[which(userGcM3$GrowthCurveComponentID ==
-                                                    meta$growth_curve_component_id)][-1]
+      id <- userGcM3$gcids[which(userGcM3$gcids ==
+                                                    meta$gcids)][-1]
       ## IMPORTANT BOUDEWYN PARAMETERS FOR NOT HANDLE AGE 0 ##
-      age <- userGcM3[GrowthCurveComponentID == meta$growth_curve_component_id, Age]
+      age <- userGcM3[gcids == meta$gcids, Age]
       age <- age[which(age > 0)]
       # series of fncts results in curves of merch, foliage and other (SW or HW)
 
