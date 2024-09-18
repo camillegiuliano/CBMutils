@@ -29,10 +29,8 @@ m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol =
   }
 
   gInc <- copy(inc)
-  colsOut <- c("id", "ecozone")
-  gInc[ ,(colsOut) := list(NULL,NULL)]
-  # gInc[,c(id_col, "age", "age")]
   gc <- data.table::melt(gInc, id.vars = c(id_col, "age"))
+  gc[is.na(value), "value"] <- 0
   set(gc, NULL, "valueNumeric", as.numeric(gc$value))
 
   idSim <- unique(gc[, ..id_col])[[1]]
