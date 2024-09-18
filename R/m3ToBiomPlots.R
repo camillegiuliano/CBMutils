@@ -30,6 +30,11 @@ m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol =
 
   gInc <- copy(inc)
   gc <- data.table::melt(gInc, id.vars = c(id_col, "age"))
+  ##TODO - make sure this warning is not a problem
+  # Warning messages: 1: 'measure.vars' [id, totMerch, fol, other, ...] are not
+  # all of the same type. By order of hierarchy, the molten data value column
+  # will be of type 'double'. All measure variables not of type 'double' will be
+  # coerced too. Check DETAILS in ?melt.data.table for more on coercion.
   gc[is.na(value), "value"] <- 0
   set(gc, NULL, "valueNumeric", as.numeric(gc$value))
 
