@@ -119,7 +119,7 @@ spuDist <- function(mySpu, dbPath) {
   dmid <- unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 3)])
 
   # add the descriptive names
-  spuDist <- cbind(dmid, cbmTables[[15]][dmid$disturbance_matrix_id, 3])
+  spuDist <- cbind(dmid, cbmTables[[15]][dmid$disturbance_matrix_id, 5])
   return(spuDist)
 }
 
