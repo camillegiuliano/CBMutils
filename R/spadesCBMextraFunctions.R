@@ -123,6 +123,7 @@ spuDist <- function(mySpu, dbPath) {
   englishTable <- englishTable[,c(2,5)]
   # add the descriptive names
   spuDist <- merge(dmid, englishTable, by = "disturbance_matrix_id")
+  spuDist <- spuDist[,c(2, 1, 3, 4)]
   return(spuDist)
 }
 
