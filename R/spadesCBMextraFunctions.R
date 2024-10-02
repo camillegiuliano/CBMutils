@@ -116,10 +116,14 @@ spuDist <- function(mySpu, dbPath) {
   }
 
   # match mySpu with the disturbance_matrix_association table
-  dmid <- unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 3)])
+  dmid <- as.data.table(unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 2, 3)]))
 
+  englishTable <- as.data.table(cbmTables[[15]])
+  englishTable <- englishTable[locale_id <= 1,]
+  englishTable <- englishTable[,c(2,5)]
   # add the descriptive names
-  spuDist <- cbind(dmid, cbmTables[[15]][dmid$disturbance_matrix_id, 5])
+  spuDist <- merge(dmid, englishTable, by = "disturbance_matrix_id")
+  spuDist <- spuDist[,c(1,3,4)]
   return(spuDist)
 }
 
