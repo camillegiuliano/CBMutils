@@ -119,13 +119,13 @@ spuDist <- function(mySpu, dbPath) {
   ## CELINE HERE.
 
   # match mySpu with the disturbance_matrix_association table
-  dmid <- as.data.table(unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 2, 3)]))
+  dmid <- as.data.table(unique(matrixTables[[2]][which(matrixTables[[2]][, 1] %in% mySpu), c(1, 2, 3)]))
 
-  englishTable <- as.data.table(cbmTables[[15]])
+  englishTable <- as.data.table(matrixTables[[6]])
   englishTable <- englishTable[locale_id <= 1,]
-  englishTable <- englishTable[,c(2,5)]
+  englishTable <- englishTable[,c(2,4)]
   # add the descriptive names
-  spuDist <- merge(dmid, englishTable, by = "disturbance_matrix_id")
+  spuDist <- merge(dmid, englishTable, by = "disturbance_type_id")
   spuDist <- spuDist[,c(2, 1, 3, 4)]
   return(spuDist)
 }
