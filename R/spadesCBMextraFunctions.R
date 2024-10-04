@@ -106,14 +106,17 @@ names(.poolids) <- .poolnames
 #'   mySpu <- unique(gcIn[, 1])
 #' }
 spuDist <- function(mySpu, dbPath) {
+  browser()
   sqlite.driver <- dbDriver("SQLite")
   archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(archiveIndex)
-  cbmTables <- list()
+  # get the matrices related tables
+  matrixTables <- list()
 
-  for (i in 1:length(alltables)) {
-    cbmTables[[i]] <- dbReadTable(archiveIndex, alltables[i])
+  for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
+    matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
   }
+  ## CELINE HERE.
 
   # match mySpu with the disturbance_matrix_association table
   dmid <- as.data.table(unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 2, 3)]))
