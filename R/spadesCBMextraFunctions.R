@@ -106,7 +106,6 @@ names(.poolids) <- .poolnames
 #'   mySpu <- unique(gcIn[, 1])
 #' }
 spuDist <- function(mySpu, dbPath) {
-  browser()
   sqlite.driver <- dbDriver("SQLite")
   archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(archiveIndex)
@@ -116,17 +115,26 @@ spuDist <- function(mySpu, dbPath) {
   for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
     matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
   }
-  ## CELINE HERE.
+  ## There are 6 tables taht have to do with disturbance matrices in the
+  ## SQLight. They are described here
+  ## https://docs.google.com/spreadsheets/d/1TFBQiRH4z54l8ROX1N02OOiCHXMe20GSaExiuUqsC0Q/edit?usp=sharing
 
-  # match mySpu with the disturbance_matrix_association table
-  dmid <- as.data.table(unique(matrixTables[[2]][which(matrixTables[[2]][, 1] %in% mySpu), c(1, 2, 3)]))
+  # match mySpu with the disturbance_matrix_association table which has spu,
+  # disturbance_type_id and disturbance_matrix_id
+  dmtid <- as.data.table(unique(matrixTables[[2]][which(matrixTables[[2]][, "spatial_unit_id"] %in% mySpu), ]))
 
+  # disturbance matrices are in multiple languages, keep english only
   englishTable <- as.data.table(matrixTables[[6]])
   englishTable <- englishTable[locale_id <= 1,]
-  englishTable <- englishTable[,c(2,4)]
-  # add the descriptive names
-  spuDist <- merge(dmid, englishTable, by = "disturbance_type_id")
-  spuDist <- spuDist[,c(2, 1, 3, 4)]
+  englishTable <- englishTable[,.(disturbance_type_id, name, description)]
+
+  # add the descriptive names and return all the disturbance_type_id and
+  # disturbance_matrix_id that are associated with the provided spatial_unit_id
+  # (spu).
+  spuDist <- merge(dmtid, englishTable, by = "disturbance_type_id")
+  spuDist <- spuDist[,.(disturbance_type_id, spatial_unit_id,
+                        disturbance_matrix_id, name)]
+
   return(spuDist)
 }
 
