@@ -109,21 +109,40 @@ spuDist <- function(mySpu, dbPath) {
   sqlite.driver <- dbDriver("SQLite")
   archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
   alltables <- dbListTables(archiveIndex)
-  cbmTables <- list()
+  # get the matrices related tables
+  matrixTables <- list()
 
-  for (i in 1:length(alltables)) {
-    cbmTables[[i]] <- dbReadTable(archiveIndex, alltables[i])
+  for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
+    matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
   }
+  ## There are 6 tables taht have to do with disturbance matrices in the
+  ## SQLight. They are described here
+  ## https://docs.google.com/spreadsheets/d/1TFBQiRH4z54l8ROX1N02OOiCHXMe20GSaExiuUqsC0Q/edit?usp=sharing
 
-  # match mySpu with the disturbance_matrix_association table
-  dmid <- as.data.table(unique(cbmTables[[14]][which(cbmTables[[14]][, 1] %in% mySpu), c(1, 2, 3)]))
+  # match mySpu with the disturbance_matrix_association table which has spu,
+  # disturbance_type_id and disturbance_matrix_id
+  dmtid <- as.data.table(unique(matrixTables[[2]][which(matrixTables[[2]][, "spatial_unit_id"] %in% mySpu), ]))
 
-  englishTable <- as.data.table(cbmTables[[15]])
-  englishTable <- englishTable[locale_id <= 1,]
-  englishTable <- englishTable[,c(2,5)]
-  # add the descriptive names
-  spuDist <- merge(dmid, englishTable, by = "disturbance_matrix_id")
-  spuDist <- spuDist[,c(2, 1, 3, 4)]
+  #disturbance_type_id is a more generic ID with general names.
+  # Here we keep english names only.
+  dist_type_name <- as.data.table(matrixTables[[6]])
+  dist_type_name <- dist_type_name[locale_id <= 1,]
+  dist_type_name <- dist_type_name[,.(disturbance_type_id, name)]
+
+  # disturbance_matrix_id is region specific IDs and has specific descriptions.
+  # Here we keep english descriptions only
+  dist_matrix_desc <- as.data.table(matrixTables[[3]])
+  dist_matrix_desc <- dist_matrix_desc[locale_id <= 1,]
+  dist_matrix_desc <- dist_matrix_desc[,.(disturbance_matrix_id, description)]
+
+  # add the names and descriptions and return all the disturbance_type_id and
+  # disturbance_matrix_id that are associated with the provided spatial_unit_id
+  # (spu).
+  spuDist <- merge(dmtid, dist_type_name, by = "disturbance_type_id")
+  spuDist <- merge(spuDist, dist_matrix_desc, by = "disturbance_matrix_id")
+  spuDist <- spuDist[,.(disturbance_type_id, spatial_unit_id,
+                        disturbance_matrix_id, name, description)]
+
   return(spuDist)
 }
 
