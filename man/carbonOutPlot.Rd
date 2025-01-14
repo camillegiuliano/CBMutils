@@ -4,12 +4,10 @@
 \alias{carbonOutPlot}
 \title{\code{carbonOutPlot}}
 \usage{
-carbonOutPlot(emissionsProducts, masterRaster)
+carbonOutPlot(emissionsProducts)
 }
 \arguments{
 \item{emissionsProducts}{TODO}
-
-\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 invoked for side effect of creating plot
