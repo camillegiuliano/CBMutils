@@ -91,7 +91,7 @@ names(.poolids) <- .poolnames
 #' @param dbPath Path to sqlite database file.
 #'
 #' @export
-#' @importFrom RSQLite dbConnect dbDriver dbListTables dbReadTable
+#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 #' @examples
 #' \dontrun{
 #'   ## using raster
@@ -106,12 +106,15 @@ names(.poolids) <- .poolnames
 #'   mySpu <- unique(gcIn[, 1])
 #' }
 spuDist <- function(mySpu, dbPath) {
+
+  # connect to database
   sqlite.driver <- dbDriver("SQLite")
   archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
-  alltables <- dbListTables(archiveIndex)
-  # get the matrices related tables
-  matrixTables <- list()
+  on.exit(dbDisconnect(archiveIndex))
 
+  # get the matrices related tables
+  alltables <- dbListTables(archiveIndex)
+  matrixTables <- list()
   for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
     matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
   }
@@ -193,11 +196,15 @@ histDist <- function(mySpu = c(27, 28)) {
 #' @return A list of `data.frame`s, one per disturbance matrix id.
 #'
 #' @export
-#' @importFrom RSQLite dbConnect dbDriver dbListTables dbReadTable
+#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 seeDist <- function(distId = c(161, 230, 313, 361),
                     dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
+
+  # connect to database
   sqlite.driver <- dbDriver("SQLite")
   cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
+  on.exit(dbDisconnect(cbmDefaults))
+
   alltables <- dbListTables(cbmDefaults)
   cbmTables <- list()
 
