@@ -106,12 +106,15 @@ names(.poolids) <- .poolnames
 #'   mySpu <- unique(gcIn[, 1])
 #' }
 spuDist <- function(mySpu, dbPath) {
+
+  # connect to database
   sqlite.driver <- dbDriver("SQLite")
   archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
-  alltables <- dbListTables(archiveIndex)
-  # get the matrices related tables
-  matrixTables <- list()
+  on.exit(dbDisconnect(archiveIndex))
 
+  # get the matrices related tables
+  alltables <- dbListTables(archiveIndex)
+  matrixTables <- list()
   for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
     matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
   }
@@ -196,8 +199,12 @@ histDist <- function(mySpu = c(27, 28)) {
 #' @importFrom RSQLite dbConnect dbDriver dbListTables dbReadTable
 seeDist <- function(distId = c(161, 230, 313, 361),
                     dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
+
+  # connect to database
   sqlite.driver <- dbDriver("SQLite")
   cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
+  on.exit(dbDisconnect(cbmDefaults))
+
   alltables <- dbListTables(cbmDefaults)
   cbmTables <- list()
 
