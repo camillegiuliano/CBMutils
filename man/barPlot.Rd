@@ -4,12 +4,10 @@
 \alias{barPlot}
 \title{\code{barPlot}}
 \usage{
-barPlot(cbmPools, masterRaster)
+barPlot(cbmPools)
 }
 \arguments{
 \item{cbmPools}{TODO}
-
-\item{masterRaster}{A \code{SpatRaster} object to use as the template}
 }
 \value{
 TODO

@@ -4,18 +4,16 @@
 \alias{spatialPlot}
 \title{\code{spatialPlot}}
 \usage{
-spatialPlot(pixelkeep, cbmPools, poolsToPlot, years, masterRaster)
+spatialPlot(cbmPools, years, masterRaster, spatialDT)
 }
 \arguments{
-\item{pixelkeep}{TODO}
-
 \item{cbmPools}{TODO}
-
-\item{poolsToPlot}{TODO}
 
 \item{years}{TODO}
 
 \item{masterRaster}{A \code{SpatRaster} object to use as the template}
+
+\item{spatialDT}{TODO}
 }
 \value{
 TODO

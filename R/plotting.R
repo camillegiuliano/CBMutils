@@ -1,10 +1,13 @@
 utils::globalVariables(c(
   "AboveGroundFastSoil", "AboveGroundSlowSoil", "AboveGroundVeryFastSoil", "AGB", "AGlive",
   "BelowGroundFastSoil", "BelowGroundSlowSoil", "BelowGroundVeryFastSoil", "BGB", "BGlive",
-  "carbon", "CH4", "CO", "CO2",  "DOM", "Emissions", "emissionsCH4", "emissionsCO", "emissionsCO2",
-  "HardwoodBranchSnag", "HardwoodStemSnag", "MediumSoil",
-  "pixelCount", "pixNPP", "pool", "products", "Products",
-  "res", "snags", "SoftwoodBranchSnag", "SoftwoodStemSnag", "soil", "weight"
+  "BranchSnag", "carbon", "CH4", "CO", "CO2", "CoarseRoots",
+  "description", "disturbance_matrix_id", "disturbance_type_id",
+  "DOM", "Emissions", "emissionsCH4", "emissionsCO", "emissionsCO2",
+  "FineRoots", "Foliage", "HardwoodBranchSnag", "HardwoodStemSnag",
+  "locale_id", "MediumSoil", "Merch", "Other",
+  "pixelCount", "pixNPP", "pixTC", "pool", "products", "Products",
+  "res", "snags", "SoftwoodBranchSnag", "SoftwoodStemSnag", "soil", "StemSnag", "weight"
 ))
 
 #' `m3ToBiomIncOnlyPlots`
@@ -32,11 +35,10 @@ m3ToBiomIncOnlyPlots <- function(inc) {
 
 #' `spatialPlot`
 #'
-#' @param pixelkeep TODO
 #' @param cbmPools TODO
-#' @param poolsToPlot TODO
 #' @param years TODO
 #' @template masterRaster
+#' @param spatialDT TODO
 #'
 #' @return TODO
 #'
@@ -69,15 +71,16 @@ spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
 #' `carbonOutPlot`
 #'
 #' @param emissionsProducts TODO
-#' @template masterRaster
 #'
 #' @return invoked for side effect of creating plot
 #'
 #' @export
 #' @importFrom data.table as.data.table melt.data.table
 #' @importFrom ggplot2 aes element_text geom_col geom_line ggplot labs
-#' @importFrom ggplot2 scale_fill_discrete scale_y_continuous sec_axis theme xlab
+#' @importFrom ggplot2 scale_fill_discrete scale_x_continuous scale_y_continuous
+#' sec_axis theme theme_classic xlab
 #' @importFrom quickPlot Plot
+#' @importFrom scales pretty_breaks
 carbonOutPlot <- function(emissionsProducts) {
   totalOutByYr <- as.data.table(emissionsProducts)
   cols <- c("CO2", "CH4", "CO")
@@ -145,13 +148,13 @@ NPPplot <- function(spatialDT, NPP, masterRaster) {
 #' `barPlot`
 #'
 #' @param cbmPools TODO
-#' @template masterRaster
 #'
 #' @return TODO
 #'
 #' @export
 #' @importFrom data.table as.data.table melt.data.table
-#' @importFrom ggplot2 aes geom_col ggplot labs scale_fill_discrete theme_bw
+#' @importFrom ggplot2 aes expansion geom_col ggplot guides guide_legend labs
+#' scale_fill_brewer scale_fill_discrete scale_y_continuous theme_classic
 #' @importFrom quickPlot Plot
 barPlot <- function(cbmPools) {
   cbmPools <- as.data.table(cbmPools)
