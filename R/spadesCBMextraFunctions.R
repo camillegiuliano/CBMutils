@@ -91,7 +91,7 @@ names(.poolids) <- .poolnames
 #' @param dbPath Path to sqlite database file.
 #'
 #' @export
-#' @importFrom RSQLite dbDriver dbConnect dbDisconnect dbListTables dbReadTable
+#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 #' @examples
 #' \dontrun{
 #'   ## using raster
@@ -196,7 +196,7 @@ histDist <- function(mySpu = c(27, 28)) {
 #' @return A list of `data.frame`s, one per disturbance matrix id.
 #'
 #' @export
-#' @importFrom RSQLite dbDriver dbConnect dbDisconnect dbListTables dbReadTable
+#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 seeDist <- function(distId = c(161, 230, 313, 361),
                     dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
 
