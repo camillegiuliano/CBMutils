@@ -1,6 +1,8 @@
-if (interactive()) library(testthat)
 
-test_that("StepPools works", {
+if (!testthat::is_testing()) source(testthat::test_path("setup.R"))
+
+test_that("StepPools", {
+
   nPixGrp <- 3 ## aka nstands
 
   pools <- matrix(c(1.0, 10.0, 0.0, 1.0, 20.0, 0.0, 1.0, 5.0, 0.0),
