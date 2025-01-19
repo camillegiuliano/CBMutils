@@ -4,10 +4,12 @@
 \alias{histDist}
 \title{Historical disturbances}
 \usage{
-histDist(mySpu = c(27, 28))
+histDist(mySpu, dbPath)
 }
 \arguments{
 \item{mySpu}{Numeric spatial unit id(s).}
+
+\item{dbPath}{Path to sqlite database file.}
 }
 \description{
 Identifies the stand-replacing wildfire disturbance in each spatial unit.

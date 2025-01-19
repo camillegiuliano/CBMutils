@@ -93,19 +93,19 @@ spuDist <- function(mySpu, dbPath) {
 #' By default the most recent is selected, but the user can change that.
 #'
 #' @param mySpu Numeric spatial unit id(s).
+#' @param dbPath Path to sqlite database file.
 #'
 #' @export
 #' @importFrom stats aggregate
-histDist <- function(mySpu = c(27, 28)) {
+histDist <- function(mySpu, dbPath) {
   # used the spuDist() function to narrow down the choice
-  a <- spuDist(mySpu)
+  a <- spuDist(mySpu, dbPath)
   # don't need all the cbm_default tables since column 3 of a give you the names
   # this searches for "wildfire"
-  # a[which(grepl("wildfire",a[,3],ignore.case = TRUE)),]
   # if there are more then 1 "wildfire" designation, chose the maximum disturbance
   # matrix id number since that would be the most recent in the database
   b <- aggregate(disturbance_matrix_id ~ spatial_unit_id,
-                 data = a[which(grepl("wildfire", a[, 3], ignore.case = TRUE)), ], max
+                 data = a[which(grepl("wildfire", a[, "name"], ignore.case = TRUE)), ], max
   )
   c <- merge.data.frame(a, b)
   return(c)
