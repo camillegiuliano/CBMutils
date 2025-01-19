@@ -4,10 +4,7 @@
 \alias{seeDist}
 \title{See disturbances}
 \usage{
-seeDist(
-  distId = c(161, 230, 313, 361),
-  dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")
-)
+seeDist(distId, dbPath)
 }
 \arguments{
 \item{distId}{Description needed}

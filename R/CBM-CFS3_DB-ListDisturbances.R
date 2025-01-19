@@ -123,8 +123,7 @@ histDist <- function(mySpu, dbPath) {
 #'
 #' @export
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
-seeDist <- function(distId = c(161, 230, 313, 361),
-                    dbPath = file.path("data", "cbm_defaults", "cbm_defaults.db")) {
+seeDist <- function(distId, dbPath) {
 
   # connect to database
   sqlite.driver <- dbDriver("SQLite")
