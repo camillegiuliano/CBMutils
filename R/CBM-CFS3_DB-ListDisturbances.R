@@ -1,78 +1,69 @@
 
-#' Identify the ID number (CBM-CFS3 legacy) possible in the current spatial unit
+#' CBM-CFS3 Spatial Unit Disturbances
 #'
-#' You give is spatial units you are targeting `mySpu` and it gives you the disturbance matrix id
-#' that are possible/default in that specific spu and a descriptive name of that disturbance matrix
-#' it creates a `data.frame` of length number of disturbances, with three columns:
-#' `spatial_unit_is`, `disturbance_matrix_id`, and a `desciption` of the disturbance.
+#' Identify the disturbances possible in spatial units.
 #'
-#' TODO: can we have a Canada-wide SPU map and they locate themselves on the map?
-#' this needs to be done before simulations are run so the user can provide this
-#' info (location info) for the simulations - Ian is working on this.
+#' @param spuIDs Spatial unit ID(s)
+#' @param dbPath Path to CBM-CFS3 SQLite database file
+#' @param localeID CBM-CFS3 locale_id
 #'
-#' the function has the defaults from the SK managed forest example.
-#' These can be changed by feeding in other SPU.
-#'
-#' @param mySpu Numeric spatial unit id(s).
-#' @param dbPath Path to sqlite database file.
+#' @return \code{data.table} with columns
+#' 'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id',
+#' 'name', 'description'
 #'
 #' @export
+#' @importFrom data.table data.table
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
-#' @examples
-#' \dontrun{
-#'   ## using raster
-#'   library(terra)
-#'   spuRaster <- rast(file.path("data/forIan/SK_data/CBM_GIS/spUnits_TestArea.tif"))
-#'   spatial_unit_id <- values(spuRaster) # 28 27
-#'   mySpu <- unique(spatial_unit_id)
-#'
-#'   ## using growth curves
-#'   f <- file.path("spadesCBMinputs/data/SK_ReclineRuns30m/LookupTables/yieldRCBM.csv")
-#'   gcIn <- as.matrix(read.csv(f))
-#'   mySpu <- unique(gcIn[, 1])
-#' }
-spuDist <- function(mySpu, dbPath) {
+spuDist <- function(spuIDs, dbPath, localeID = 1) {
 
-  # connect to database
-  sqlite.driver <- dbDriver("SQLite")
-  archiveIndex <- dbConnect(sqlite.driver, dbname = dbPath)
-  on.exit(dbDisconnect(archiveIndex))
+  if (length(spuIDs) <  1) stop("length(spuIDs) must be >= 1")
+  if (length(dbPath) != 1) stop("length(dbPath) must be == 1")
 
-  # get the matrices related tables
-  alltables <- dbListTables(archiveIndex)
-  matrixTables <- list()
-  for (i in 1:length(grep("disturbance", alltables, ignore.case = TRUE))) {
-    matrixTables[[i]] <- dbReadTable(archiveIndex, alltables[grep("disturbance", alltables, ignore.case = TRUE)[i]])
+  # Connect to database
+  cbmDBcon <- dbConnect(dbDriver("SQLite"), dbname = dbPath)
+  on.exit(dbDisconnect(cbmDBcon))
+
+  # Read database tables
+  ## Read more about the 6 tables related to disturbance matrices here:
+  ## https://docs.google.com/spreadsheets/d/1TFBQiRH4z54l8ROX1N02OOiCHXMe20GSaExiuUqsC0Q
+  cbmTableNames <- c(
+    "disturbance_type", "disturbance_type_tr",
+    "disturbance_matrix", "disturbance_matrix_tr", "disturbance_matrix_value",
+    "disturbance_matrix_association"
+  )
+
+  cbmDB <- list()
+  for (cbmTableName in cbmTableNames) {
+    cbmDB[[cbmTableName]] <- dbReadTable(cbmDBcon, cbmTableName) |> data.table()
   }
-  ## There are 6 tables taht have to do with disturbance matrices in the
-  ## SQLight. They are described here
-  ## https://docs.google.com/spreadsheets/d/1TFBQiRH4z54l8ROX1N02OOiCHXMe20GSaExiuUqsC0Q/edit?usp=sharing
 
-  # match mySpu with the disturbance_matrix_association table which has spu,
+  # match spuIDs with the disturbance_matrix_association table which has spu,
   # disturbance_type_id and disturbance_matrix_id
-  dmtid <- as.data.table(unique(matrixTables[[2]][which(matrixTables[[2]][, "spatial_unit_id"] %in% mySpu), ]))
+  dist_matrix_assoc <- unique(subset(cbmDB[["disturbance_matrix_association"]], spatial_unit_id %in% spuIDs))
 
-  #disturbance_type_id is a more generic ID with general names.
-  # Here we keep english names only.
-  dist_type_name <- as.data.table(matrixTables[[6]])
-  dist_type_name <- dist_type_name[locale_id <= 1,]
-  dist_type_name <- dist_type_name[,.(disturbance_type_id, name)]
+  # disturbance_type_id is a more generic ID with general names.
+  dist_type_name <- subset(
+    cbmDB[["disturbance_type_tr"]], locale_id == localeID
+  )[,.(disturbance_type_id, name)]
 
   # disturbance_matrix_id is region specific IDs and has specific descriptions.
-  # Here we keep english descriptions only
-  dist_matrix_desc <- as.data.table(matrixTables[[3]])
-  dist_matrix_desc <- dist_matrix_desc[locale_id <= 1,]
-  dist_matrix_desc <- dist_matrix_desc[,.(disturbance_matrix_id, description)]
+  dist_matrix_desc <- subset(
+    cbmDB[["disturbance_matrix_tr"]], locale_id == localeID
+  )[,.(disturbance_matrix_id, description)]
 
   # add the names and descriptions and return all the disturbance_type_id and
   # disturbance_matrix_id that are associated with the provided spatial_unit_id
   # (spu).
-  spuDist <- merge(dmtid, dist_type_name, by = "disturbance_type_id")
-  spuDist <- merge(spuDist, dist_matrix_desc, by = "disturbance_matrix_id")
-  spuDist <- spuDist[,.(disturbance_type_id, spatial_unit_id,
-                        disturbance_matrix_id, name, description)]
+  spuDist <- dist_matrix_assoc |>
+    merge(dist_type_name,   by = "disturbance_type_id") |>
+    merge(dist_matrix_desc, by = "disturbance_matrix_id")
 
-  return(spuDist)
+  return(
+    spuDist[,.(
+      spatial_unit_id, disturbance_type_id, disturbance_matrix_id,
+      name, description
+    )]
+  )
 }
 
 #' Historical disturbances
