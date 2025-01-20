@@ -66,7 +66,8 @@ spuDist <- function(spuIDs, dbPath, localeID = 1) {
   )
 }
 
-#' Historical disturbances
+
+#' CBM-CFS3 Historical Disturbances
 #'
 #' Identifies the stand-replacing wildfire disturbance in each spatial unit.
 #'
@@ -83,24 +84,59 @@ spuDist <- function(spuIDs, dbPath, localeID = 1) {
 #' ## TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).
 #' By default the most recent is selected, but the user can change that.
 #'
-#' @param mySpu Numeric spatial unit id(s).
-#' @param dbPath Path to sqlite database file.
+#' @param spuID Spatial unit ID(s)
+#' @param dbPath Path to CBM-CFS3 SQLite database file
+#' @param localeID CBM-CFS3 locale_id
+#' @param listDist data.table. Optional. Result of a call to \code{\link{spuDist}}.
+#' A list of possible disturbances in the spatial unit(s) with columns
+#' 'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
+#' If provided, the \code{dbPath} and \code{localeID} arguments are not required.
 #'
 #' @export
 #' @importFrom stats aggregate
-histDist <- function(mySpu, dbPath) {
-  # used the spuDist() function to narrow down the choice
-  a <- spuDist(mySpu, dbPath)
-  # don't need all the cbm_default tables since column 3 of a give you the names
-  # this searches for "wildfire"
-  # if there are more then 1 "wildfire" designation, chose the maximum disturbance
+histDist <- function(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL) {
+
+  # Set disturbance name matches
+  histDistName <- list(`1` = "Wildfire")
+  if (!as.character(localeID) %in% names(histDistName)) stop(
+    "CBMutils::histDist does not support finding historical disturbances for locale_id ",
+    localeID, " (yet).")
+
+  # List possible spatial disturbances for the spatial units
+  if (is.null(listDist)){
+
+    listDist <- spuDist(spuIDs = spuIDs, dbPath = dbPath, localeID = localeID)
+
+  }else{
+
+    reqCols <- c("spatial_unit_id", "disturbance_type_id", "disturbance_matrix_id",
+                 "name", "description")
+    if (!all(reqCols %in% names(listDist))) stop(
+      "listDist' must have the following columns: ",
+      paste(shQuote(reqCols), collapse = ", "))
+
+    if (!all(spuIDs %in% listDist$spatial_unit_id)) stop(
+      "'listDist' does not contain any disturbances for spatial unit(s) ",
+      paste(shQuote(setdiff(spuIDs, listDist$spatial_unit_id)),
+            collapse = ", "))
+  }
+
+  # If there are more then 1 "wildfire" designation, chose the maximum disturbance
   # matrix id number since that would be the most recent in the database
-  b <- aggregate(disturbance_matrix_id ~ spatial_unit_id,
-                 data = a[which(grepl("wildfire", a[, "name"], ignore.case = TRUE)), ], max
-  )
-  c <- merge.data.frame(a, b)
-  return(c)
+  histDist <- do.call(rbind, lapply(spuIDs, function(spuID){
+    subset(
+      subset(listDist, spatial_unit_id == spuID &
+               tolower(name) %in% tolower(histDistName[[as.character(localeID)]])),
+      disturbance_matrix_id = max(disturbance_matrix_id))
+  }))
+  if (!all(spuIDs %in% histDist$spatial_unit_id)) stop(
+    shQuote(histDistName[[as.character(localeID)]]),
+    " disturbance(s) not found for spatial unit(s): ",
+    paste(setdiff(spuIDs, histDist$spatial_unit_id), collapse = ", "))
+
+  return(histDist)
 }
+
 
 #' See disturbances
 #'

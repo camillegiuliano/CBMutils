@@ -2,14 +2,21 @@
 % Please edit documentation in R/CBM-CFS3_DB-ListDisturbances.R
 \name{histDist}
 \alias{histDist}
-\title{Historical disturbances}
+\title{CBM-CFS3 Historical Disturbances}
 \usage{
-histDist(mySpu, dbPath)
+histDist(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL)
 }
 \arguments{
-\item{mySpu}{Numeric spatial unit id(s).}
+\item{dbPath}{Path to CBM-CFS3 SQLite database file}
 
-\item{dbPath}{Path to sqlite database file.}
+\item{localeID}{CBM-CFS3 locale_id}
+
+\item{listDist}{data.table. Optional. Result of a call to \code{\link{spuDist}}.
+A list of possible disturbances in the spatial unit(s) with columns
+'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
+If provided, the \code{dbPath} and \code{localeID} arguments are not required.}
+
+\item{spuID}{Spatial unit ID(s)}
 }
 \description{
 Identifies the stand-replacing wildfire disturbance in each spatial unit.
