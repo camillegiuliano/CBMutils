@@ -4,7 +4,7 @@
 \alias{histDist}
 \title{CBM-CFS3 Historical Disturbances}
 \usage{
-histDist(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL)
+histDist(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL, ask = FALSE)
 }
 \arguments{
 \item{spuIDs}{Spatial unit ID(s)}
@@ -17,6 +17,10 @@ histDist(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL)
 A list of possible disturbances in the spatial unit(s) with columns
 'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
 If provided, the \code{dbPath} and \code{localeID} arguments are not required.}
+
+\item{ask}{logical.
+If TRUE, prompt the user to choose the correct disturbance matches.
+If FALSE, the function will look for exact name matches.}
 }
 \description{
 Identifies the stand-replacing wildfire disturbance in each spatial unit.

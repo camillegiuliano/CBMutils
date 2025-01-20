@@ -7,7 +7,7 @@ URL:
     https://CBMutils.predictiveecology.org/,
     https://github.com/PredictiveEcology/CBMutils
 Date: 2023-02-28
-Version: 0.0.7.9013
+Version: 0.0.7.9014
 Authors@R: c(
     person("Céline", "Boisvenue", email = "celine.boisvenue@nrcan-rncan.gc.ca", role = c("aut")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca", role = c("aut", "cre"),
@@ -25,6 +25,7 @@ Imports:
     fasterize,
     ggforce,
     ggplot2,
+    knitr,
     magrittr,
     methods,
     quickPlot (>= 0.1.8.9001),
@@ -40,7 +41,6 @@ Imports:
 Suggests:
     covr,
     devtools,
-    knitr,
     rmarkdown,
     testthat,
     withr
