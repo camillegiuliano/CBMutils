@@ -41,21 +41,23 @@ m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol =
   idSim <- unique(gc[, ..id_col])[[1]]
   plots <- gc %>% # [id_ecozone %in% idSim[1:20]] %>%
     ggplot(aes(x = age, y = valueNumeric, group = variable, color = variable)) +
+    theme_bw() +
     geom_line() +
     facet_wrap(facets = id_col) +
     labs(title = title) +
     theme(plot.title = element_text(hjust = 0.5))
+  ggsave(file.path(path, paste0(filenameBase, ".png")), plots)
 
   # Do first page, so that n_pages can calculate how many pages there are
   #   -- not used -- so a bit wasteful
-  numPages <- ceiling(length(idSim) / (nrow * ncol))
-
-  path <- checkPath(path, create = TRUE)
-  for (i in seq(numPages)) {
-    plotsByPage <- plots + facet_wrap_paginate(facets = id_col, scales = scales,
-                                               page = i, nrow = nrow, ncol = ncol)
-    ggsave(file.path(path, paste0(filenameBase, i, ".png")), plotsByPage)
-  }
+  # numPages <- ceiling(length(idSim) / (nrow * ncol))
+  #
+  # path <- checkPath(path, create = TRUE)
+  # for (i in seq(numPages)) {
+  #   plotsByPage <- plots + facet_wrap_paginate(facets = id_col, scales = scales,
+  #                                              page = i, nrow = nrow, ncol = ncol)
+  #   ggsave(file.path(path, paste0(filenameBase, i, ".png")), plotsByPage)
+  # }
   return(plots)
 }
 
