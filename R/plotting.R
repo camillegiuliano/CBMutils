@@ -119,9 +119,9 @@ carbonOutPlot <- function(emissionsProducts) {
 #' @return TODO
 #'
 #' @export
-#' @importFrom data.table copy merge.data.table setkey
+#' @importFrom data.table copy setkey
 #' @importFrom quickPlot Plot
-#' @importFrom raster raster
+#' @importFrom terra rast res unwrap values
 NPPplot <- function(spatialDT, NPP, masterRaster) {
   masterRaster <- terra::unwrap(masterRaster)
   npp <- as.data.table(copy(NPP))
@@ -133,10 +133,10 @@ NPPplot <- function(spatialDT, NPP, masterRaster) {
   setkey(avgNPP, pixelGroup)
   temp <- merge(t, avgNPP, allow.cartesian=TRUE)
   setkey(temp, pixelIndex)
-  plotMaster <- terra::rast(masterRaster)
+  plotMaster <- terra::rast(masterRaster, vals = NA)
   # plotMaster[] <- 0
-  plotMaster[temp$pixelIndex] <- temp$avgNPP
-  pixSize <- prod(res(masterRaster))/10000
+  terra::values(plotMaster)[temp$pixelIndex] <- temp$avgNPP
+  pixSize <- prod(terra::res(masterRaster))/10000
   temp[, `:=`(pixNPP, avgNPP * pixSize)]
   overallAvgNpp <- sum(temp$pixNPP)/(nrow(temp) * pixSize)
   quickPlot::Plot(plotMaster, new = TRUE,
