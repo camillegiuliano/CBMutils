@@ -43,10 +43,11 @@ m3ToBiomIncOnlyPlots <- function(inc) {
 #' @return TODO
 #'
 #' @export
-#' @importFrom data.table as.data.table merge.data.table
+#' @importFrom data.table as.data.table
 #' @importFrom quickPlot Plot
-#' @importFrom terra rast values
+#' @importFrom terra rast res unwrap values
 spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
+
   masterRaster <- terra::unwrap(masterRaster)
   cbmPools <- as.data.table(cbmPools)
   totalCarbon <- apply(cbmPools[, Merch:BranchSnag],
@@ -58,10 +59,9 @@ spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
   setkey(totalCarbon, pixelGroup)
   temp <- merge(t, totalCarbon, allow.cartesian=TRUE)
   setkey(temp, pixelIndex)
-  plotM <- terra::rast(masterRaster)
-  plotM[] <- 0
-  plotM[temp$pixelIndex] <- temp$totalCarbon
-  pixSize <- prod(res(masterRaster))/10000
+  plotM <- terra::rast(masterRaster, vals = 0)
+  terra::values(plotM)[temp$pixelIndex] <- temp$totalCarbon
+  pixSize <- prod(terra::res(masterRaster))/10000
   temp[, `:=`(pixTC, totalCarbon * pixSize)]
   overallTC <- sum(temp$pixTC)/(nrow(temp) * pixSize)
   quickPlot::Plot(plotM, new = TRUE,
