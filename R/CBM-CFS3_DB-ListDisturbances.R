@@ -132,10 +132,10 @@ spuDistMatch <- function(distTable, ask = interactive(),
         which(sapply(spuMatches$description, identical, matchUser[i,]$name)),
 
         # Partial match to name
-        which(grepl(matchUser[i,]$name, spuMatches$name)),
+        which(grepl(matchUser[i,]$name, spuMatches$name, fixed = TRUE)),
 
         # Partial match to description
-        which(grepl(matchUser[i,]$name, spuMatches$description))
+        which(grepl(matchUser[i,]$name, spuMatches$description, fixed = TRUE))
 
       ))]
 
