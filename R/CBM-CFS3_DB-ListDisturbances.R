@@ -20,7 +20,7 @@
 #' 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'
 #'
 #' @export
-#' @importFrom data.table data.table
+#' @importFrom data.table copy data.table
 #' @importFrom knitr kable
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 spuDistMatch <- function(distTable, ask = interactive(),
@@ -78,8 +78,8 @@ spuDistMatch <- function(distTable, ask = interactive(),
     str
   }
 
-  matchUser <- distTable
-  matchDist <- cbind(rowID = 1:nrow(listDist), listDist[, .(spatial_unit_id, name, description)])
+  matchUser <- data.table::copy(distTable)
+  matchDist <- cbind(rowID = 1:nrow(listDist), data.table::copy(listDist)[, .(spatial_unit_id, name, description)])
 
   matchUser[, name        := .prepMatch(name)]
   matchDist[, name        := .prepMatch(name)]
