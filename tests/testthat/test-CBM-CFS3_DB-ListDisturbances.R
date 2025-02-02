@@ -24,10 +24,17 @@ test_that("spuDist", {
 
 test_that("spuDistMatch", {
 
-  distTable <- rbind(
-    data.frame(spatial_unit_id = 27, name = "clearcut harvesting without salvage"),
-    data.frame(spatial_unit_id = 28, name = "wild fire")
+  # Set list of disturbance types
+  distTypes <- rbind(
+    data.frame(rasterID = 1, wholeStand = 1, distName = "Wildfire"),
+    data.frame(rasterID = 2, wholeStand = 1, distName = "Clearcut harvesting without salvage"),
+    data.frame(rasterID = 3, wholeStand = 0, distName = "Generic 20% mortality"),
+    data.frame(rasterID = 4, wholeStand = 1, distName = "Deforestation")
   )
+
+  # Try with a single spuID
+  spuIDs <- 28
+  distTable <- cbind(spatial_unit_id = spuIDs, distTypes)
 
   listDist <- spuDistMatch(distTable, dbPath = dbPath, ask = FALSE)
 
@@ -37,7 +44,26 @@ test_that("spuDistMatch", {
     "disturbance_type_id", "spatial_unit_id", "disturbance_matrix_id", "name", "description"
   ) %in% names(listDist)))
 
-  expect_equal(listDist$disturbance_matrix_id, c(160, 371))
+  expect_equal(listDist$disturbance_matrix_id, c(371, 160, 91, 26))
+
+  # Try with 2 spuIDs
+  spuIDs <- c(27, 28)
+  distTable <- do.call(rbind, lapply(spuIDs, function(spuID){
+    cbind(spatial_unit_id = spuID, distTypes)
+  }))
+
+  listDist <- spuDistMatch(distTable, dbPath = dbPath, ask = FALSE)
+
+  expect_true(inherits(listDist, "data.table"))
+
+  expect_true(all(c(
+    "disturbance_type_id", "spatial_unit_id", "disturbance_matrix_id", "name", "description"
+  ) %in% names(listDist)))
+
+  expect_equal(listDist$disturbance_matrix_id, c(
+    378, 160, 91, 26,
+    371, 160, 91, 26
+  ))
 
   # Expect error: name does not have an exact match and ask = FALSE
   expect_error(

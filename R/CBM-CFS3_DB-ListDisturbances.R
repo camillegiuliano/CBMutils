@@ -182,7 +182,9 @@ spuDistMatch <- function(distTable, ask = interactive(),
         }
       }
 
-      distMatch[[i]] <- subset(listDist, disturbance_matrix_id == userSelectID)
+      distMatch[[i]] <- subset(
+        listDist, spatial_unit_id == distTable[i,]$spatial_unit_id &
+          disturbance_matrix_id == userSelectID)
     }
   }
 
