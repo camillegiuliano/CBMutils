@@ -16,7 +16,7 @@ utils::globalVariables(c(
 #' @export
 #' @importFrom data.table copy melt
 #' @importFrom ggforce facet_wrap_paginate
-#' @importFrom ggplot2 aes element_text facet_wrap geom_line ggplot ggsave labs theme
+#' @importFrom ggplot2 aes element_text facet_wrap geom_line ggplot ggsave labs theme_bw
 #' @importFrom magrittr %>%
 #' @importFrom reproducible checkPath
 #'
