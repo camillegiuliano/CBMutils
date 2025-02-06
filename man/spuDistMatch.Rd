@@ -7,6 +7,7 @@
 spuDistMatch(
   distTable,
   ask = interactive(),
+  nearMatches = TRUE,
   dbPath = NULL,
   localeID = 1,
   listDist = NULL
@@ -20,6 +21,8 @@ in the CBM-CFS3 database.}
 \item{ask}{logical.
 If TRUE, prompt the user to choose the correct disturbance matches.
 If FALSE, the function will look for exact name matches.}
+
+\item{nearMatches}{logical. Allow for near matches; e.g. "clearcut" can match "clear-cut".}
 
 \item{dbPath}{Path to CBM-CFS3 SQLite database file}
 
