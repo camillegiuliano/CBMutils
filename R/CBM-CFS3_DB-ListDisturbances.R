@@ -9,6 +9,7 @@
 #' @param ask logical.
 #' If TRUE, prompt the user to choose the correct disturbance matches.
 #' If FALSE, the function will look for exact name matches.
+#' @param nearMatches logical. Allow for near matches; e.g. "clearcut" can match "clear-cut".
 #' @param dbPath Path to CBM-CFS3 SQLite database file
 #' @param localeID CBM-CFS3 locale_id
 #' @param listDist data.table. Optional. Result of a call to \code{\link{spuDist}}.
@@ -23,7 +24,7 @@
 #' @importFrom data.table copy data.table
 #' @importFrom knitr kable
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
-spuDistMatch <- function(distTable, ask = interactive(),
+spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
                          dbPath = NULL, localeID = 1, listDist = NULL){
 
   # Check input
@@ -35,7 +36,7 @@ spuDistMatch <- function(distTable, ask = interactive(),
   }
 
   reqCols <- c("spatial_unit_id", "name")
-  if (!"name" %in% names(distTable)){
+  if (!"name" %in% names(distTable) & "distName" %in% names(distTable)){
     names(distTable) <- gsub("^distName$", "name", names(distTable))
   }
   if (!all(reqCols %in% names(distTable))) stop(
@@ -48,147 +49,180 @@ spuDistMatch <- function(distTable, ask = interactive(),
     listDist <- spuDist(spuIDs = distTable$spatial_unit_id, dbPath = dbPath, localeID = localeID)
 
   }else{
-
-    reqCols <- c("spatial_unit_id", "disturbance_type_id", "disturbance_matrix_id",
-                 "name", "description")
+    reqCols <- c("spatial_unit_id", "disturbance_type_id", "disturbance_matrix_id", "name", "description")
     if (!all(reqCols %in% names(listDist))) stop(
       "listDist' must have the following columns: ",
       paste(shQuote(reqCols), collapse = ", "))
-
-      if (!all(distTable$spatial_unit_id %in% listDist$spatial_unit_id)) stop(
-        "'listDist' does not contain any disturbance for spatial unit(s) ",
-        paste(shQuote(setdiff(distTable$spatial_unit_id, listDist$spatial_unit_id)),
-              collapse = ", "))
   }
-
-  # Create tables for easy matching by standardizing some equivalent strings standardized
-  strEquivs <- list(
-    `clearcut` = c("clear cut", "clear-cut"),
-    `wildfire` = c("wild fire", "wild-fire")
-  )
-
-  # Helper function: prepare fields for matching
-  .prepMatch <- function(str){
-    str <- trimws(tolower(str))
-    for (strReplace in names(strEquivs)){
-      for (strPattern in strEquivs[[strReplace]]){
-        str <- gsub(strPattern, strReplace, str, fixed = TRUE)
-      }
-    }
-    str
-  }
-
-  matchUser <- data.table::copy(distTable)
-  matchDist <- cbind(rowID = 1:nrow(listDist), data.table::copy(listDist)[, .(spatial_unit_id, name, description)])
-
-  matchUser[, name        := .prepMatch(name)]
-  matchDist[, name        := .prepMatch(name)]
-  matchDist[, description := .prepMatch(description)]
 
   # For each disturbance: choose a CBM-CFS3 match
   distMatch <- list()
   for (i in 1:nrow(distTable)){
 
+    spuID    <- distTable[i,]$spatial_unit_id
+    distName <- distTable[i,]$name
+
     if (!ask){
 
-      # Find identical matches to name
-      matchIdx <- c(
-
-        # Identical match
-        which(
-          sapply(listDist$name, identical, distTable[i,]$name) &
-            listDist$spatial_unit_id == distTable[i,]$spatial_unit_id
-        ),
-
-        # Nearly identical match
-        which(
-          sapply(matchDist$name, identical, matchUser[i,]$name) &
-            matchDist$spatial_unit_id == matchUser[i,]$spatial_unit_id
-        )
+      # Find only identical or near matches to name
+      distMatches <- .spuDistMatches(
+        spuID       = spuID,
+        distName    = distName,
+        listDist    = listDist,
+        name        = TRUE,
+        desc        = FALSE,
+        identical   = TRUE,
+        nearMatches = nearMatches
       )
 
-      if (length(matchIdx) == 0) stop(
-        "Disturbance match not found ",
-        "for spatial_unit_id ", distTable[i,]$spatial_unit_id, " ",
-        "and disturbance name ", shQuote(distTable[i,]$name), ". ",
+      if (nrow(distMatches) != 1) stop(
+        nrow(distMatches),
+        " disturbance matches found for spatial_unit_id ", spuID, " ",
+        "and disturbance name ", shQuote(distName), ". ",
         "Try rerunning with ask = TRUE ",
         "or use the listDist function to review disturbance options.")
 
-      distMatch[[i]] <- listDist[matchIdx[[1]],]
+      distMatch[[i]] <- distMatches
 
     }else{
 
-      # Subset disturbances by spatial unit
-      spuMatches <- subset(matchDist, spatial_unit_id == distTable[i,]$spatial_unit_id)
+      # Helper function: prompt user to choose a match
+      .spuDistMatchSelect <- function(distMatches, chooseID = "disturbance_type_id"){
 
-      # Check for disturbances containing the provided name in "name" or "description"
-      ## List these in order of their best rank
-      matchIdx <- spuMatches$rowID[unique(c(
+        printTable <- distMatches[, .(disturbance_type_id, disturbance_matrix_id, name, description)]
 
-        # Identical match to name
-        which(sapply(spuMatches$name,        identical, matchUser[i,]$name)),
+        repeat{
 
-        # Identical match to description
-        which(sapply(spuMatches$description, identical, matchUser[i,]$name)),
-
-        # Partial match to name
-        which(grepl(matchUser[i,]$name, spuMatches$name, fixed = TRUE)),
-
-        # Partial match to description
-        which(grepl(matchUser[i,]$name, spuMatches$description, fixed = TRUE))
-
-      ))]
-
-      if (length(matchIdx) == 0) stop(
-        "Disturbance match options not found ",
-        "for spatial_unit_id ", distTable[i,]$spatial_unit_id, " ",
-        "and disturbance name ", shQuote(distTable[i,]$name), ". ",
-        "Use the listDist function to review disturbance options.")
-
-      # Prompt user to select match
-      printTable <- listDist[matchIdx, .(disturbance_matrix_id, disturbance_type_id, name, description)]
-
-      repeat{
-
-        ans <- readline(cat(paste(c(
-          "",
-          "Choose a CBM-CFS3 disturbance matrix ID match for:",
-          paste("  Spatial unit ID  :", distTable[i,]$spatial_unit_id),
-          paste("  Disturbance name :", shQuote(distTable[i,]$name)),
-          sapply(setdiff(names(distTable), c("spatial_unit_id", "name")), function(col){
-            sprintf("  %-16s : %s", col, distTable[i,][[col]])
-          }),
-          "",
-          "CBM-CFS3 disturbance(s) with a matching name or description:",
-          knitr::kable(printTable[,1:3], format = "pipe"),
-          "",
-          crayon::yellow(
-            "Enter the correct disturbance_matrix_id",
-            "or \"desc\" to view disturbance descriptions: ")
-        ), collapse = "\n")))
-
-        if (identical(trimws(tolower(ans)), "desc")){
           ans <- readline(cat(paste(c(
-            knitr::kable(printTable, format = "pipe"),
             "",
-            crayon::yellow("Enter the correct disturbance_matrix_id: ")
+            "Input disturance information:",
+            paste("  Spatial unit ID  :", spuID),
+            paste("  Disturbance name :", shQuote(distName)),
+            sapply(setdiff(names(distTable), c("spatial_unit_id", "name")), function(col){
+              sprintf("  %-16s : %s", col, distTable[i,][[col]])
+            }),
+            "",
+            "CBM-CFS3 disturbance(s) with a matching name or description:",
+            knitr::kable(printTable[,1:3], format = "pipe"),
+            "",
+            crayon::yellow(
+              "Enter the correct", chooseID,
+              "or \"desc\" to view disturbance descriptions: ")
           ), collapse = "\n")))
-        }
 
-        userSelectID <- suppressWarnings(tryCatch(as.numeric(trimws(ans)), error = function(e) NULL))
+          if (identical(trimws(tolower(ans)), "desc")){
+            ans <- readline(cat(paste(c(
+              knitr::kable(printTable, format = "pipe"),
+              "",
+              crayon::yellow("Enter the correct ", chooseID, ": ")
+            ), collapse = "\n")))
+          }
 
-        if (isTRUE(userSelectID %in% listDist[matchIdx,]$disturbance_matrix_id)){
-          break
+          userSelectID <- suppressWarnings(tryCatch(as.numeric(trimws(ans)), error = function(e) NULL))
+
+          if (isTRUE(userSelectID %in% distMatches[[chooseID]])){
+            return(distMatches[distMatches[[chooseID]] == userSelectID,])
+          }
         }
       }
 
-      distMatch[[i]] <- subset(
-        listDist, spatial_unit_id == distTable[i,]$spatial_unit_id &
-          disturbance_matrix_id == userSelectID)
+      # Find all matches to name or description
+      distMatches <- .spuDistMatches(
+        spuID       = spuID,
+        distName    = distName,
+        listDist    = listDist,
+        name        = TRUE,
+        desc        = TRUE,
+        identical   = FALSE,
+        nearMatches = nearMatches
+      )
+
+      if (nrow(distMatches) == 0) stop(
+        "Disturbance match options not found ",
+        "for spatial_unit_id ", spuID, " ",
+        "and disturbance name ", shQuote(distName), ". ",
+        "Use the listDist function to review disturbance options.")
+
+      # Prompt user to subset matches by disturbance_type_id
+      distMatches <- .spuDistMatchSelect(distMatches, "disturbance_type_id")
+
+      # Prompt user to subset matches by disturbance_matrix_id
+      if (nrow(distMatches) > 1){
+        distMatches <- .spuDistMatchSelect(distMatches, "disturbance_matrix_id")
+      }
+
+      distMatch[[i]] <- distMatches
     }
   }
 
   do.call(rbind, distMatch)
+}
+
+# Subset CBM-CFS3 disturbances by matches to a spatial_unit_id and a disturbance name.
+# @param name logical. Match name with listDist 'name' column
+# @param desc logical. Match name with listDist 'description' column
+# @param identical logical. Require matches to name and/or description to be identical.
+# @param nearMatches logical. Allow for near matches e.g. "clearcut" can match "clear-cut".
+.spuDistMatches <- function(
+    listDist, spuID, distName,
+    name = TRUE, desc = TRUE, identical = FALSE, nearMatches = TRUE){
+
+  # Check input: listDist
+  reqCols <- c("spatial_unit_id", "name", "description")
+  if (!all(reqCols %in% names(listDist))) stop(
+    "listDist' must have the following columns: ",
+    paste(shQuote(reqCols), collapse = ", "))
+
+  # Add additional matches for equivalent strings
+  strEquivs <- list(
+    `clearcut` = c("clear cut", "clear-cut"),
+    `wildfire` = c("wild fire", "wild-fire")
+  )
+  distNameUser <- c(distName, if (nearMatches) strEquivs[[distName]])
+
+  # Subset disturbances by spatial unit ID
+  spuDists <- subset(data.table::copy(listDist), spatial_unit_id == spuID)
+  if (nrow(spuDists) == 0) stop(
+    "'listDist' does not contain any disturbances for spatial unit ", spuID)
+
+  # Standardize strings for matching
+  distNameUser <- trimws(tolower(distNameUser))
+  distNameCBM  <- trimws(tolower(spuDists$name))
+  distDescCBM  <- trimws(tolower(spuDists$description))
+
+  # Check for matches
+  distMatch <- list()
+
+  .whichIdentical <- function(charVect) unname(which(sapply(charVect, function(char) any(char %in% distNameUser))))
+  .whichPartial   <- function(charVect) unname(which(
+    sapply(charVect, function(char) any(sapply(distNameUser, function(nm) grepl(nm, char, fixed = TRUE))))
+  ))
+
+  # Match disturbance name
+  if (name){
+
+    # Identical match to name
+    distMatch[["nameIdentical"]] <- .whichIdentical(distNameCBM)
+
+    if (!identical){
+      distMatch[["namePartial"]] <- .whichPartial(distNameCBM)
+    }
+  }
+
+  # Match disturbance description
+  if (desc){
+
+    # Identical match to desc
+    distMatch[["descIdentical"]] <- .whichIdentical(distDescCBM)
+
+    if (!identical){
+      distMatch[["descPartial"]] <- .whichPartial(distDescCBM)
+    }
+  }
+
+  # Return matches
+  spuDists[unique(unlist(distMatch)),]
+
 }
 
 
