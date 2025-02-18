@@ -64,8 +64,9 @@ spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
   pixSize <- prod(terra::res(masterRaster))/10000
   temp[, `:=`(pixTC, totalCarbon * pixSize)]
   overallTC <- sum(temp$pixTC)/(nrow(temp) * pixSize)
-  quickPlot::Plot(plotM, new = TRUE,
-                  title = paste0("Total Carbon in ", years, " in MgC/ha"))
+  Plot <- ggplot() + geom_raster(data = plotM, aes(x = x, y = y, fill = ldSp_TestArea)) +
+    theme_no_axes() + scale_fill_continuous(low = "red", high = "green", na.value = "transparent", guide = "colorbar") +
+    ggtitle(paste0("Total Carbon in ", years, " in MgC/ha"))
 }
 
 #' `carbonOutPlot`
@@ -91,6 +92,7 @@ carbonOutPlot <- function(emissionsProducts) {
     scale_y_continuous(name = "Products in MgC") +
     scale_x_continuous(breaks = scales::pretty_breaks()) +
     xlab("Simulation Years") + theme_classic() +
+    ggtitle("Yearly Forest Products") +
     theme(axis.title.y = element_text(size = 10),
           axis.title.x = element_text(size = 10))
 
@@ -100,14 +102,10 @@ carbonOutPlot <- function(emissionsProducts) {
     scale_x_continuous(breaks = scales::pretty_breaks()) +
     labs(x = "Simulation Years", y = expression(paste('Emissions (CO'[2]*'+CH'[4]*'+CO) in MgC'))) +
     theme_classic() +
+    ggtitle("Yearly Emissions") +
     theme(axis.title.y = element_text(size = 10),
           axis.title.x = element_text(size = 10))
-
-
-  quickPlot::Plot(absCbyYrProducts, addTo = "absCbyYrProducts",
-                  title = "Yearly Forest Products")
-  quickPlot::Plot(absCbyYrEmissions, addTo = "absCbyYrEmissions",
-                  title = "Yearly Emissions")
+  plot_grid(absCbyYrProducts, absCbyYrEmissions, ncol = 2)
 }
 
 #' `NPPplot`
@@ -133,15 +131,16 @@ NPPplot <- function(spatialDT, NPP, masterRaster) {
   setkey(avgNPP, pixelGroup)
   temp <- merge(t, avgNPP, allow.cartesian=TRUE)
   setkey(temp, pixelIndex)
-  plotMaster <- terra::rast(masterRaster, vals = NA)
+  plotMaster <- terra::rast(masterRaster)
   # plotMaster[] <- 0
-  terra::values(plotMaster)[temp$pixelIndex] <- temp$avgNPP
-  pixSize <- prod(terra::res(masterRaster))/10000
+  plotMaster[temp$pixelIndex] <- temp$avgNPP
+  pixSize <- prod(res(masterRaster))/10000
   temp[, `:=`(pixNPP, avgNPP * pixSize)]
   overallAvgNpp <- sum(temp$pixNPP)/(nrow(temp) * pixSize)
-  quickPlot::Plot(plotMaster, new = TRUE,
-                  title = paste0("Pixel-level average NPP",
-                                 "\n Landscape average: ", round(overallAvgNpp, 3), "  MgC/ha/yr."))
+  Plot <- ggplot() + geom_raster(data = plotMaster, aes(x = x, y = y, fill = ldSp_TestArea)) +
+    theme_no_axes() + scale_fill_continuous(low = "red", high = "green", na.value = "transparent", guide = "colorbar") +
+    ggtitle(paste0("Pixel-level average NPP\n",
+                   "Landscape average: ", round(overallAvgNpp, 3), "  MgC/ha/yr."))
 }
 
 
@@ -182,9 +181,7 @@ barPlot <- function(cbmPools) {
     geom_col(position = "fill") +
     scale_y_continuous(expand = expansion(mult = c(0, .1))) +
     scale_fill_discrete(name = "Carbon Compartment") +
-    labs(x = "Year", y = "Proportion") + theme_classic() +
+    labs(x = "Year", y = "Proportion") + theme_classic() + ggtitle("Proportion of C above and below ground compartments.") +
     guides(fill = guide_legend(title.position= "top", title ="Carbon compartment") ) +
     scale_fill_brewer(palette = "Set1", labels = c("Soil", "AGlive", "BGlive", 'snags'))
-
-  quickPlot::Plot(barPlots, addTo = "barPlots", title = "Proportion of C above and below ground compartments.")
 }
