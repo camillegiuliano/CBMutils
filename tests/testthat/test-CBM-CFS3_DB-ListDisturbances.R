@@ -10,7 +10,7 @@ if (!file.exists(dbPath)){
 
 test_that("spuDist", {
 
-  listDist <- spuDist(27, dbPath = dbPath)
+  listDist <- spuDist(spuIDs = 27, dbPath = dbPath)
 
   expect_true(inherits(listDist, "data.table"))
 
