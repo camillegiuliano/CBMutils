@@ -2,15 +2,18 @@
 if (!testthat::is_testing()) source(testthat::test_path("setup.R"))
 
 # Download CBM-CFS3 database
-dbURL <- "https://raw.githubusercontent.com/cat-cfs/libcbm_py/main/libcbm/resources/cbm_defaults_db/cbm_defaults_v1.2.8340.362.db"
-dbPath <- file.path(testDirs$temp$inputs, basename(dbURL))
-if (!file.exists(dbPath)){
-  download.file(url = dbURL, destfile = dbPath, mode = "wb", quiet = TRUE)
-}
+cbmDBs <- list(
+  defaults = "https://raw.githubusercontent.com/cat-cfs/libcbm_py/main/libcbm/resources/cbm_defaults_db/cbm_defaults_v1.2.8340.362.db",
+  exn_dma  = "https://raw.githubusercontent.com/cat-cfs/libcbm_py/refs/heads/main/libcbm/resources/cbm_exn/disturbance_matrix_association.csv"
+) |> lapply(function(url){
+  destfile <- file.path(testDirs$temp$inputs, basename(url))
+  download.file(url = url, destfile = destfile, mode = "wb", quiet = TRUE)
+  file.path(testDirs$temp$inputs, basename(url))
+})
 
 test_that("spuDist", {
 
-  listDist <- spuDist(spuIDs = 27, dbPath = dbPath)
+  listDist <- spuDist(spuIDs = 27, dbPath = cbmDBs[["defaults"]])
 
   expect_true(inherits(listDist, "data.table"))
 
@@ -19,6 +22,12 @@ test_that("spuDist", {
   ) %in% names(listDist)))
 
   expect_true(all(listDist$spatial_unit_id == 27))
+  expect_true(nrow(listDist) == 133)
+
+  # Test with user provided disturbance_matrix_association
+  listDist <- spuDist(spuIDs = 27, dbPath = cbmDBs[["defaults"]], disturbance_matrix_association = read.csv(cbmDBs[["exn_dma"]]))
+  expect_true(all(listDist$spatial_unit_id == 27))
+  expect_true(nrow(listDist) == 266)
 
 })
 
@@ -36,7 +45,7 @@ test_that("spuDistMatch", {
   spuIDs <- 28
   distTable <- cbind(spatial_unit_id = spuIDs, distTypes)
 
-  listDist <- spuDistMatch(distTable, dbPath = dbPath, ask = FALSE)
+  listDist <- spuDistMatch(distTable, dbPath = cbmDBs[["defaults"]], ask = FALSE)
 
   expect_true(inherits(listDist, "data.table"))
 
@@ -52,10 +61,9 @@ test_that("spuDistMatch", {
     cbind(spatial_unit_id = spuID, distTypes)
   }))
 
-  listDist <- spuDistMatch(distTable, dbPath = dbPath, ask = FALSE)
+  listDist <- spuDistMatch(distTable, dbPath = cbmDBs[["defaults"]], ask = FALSE)
 
   expect_true(inherits(listDist, "data.table"))
-
   expect_true(all(c(
     "disturbance_type_id", "spatial_unit_id", "disturbance_matrix_id", "name", "description"
   ) %in% names(listDist)))
@@ -65,15 +73,30 @@ test_that("spuDistMatch", {
     371, 160, 91, 26
   ))
 
+  # Test 2 spuIDs and user provided disturbance_matrix_association
+  listDist <- spuDist(dbPath = cbmDBs[["defaults"]], disturbance_matrix_association = read.csv(cbmDBs[["exn_dma"]]))
+
+  listDist <- spuDistMatch(distTable, listDist = listDist, ask = FALSE)
+
+  expect_true(inherits(listDist, "data.table"))
+  expect_true(all(c(
+    "disturbance_type_id", "spatial_unit_id", "sw_hw", "disturbance_matrix_id", "name", "description"
+  ) %in% names(listDist)))
+
+  expect_equal(listDist$disturbance_matrix_id, c(
+    378, 858, 160, 640, 91, 571, 26, 506,
+    371, 851, 160, 640, 91, 571, 26, 506
+  ))
+
   # Expect error: name does not have an exact match and ask = FALSE
   expect_error(
-    spuDistMatch(data.frame(spatial_unit_id = 27, name = "clearcut"), dbPath = dbPath, ask = FALSE)
+    spuDistMatch(data.frame(spatial_unit_id = 27, name = "clearcut"), dbPath = cbmDBs[["defaults"]], ask = FALSE)
   )
 })
 
 test_that("histDist", {
 
-  listDist <- histDist(27, dbPath = dbPath)
+  listDist <- histDist(27, dbPath = cbmDBs[["defaults"]])
 
   expect_true(inherits(listDist, "data.table"))
 

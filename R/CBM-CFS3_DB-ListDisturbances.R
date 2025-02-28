@@ -75,8 +75,12 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
         nearMatches = nearMatches
       )
 
-      if (nrow(distMatches) != 1) stop(
-        nrow(distMatches),
+      matchUnq <- if ("sw_hw" %in% names(distMatches)){
+        unique(distMatches[, .SD, .SDcols = !c("sw_hw", "disturbance_matrix_id", "name", "description")])
+      }else distMatches
+
+      if (nrow(matchUnq) != 1) stop(
+        nrow(matchUnq),
         " disturbance matches found for spatial_unit_id ", spuID, " ",
         "and disturbance name ", shQuote(distName), ". ",
         "Try rerunning with ask = TRUE ",
@@ -89,9 +93,13 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
       # Helper function: prompt user to choose a match
       .spuDistMatchSelect <- function(distMatches, chooseID = "disturbance_type_id"){
 
-        printTable <- distMatches[, intersect(
-          c("disturbance_type_id", "sw_hw", "disturbance_matrix_id", "name", "description"),
-          names(distMatches)), with = FALSE]
+        if (chooseID == "disturbance_type_id"){
+          printTable <- unique(distMatches[, .(disturbance_type_id, name, description)])
+        }else{
+          printTable <- distMatches[, intersect(
+            c("disturbance_type_id", "sw_hw", "disturbance_matrix_id", "name", "description"),
+            names(distMatches)), with = FALSE]
+        }
 
         repeat{
 
@@ -149,8 +157,18 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
       distMatches <- .spuDistMatchSelect(distMatches, "disturbance_type_id")
 
       # Prompt user to subset matches by disturbance_matrix_id
-      if ("disturbance_matrix_id" %in% names(distMatches) && nrow(distMatches) > 1){
-        distMatches <- .spuDistMatchSelect(distMatches, "disturbance_matrix_id")
+      matchUnq <- if ("sw_hw" %in% names(distMatches)){
+        unique(distMatches[, .SD, .SDcols = !c("sw_hw", "disturbance_matrix_id", "name", "description")])
+      }else distMatches
+
+      if (nrow(matchUnq) > 1){
+        if ("disturbance_matrix_id" %in% names(distMatches) && nrow(matchUnq) > 1){
+          distMatches <- .spuDistMatchSelect(distMatches, "disturbance_matrix_id")
+        }else warning(
+          nrow(distMatches),
+          " disturbance matches found for spatial_unit_id ", spuID, " ",
+          "and disturbance name ", shQuote(distName), ". ",
+          "'disturbance_matrix_id' column required to subset options further")
       }
 
       distMatch[[i]] <- distMatches
