@@ -1,7 +1,29 @@
-## NOTES
-#    FORCS parameters are hard coded: minimum merchantable age, a, and b (used
-#    to calculate the proportion of merchantable Stemwood)
+#' Convert total above ground biomass into 3 pools (\eqn{T/ha})
+#'
+#' Implements the flowchart from figure 3 of Boudewyn et al. (2007) using an alternative
+#' set of parameter to divide total above ground biomass (\eqn{T/ha}) into total merchantable
+#' stemwood biomass (\eqn{T/ha}), foliage biomass (\eqn{T/ha}), and other wood biomass (\eqn{T/ha}).
+#'
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param allInfoAGBin `data.frame` with at least four following columns: `canfi_species`,
+#' `ecozone`, `juris_id`, `age`, `B` and a column for pixel group identifier.
+#'
+#' @param table6 `data.frame` corresponding to Table 3 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv>.
+#'
+#' @param table7 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
+#'
+#' @param pixGroupCol the name of the column in `allInforAGBin` serving as the pixel group
+#' identifier. Currently, this can be "poolsPixelGroup", or "yieldPixelGroups".
 
+#' @return biomass (\eqn{T/ha}) in each above ground pool for each cohort per pixel group.
+#'
+#' @export
 cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "poolsPixelGroup"){
   counter <- 0L
   cumBiomList <- list()
@@ -33,7 +55,7 @@ cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "pools
 
     # going from tonnes of biomass/ha to tonnes of carbon/ha here
     ### HARD CODED VALUE ####################
-    cumBiom <- cumBiom * 0.5 ## this value is in sim$cbmData@biomassToCarbonRate
+    cumBiom <- cumBiom * 0.5
 
     # To handle cohortData as well
     if(pixGroupCol != "yieldPixelGroup") cohort_id <- NULL
@@ -42,7 +64,7 @@ cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "pools
                                        .(gcids = cohort_id,
                                          species = speciesCode,
                                          age = age,
-                                         pixGroupColValue = get(pixGroupCol))]  # Use get() to refer to pixGroupCol dynamically
+                                         pixGroupColValue = get(pixGroupCol))]
     setnames(cumBiomList[[counter]], "pixGroupColValue", pixGroupCol)
     cumBiomList[[counter]] <- cbind(cumBiomList[[counter]],
                                     cumBiom)
@@ -52,6 +74,31 @@ cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "pools
   return(cumPools)
 }
 
+#' Convert total above ground biomass into 3 pools (\eqn{T/ha})
+#'
+#' Implements the flowchart from figure 3 of Boudewyn et al. (2007) using an alternative
+#' set of parameter to divide total above ground biomass (\eqn{T/ha}) into total merchantable
+#' stemwood biomass (\eqn{T/ha}), foliage biomass (\eqn{T/ha}), and other wood biomass (\eqn{T/ha}).
+#'
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param oneCurve `data.frame` with at least four following columns: `canfi_species`,
+#' `ecozone`, `juris_id`, and `B`.
+#'
+#' @param table6 `data.frame` corresponding to Table 3 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv>.
+#'
+#' @param table7 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
+
+#' @return three-column matrix with columns corresponding to biomass (\eqn{T/ha}) for
+#' total merchantable, foliage, and other wood.
+#'
+#'
+#' @export
 convertAGB2pools <- function(oneCurve, table6, table7){
 
   # get the parameters
@@ -66,7 +113,7 @@ convertAGB2pools <- function(oneCurve, table6, table7){
   params7 <- EquatParams$params7
 
   # get the proportions of each pool
-  pVect <- biomProp2(table6 = params6, table7 = params7, vol = oneCurve$B, type = "biomass")
+  pVect <- biomProp(table6 = params6, table7 = params7, x = oneCurve$B, type = "biomass")
   totTree <-  oneCurve$B
   totalStemWood <- totTree * pVect[, 1]
 
@@ -107,78 +154,43 @@ convertAGB2pools <- function(oneCurve, table6, table7){
   return(biomCumulative)
 }
 
-biomProp <- function(table6, table7, x, type = "volume") {
-  if (type == "volume"){
-    if(any(!(c("vol_min", "vol_max") %in% colnames(table7)))) {
-      stop("The parameter tables do not have the correct columns for ", type, " inputs.")
-    }
-    caps <- as.numeric(table7[,c("vol_min", "vol_max")])
-  } else if (type == "biomass") {
-    if(any(!(c("biom_min", "biom_max") %in% colnames(table7)))) {
-      stop("The parameter tables do not have the correct columns for ", type, " inputs.")
-    }
-    caps <- as.numeric(table7[,c("biom_min", "biom_max")])
-  } else {
-    stop("The argument type in biomProp() needs to be `volume` or `biomass`")
-  }
+#' Extract the parameters to apply to convert total biomass into pool biomass
+#'
+#' Extract the species- and location- specific parameters for equation 4-7 of
+#' Boudewyn et al. (2007). If there is no match for the given ecozone, the parameters
+#' for a different ecozone in the same province/territory is returned. If there
+#' is no match for a given province/territory, the parameters for a different
+#' province/territory in the same ecozone is returned. If there is no match for
+#' the given ecozone and province/territory, the parameters for a different location
+#' is returned.
+#'
+#' @references
+#' Boudewyn, P., Song, X., Magnussen, S., & Gillis, M. D. (2007). Model-based, volume-to-biomass
+#' conversion for forested and vegetated land in Canada (BC-X-411). Natural Resource Canada,
+#' Pacific Forestry Centre. <https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/27434.pdf>
+#'
+#' @param table6 `data.frame` corresponding to Table 3 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv>.
+#'
+#' @param table7 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
+#' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
+#'
+#' @param canfi_species the canfi code of the species
+#'
+#' @param ecozone the code of the ecozone
+#'
+#' @param juris_id the 2-letter code for the province/territory
 
-  # flag if vol in below vol_min or above vol_max (when not NA)
-  # the model was developed on
-  # DC 2025-03-07: ONLY FOR VOLUME. MUTED FOR BIOMASS BECAUSE IT HAPPENS ALL THE
-  # TIME WHEN CREATING YIELD TABLES FROM LANDR
-  if (length(is.na(unique(caps[1]))) > 0 & type == "volume") {
-    testVec <- min(vol) < unique(caps[1])
-    if (any(testVec)) {
-      message("Some volumes in the growth information provided are smaller than ",
-              "the minimum volume the proportions model was developed with.")
-    }
-  }
-
-  if (length(is.na(unique(caps[2]))) > 0 & type == "volume") {
-    testVec <- max(vol) > unique(caps[2])
-    if (any(testVec)) {
-      message("Some volumes in the growth information provided are larger than ",
-              "the maximum volume the proportions model was developed with.")
-    }
-  }
-
-
-  lvol <- log(x + 5)
-
-  ## denominator is the same for all 4 equations
-  denom <- (1 + exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) +
-              exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) +
-              exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol))
-  ## for each proportion, enforce caps per table 7
-  pstem <- 1 / denom
-  pstem[which(x < caps[1])] <- table7$p_sw_low
-  pstem[which(x > caps[2])] <- table7$p_sw_high
-
-  pbark <- exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) / denom
-  pbark[which(x < caps[1])] <- table7$p_sb_low
-  pbark[which(x > caps[2])] <- table7$p_sb_high
-
-  pbranches <- exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) / denom
-  pbranches[which(x < caps[1])] <- table7$p_br_low
-  pbranches[which(x > caps[2])] <- table7$p_br_high
-
-  pfol <- exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol) / denom
-  pfol[which(x < caps[1])] <- table7$p_fl_low
-  pfol[which(x > caps[2])] <- table7$p_fl_high
-
-  propVect <- cbind(pstem = pstem, pbark = pbark, pbranches = pbranches, pfol = pfol)
-
-  if(any(rowSums(propVect) - 1 > 0.01)) {
-    stop("The sums of biomass proportions do not sum to 1...")
-  }
-
-  return(propVect)
-}
-
+#' @return a list with 2 vectors for the parameters in table6 and table7 respectively.
 getParameters <- function(table6, table7, canfi_species, ecozone, juris_id){
   spec <- as.integer(canfi_species)
   ez <- ecozone
   admin <- juris_id
+
+  if(!(spec %in% table6$canfi_spec) | !(spec %in% table7$canfi_spec)){
+    stop("There are no parameters available for species ", spec)
+  }
+
   params6 <- table6[canfi_spec == spec & ecozone == ez & juris_id == admin,][1]
   params7 <- table7[canfi_spec == spec & ecozone == ez & juris_id == admin,][1]
 

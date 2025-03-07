@@ -54,5 +54,23 @@ test_that("testing biomProp function", {
                c(pstem = 0.67, pbark = 0.09, pbranches = 0.14, pfol = 0.09)) # expected result by hand
   expect_equal(round(prop[3,],2),
                c(pstem = 0.79, pbark = 0.10, pbranches = 0.08, pfol = 0.04)) # expected from table 7
+})
 
+test_that("testing getParameters function", {
+  out <- getParameters(table6AGB, table7AGB, 101, 4, "BC")
+
+  expect_is(out, "list")
+  expect_named(out, c("params6", "params7"))
+  expect_true(all(
+    out$params6[,c("juris_id", "ecozone", "canfi_spec", "genus", "species")] ==
+      data.table::data.table("BC", 4L, 101L, "PICE", "MAR")))
+  expect_true(all(
+    out$params7[,c("juris_id", "ecozone", "canfi_spec", "genus", "species")] ==
+      data.table::data.table("BC", 4L, 101L, "PICE", "MAR")))
+  expect_equal(out$params7$p_sb_high, 0.11207112)
+  expect_equal(out$params6$c2, 0.0012709)
+
+  expect_message(getParameters(table6AGB, table7AGB, 101, 99999, "BC"))
+  expect_message(getParameters(table6AGB, table7AGB, 101, 4, "notaprovince"))
+  expect_error(getParameters(table6AGB, table7AGB, 1, 4, "BC"))
 })
