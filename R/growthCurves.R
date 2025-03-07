@@ -169,7 +169,7 @@ biomProp <- function(table6, table7, x, type = "volume") {
   # DC 2025-03-07: ONLY FOR VOLUME. MUTED FOR BIOMASS BECAUSE IT HAPPENS ALL THE
   # TIME WHEN CREATING YIELD TABLES FROM LANDR
   if (length(is.na(unique(caps[1]))) > 0 & type == "volume") {
-    testVec <- min(vol) < unique(caps[1])
+    testVec <- min(x) < unique(caps[1])
     if (any(testVec)) {
       message("Some volumes in the growth information provided are smaller than ",
               "the minimum volume the proportions model was developed with.")
@@ -177,7 +177,7 @@ biomProp <- function(table6, table7, x, type = "volume") {
   }
 
   if (length(is.na(unique(caps[2]))) > 0 & type == "volume") {
-    testVec <- max(vol) > unique(caps[2])
+    testVec <- max(x) > unique(caps[2])
     if (any(testVec)) {
       message("Some volumes in the growth information provided are larger than ",
               "the maximum volume the proportions model was developed with.")
