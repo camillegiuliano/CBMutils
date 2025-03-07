@@ -4,16 +4,24 @@
 \alias{biomProp}
 \title{Proportions of total tree biomass in stemwood, bark, branches, and foliage}
 \usage{
-biomProp(table6, table7, vol)
+biomProp(table6, table7, x, type = "volume")
 }
 \arguments{
 \item{table6}{\code{data.frame} corresponding to Table 6 from Boudewyn et al. (2007),
-available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv}.}
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv}.
+The alternative table 6 for equations using total biomass as independent variable
+is available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv}.}
 
 \item{table7}{\code{data.frame} corresponding to Table 7 from Boudewyn et al. (2007),
-available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv}.}
+available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv}.
+The alternative table 7 for equations using total biomass as independent variable
+is available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv}.}
 
-\item{vol}{gross merchantable volume per hectare (\eqn{m^3/ha})}
+\item{x}{\code{vector} gross merchantable volume per hectare (\eqn{m^3/ha}) or
+total biomass (\eqn{tonnes/ha})}
+
+\item{type}{\code{character} specifies if the \code{x} represents gross merchantable
+volume per hectare ("volume") or total biomass ("biomass").}
 }
 \value{
 four-column matrix will columns corresponding to \eqn{p_{stemwood}}, \eqn{p_{bark}},
