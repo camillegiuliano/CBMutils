@@ -328,17 +328,16 @@ spuDist <- function(EXN = TRUE, spuIDs = NULL,
 #'
 #' Identifies the stand-replacing wildfire disturbance in each spatial unit.
 #'
+#' In all spatial units in Canada, the historical disturbance is set to fire.
 #' Historical disturbances in CBM-CFS3 are used for "filling-up" the soil-related carbon pools.
 #' Boudewyn et al. (2007) translate the m3/ha curves into biomass per ha in each of four pools:
 #' total biomass for stem wood, total biomass for bark, total biomass for branches and total
 #' biomass for foliage.
 #' Biomass in coarse and fine roots, in aboveground- and belowground- very-fast, -fast, -slow,
 #' in medium-soil, and in snags still needs to be estimated.
-#' In all spatial units in Canada, the historical disturbance is set to fire.
 #' A stand-replacing fire disturbance is used in a disturb-grow cycle, where stands are disturbed
 #' and regrown with turnover, overmature, decay, functioning until the dead organic matter pools
-#' biomass values stabilize (+/- 10%).
-#' ## TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).
+#' biomass values stabilize (+/- 10%) (TODO: check this).
 #'
 #' @param spuIDs Spatial unit ID(s)
 #' @param localeID CBM-CFS3 locale_id
@@ -412,10 +411,15 @@ seeDist <- function(EXN = TRUE, matrixIDs = NULL,
 
     cbmDBM <- {
       tableNames <- c("disturbance_matrix_value", "pool")
-      lapply(setNames(tableNames, tableNames), function(nm){
+      names(tableNames) <- tableNames
+      lapply(tableNames, function(nm){
         as.data.table(dbReadTable(cbmDBcon, nm))
       })
     }
+
+    # CRAN requirement: predefine variables
+    source_pool_id <- source_pool <- sink_pool_id <- sink_pool <- proportion <- code <- NULL
+
     cbmDBM[["pool_source"]] <- copy(cbmDBM[["pool"]])[, source_pool := code]
     cbmDBM[["pool_sink"]]   <- copy(cbmDBM[["pool"]])[, sink_pool   := code]
     disturbance_matrix_value <- cbmDBM[["disturbance_matrix_value"]] |>

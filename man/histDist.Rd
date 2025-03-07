@@ -21,16 +21,14 @@ If FALSE, the function will look for exact name matches.}
 Identifies the stand-replacing wildfire disturbance in each spatial unit.
 }
 \details{
+In all spatial units in Canada, the historical disturbance is set to fire.
 Historical disturbances in CBM-CFS3 are used for "filling-up" the soil-related carbon pools.
 Boudewyn et al. (2007) translate the m3/ha curves into biomass per ha in each of four pools:
 total biomass for stem wood, total biomass for bark, total biomass for branches and total
 biomass for foliage.
 Biomass in coarse and fine roots, in aboveground- and belowground- very-fast, -fast, -slow,
 in medium-soil, and in snags still needs to be estimated.
-In all spatial units in Canada, the historical disturbance is set to fire.
 A stand-replacing fire disturbance is used in a disturb-grow cycle, where stands are disturbed
 and regrown with turnover, overmature, decay, functioning until the dead organic matter pools
-biomass values stabilize (+/- 10\%).
-\subsection{TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).}{
-}
+biomass values stabilize (+/- 10\%) (TODO: check this).
 }
