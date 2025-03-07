@@ -280,11 +280,11 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   # trees (b_n) and b_nm which is the sum of the total stem wood biomass of merch size
   # live plus, the stem wood live of non merch-sized trees, given the total
   # stem wood biomass per ha of live merch size trees (in tonnes/ha)
-  eq2 <- nmfac(params4, eq1 = eq1, vol = oneCurve$MerchVolume)
+  eq2 <- nmfac(params4, eq1 = eq1, x = oneCurve$MerchVolume)
   # eq3 is for biomass of the saplings, the smallest of the non-merch trees. The
   # non-merch biomass from eq2, is needed. eq3 returns b_s, stem wood biomass of
   # live sapling-sized trees in tonnes/ha
-  eq3 <- sapfac(params5, eq2 = eq2, vol = oneCurve$MerchVolume)
+  eq3 <- sapfac(params5, eq2 = eq2, x = oneCurve$MerchVolume)
   #eq3[which(is.na(eq3))] <- 0
   # middle box flowchart3: total stem wood biomass (tonnes) /ha for all live trees
 
@@ -292,7 +292,7 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   totalStemWood[which(is.nan(totalStemWood))] <- NA
   # calculate the 4 proportions that should be returned: proportion for
   # stemwood, prop for bark, prop for branches, and prop for foliage.
-  pVect <- biomProp(table6 = params6, table7 = params7, vol = oneCurve$MerchVolume)
+  pVect <- biomProp(table6 = params6, table7 = params7, x = oneCurve$MerchVolume)
   # translating this into biomass values for the carbon pools
   totMerch <- eq1
   totTree <- totalStemWood / pVect[, 1]
