@@ -10,12 +10,11 @@
 #' If TRUE, prompt the user to choose the correct disturbance matches.
 #' If FALSE, the function will look for exact name matches.
 #' @param nearMatches logical. Allow for near matches; e.g. "clearcut" can match "clear-cut".
-#' @param dbPath Path to CBM-CFS3 SQLite database file
-#' @param localeID CBM-CFS3 locale_id
+#' @param ... arguments to \code{\link{spuDist}}
+#' for listing the possible disturbances in the spatial units.
 #' @param listDist data.table. Optional. Result of a call to \code{\link{spuDist}}.
 #' A list of possible disturbances in the spatial unit(s) with columns
 #' 'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
-#' If provided, the \code{dbPath} and \code{localeID} arguments are not required.
 #'
 #' @return \code{data.table} with columns 'spatial_unit_id'
 #' 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'
@@ -25,7 +24,7 @@
 #' @importFrom knitr kable
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
 spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
-                         dbPath = NULL, localeID = 1, listDist = NULL){
+                         listDist = NULL, ...){
 
   # Check input
   if (!inherits(distTable, "data.table")){
@@ -46,7 +45,7 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
   # List possible spatial disturbances for the spatial units
   if (is.null(listDist)){
 
-    listDist <- spuDist(spuIDs = distTable$spatial_unit_id, dbPath = dbPath, localeID = localeID)
+    listDist <- spuDist(spuIDs = distTable$spatial_unit_id, ...)
 
   }else{
     reqCols <- c("spatial_unit_id", "disturbance_type_id", "name", "description")
@@ -250,12 +249,15 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
 #'
 #' Identify the disturbances possible in spatial units.
 #'
-#' @param dbPath Path to CBM-CFS3 SQLite database file
+#' @param EXN logical. Use CBM-EXN CBM-CFS3 equivalent model data.
 #' @param spuIDs Optional. Subset by spatial unit ID(s)
-#' @param localeID CBM-CFS3 locale_id
+#' @param dbPath Path to CBM-CFS3 SQLite database file.
+#' Required if EXN = TRUE or EXN = FALSE.
 #' @param disturbance_matrix_association data.frame. Optional.
 #' Alternative disturbance_matrix_association table with columns
 #' "spatial_unit_id", "disturbance_type_id", and "disturbance_matrix_id".
+#' Required if EXN = TRUE.
+#' @param localeID CBM-CFS3 locale_id
 #'
 #' @return \code{data.table} with 'disturbance_type_tr' columns
 #' "spatial_unit_id", "disturbance_type_id", "name", "description"
@@ -263,12 +265,31 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
 #' "spatial_unit_id" and "disturbance_matrix_id"
 #'
 #' @export
-#' @importFrom data.table data.table
+#' @importFrom data.table as.data.table
 #' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
-spuDist <- function(dbPath, spuIDs = NULL, localeID = 1,
-                    disturbance_matrix_association = NULL) {
+spuDist <- function(EXN = TRUE, spuIDs = NULL,
+                    dbPath = NULL, disturbance_matrix_association = NULL,
+                    localeID = 1){
 
-  if (length(dbPath) != 1) stop("length(dbPath) must be == 1")
+  if (is.null(dbPath)) stop("'dbPath' input required")
+  if (length(dbPath) != 1) stop("length(dbPath) must == 1")
+
+  if (EXN){
+
+    if (is.null(disturbance_matrix_association)) stop(
+      "'disturbance_matrix_association' input required if EXN = TRUE")
+
+   disturbance_matrix_association <- tryCatch(
+      as.data.table(disturbance_matrix_association),
+      error = function(e) stop(
+        "disturbance_matrix_association failed to convert to data.table: ",
+        e$message, call. = FALSE))
+
+    reqCols <- c("spatial_unit_id", "disturbance_type_id", "disturbance_matrix_id")
+    if (!all(reqCols %in% names(disturbance_matrix_association))) stop(
+      "'disturbance_matrix_association' must have the following columns: ",
+      paste(shQuote(reqCols), collapse = ", "))
+  }
 
   # Connect to database
   cbmDBcon <- dbConnect(dbDriver("SQLite"), dbname = dbPath)
@@ -277,17 +298,14 @@ spuDist <- function(dbPath, spuIDs = NULL, localeID = 1,
   # Read database tables
   ## Read more about the 6 tables related to disturbance matrices here:
   ## https://docs.google.com/spreadsheets/d/1TFBQiRH4z54l8ROX1N02OOiCHXMe20GSaExiuUqsC0Q
-  cbmTableNames <- c(
-    "disturbance_type_tr",
-    if (is.null(disturbance_matrix_association)) "disturbance_matrix_association")
+  cbmTableNames <- c("disturbance_type_tr", if (!EXN) "disturbance_matrix_association")
 
   cbmDB <- list()
   for (cbmTableName in cbmTableNames) {
-    cbmDB[[cbmTableName]] <- dbReadTable(cbmDBcon, cbmTableName) |> data.table()
+    cbmDB[[cbmTableName]] <- dbReadTable(cbmDBcon, cbmTableName) |> as.data.table()
   }
-
-  if (!is.null(disturbance_matrix_association)){
-    cbmDB[["disturbance_matrix_association"]] <- data.table(disturbance_matrix_association)
+  if (EXN){
+    cbmDB[["disturbance_matrix_association"]] <- disturbance_matrix_association
   }
 
   # Merge and return
@@ -321,21 +339,16 @@ spuDist <- function(dbPath, spuIDs = NULL, localeID = 1,
 #' and regrown with turnover, overmature, decay, functioning until the dead organic matter pools
 #' biomass values stabilize (+/- 10%).
 #' ## TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).
-#' By default the most recent is selected, but the user can change that.
 #'
 #' @param spuIDs Spatial unit ID(s)
-#' @param dbPath Path to CBM-CFS3 SQLite database file
 #' @param localeID CBM-CFS3 locale_id
-#' @param listDist data.table. Optional. Result of a call to \code{\link{spuDist}}.
-#' A list of possible disturbances in the spatial unit(s) with columns
-#' 'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
-#' If provided, the \code{dbPath} and \code{localeID} arguments are not required.
 #' @param ask logical.
 #' If TRUE, prompt the user to choose the correct disturbance matches.
 #' If FALSE, the function will look for exact name matches.
+#' @param ... arguments to \code{\link{spuDistMatch}}
 #'
 #' @export
-histDist <- function(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL, ask = FALSE) {
+histDist <- function(spuIDs, localeID = 1, ask = FALSE, ...) {
 
   if (length(spuIDs) < 1) stop("length(spuIDs) must be >= 1")
 
@@ -348,61 +361,73 @@ histDist <- function(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL, ask =
   # Return matching records
   spuDistMatch(
     data.frame(spatial_unit_id = spuIDs, name = histDistName[[as.character(localeID)]]),
-    dbPath = dbPath, localeID = localeID, listDist = NULL,
-    ask = ask
-  )
+    localeID = localeID, ask = FALSE, ...)
 }
 
 
 #' See disturbances
 #'
-#' Get the descriptive name of the disturbance, the source pools, the sink pools, and
-#' the proportions transferred.
+#' Retrieve disturbance source pools, sink pools, and the proportions transferred.
 #'
-#' @param distId Description needed
-#' @param dbPath Path to sqlite database file.
+#' @param EXN logical. Use CBM-EXN CBM-CFS3 equivalent model data.
+#' @param matrixIDs character. Optional. Subset disturbances by disturbance_matrix_id
+#' @param dbPath Path to CBM-CFS3 SQLite database file.
+#' Required if EXN = FALSE
+#' @param disturbance_matrix_value disturbance_matrix_value table from CBM-EXN
+#' Required if EXN = TRUE
 #'
-#' @return A list of `data.frame`s, one per disturbance matrix id.
+#' @return List of `data.frame` named by disturbance_matrix_id
 #'
 #' @export
-#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbListTables dbReadTable
-seeDist <- function(distId, dbPath) {
+#' @importFrom data.table as.data.table
+#' @importFrom RSQLite dbConnect dbDisconnect dbDriver dbReadTable
+seeDist <- function(EXN = TRUE, matrixIDs = NULL,
+                    dbPath = NULL, disturbance_matrix_value = NULL){
 
-  # connect to database
-  sqlite.driver <- dbDriver("SQLite")
-  cbmDefaults <- dbConnect(sqlite.driver, dbname = dbPath)
-  on.exit(dbDisconnect(cbmDefaults))
+  if (EXN){
 
-  alltables <- dbListTables(cbmDefaults)
-  cbmTables <- list()
+    if (is.null(disturbance_matrix_value)) stop(
+      "'disturbance_matrix_value' input required if EXN = TRUE")
 
-  for (i in 1:length(alltables)) {
-    cbmTables[[i]] <- dbReadTable(cbmDefaults, alltables[i])
+    disturbance_matrix_value <- tryCatch(
+      as.data.table(disturbance_matrix_value),
+      error = function(e) stop(
+        "disturbance_matrix_value failed to convert to data.table: ",
+        e$message, call. = FALSE))
+
+    reqCols <- c("disturbance_matrix_id", "source_pool", "sink_pool", "proportion")
+    if (!all(reqCols %in% names(disturbance_matrix_value))) stop(
+      "'disturbance_matrix_value' must have the following columns: ",
+      paste(shQuote(reqCols), collapse = ", "))
+
+  }else{
+
+    if (is.null(dbPath)) stop(
+      "'dbPath' input required if EXN = FALSE")
+    if (length(dbPath) != 1) stop("length(dbPath) must == 1")
+
+    # Connect to database
+    cbmDBcon <- dbConnect(dbDriver("SQLite"), dbname = dbPath)
+    on.exit(dbDisconnect(cbmDBcon))
+
+    cbmDBM <- {
+      tableNames <- c("disturbance_matrix_value", "pool")
+      lapply(setNames(tableNames, tableNames), function(nm){
+        as.data.table(dbReadTable(cbmDBcon, nm))
+      })
+    }
+    cbmDBM[["pool_source"]] <- copy(cbmDBM[["pool"]])[, source_pool := code]
+    cbmDBM[["pool_sink"]]   <- copy(cbmDBM[["pool"]])[, sink_pool   := code]
+    disturbance_matrix_value <- cbmDBM[["disturbance_matrix_value"]] |>
+      merge(cbmDBM[["pool_source"]][, .(id, source_pool)], by.x = "source_pool_id", by.y = "id") |>
+      merge(cbmDBM[["pool_sink"  ]][, .(id, sink_pool  )], by.x = "sink_pool_id",   by.y = "id")
+    disturbance_matrix_value <- disturbance_matrix_value[
+      , .(disturbance_matrix_id, source_pool_id, source_pool, sink_pool_id, sink_pool, proportion)]
   }
 
-  # one copy of each distId
-  matNum <- unique(distId)
-  lookDists <- vector("list", length = length(matNum))
-  c1 <- .poolnames
-  c2 <- c(1L:24, 26L)
-  poolNames <- as.data.table(cbind(c1,c2))
-
-  # for each matNum, create a data.frame that explains the pool transfers
-  for (i in 1:length(matNum)) {
-    # get the lines specific to the distMatrix in question
-    matD <- as.data.frame(cbmTables[[8]][which(cbmTables[[8]][, 1] == matNum[i]), ])
-    names(poolNames) <- c("sinkName", "sink_pool_id")
-    sinkNames <- merge.data.frame(poolNames, matD)
-
-    names(poolNames) <- c("sourceName", "source_pool_id")
-    sourceNames <- merge.data.frame(poolNames, sinkNames)
-    lookDists[[i]] <- sourceNames[, c(5, 1:4, 6)]
-  }
-  # each data.frame gets a descriptive name
-  names(lookDists) <- cbmTables[[6]][matNum, 3]
-  # description
-  # "Salvage uprooting and burn for Boreal Plains"
-  return(lookDists)
+  distTables <- split(disturbance_matrix_value, disturbance_matrix_value$disturbance_matrix_id)
+  if (!is.null(matrixIDs)) distTables <- distTables[as.character(matrixIDs)]
+  return(distTables)
 }
 
 #' get the descriptive name and proportions transferred for disturbances in a simulation

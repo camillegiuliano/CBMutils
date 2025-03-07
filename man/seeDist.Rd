@@ -4,17 +4,27 @@
 \alias{seeDist}
 \title{See disturbances}
 \usage{
-seeDist(distId, dbPath)
+seeDist(
+  EXN = TRUE,
+  matrixIDs = NULL,
+  dbPath = NULL,
+  disturbance_matrix_value = NULL
+)
 }
 \arguments{
-\item{distId}{Description needed}
+\item{EXN}{logical. Use CBM-EXN CBM-CFS3 equivalent model data.}
 
-\item{dbPath}{Path to sqlite database file.}
+\item{matrixIDs}{character. Optional. Subset disturbances by disturbance_matrix_id}
+
+\item{dbPath}{Path to CBM-CFS3 SQLite database file.
+Required if EXN = FALSE}
+
+\item{disturbance_matrix_value}{disturbance_matrix_value table from CBM-EXN
+Required if EXN = TRUE}
 }
 \value{
-A list of \code{data.frame}s, one per disturbance matrix id.
+List of \code{data.frame} named by disturbance_matrix_id
 }
 \description{
-Get the descriptive name of the disturbance, the source pools, the sink pools, and
-the proportions transferred.
+Retrieve disturbance source pools, sink pools, and the proportions transferred.
 }
