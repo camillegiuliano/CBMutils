@@ -210,7 +210,7 @@ biomProp <- function(table6, table7, x, type = "volume") {
 
   propVect <- cbind(pstem = pstem, pbark = pbark, pbranches = pbranches, pfol = pfol)
 
-  if(any(rowSums(propVect) - 1 > 0.01)) {
+  if(any(abs(rowSums(propVect) - 1) > 0.001)) {
     stop("The sums of biomass proportions do not sum to 1...")
   }
 
