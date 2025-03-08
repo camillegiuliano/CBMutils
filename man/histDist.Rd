@@ -4,40 +4,31 @@
 \alias{histDist}
 \title{CBM-CFS3 Historical Disturbances}
 \usage{
-histDist(spuIDs, dbPath = NULL, localeID = 1, listDist = NULL, ask = FALSE)
+histDist(spuIDs, localeID = 1, ask = FALSE, ...)
 }
 \arguments{
 \item{spuIDs}{Spatial unit ID(s)}
 
-\item{dbPath}{Path to CBM-CFS3 SQLite database file}
-
 \item{localeID}{CBM-CFS3 locale_id}
-
-\item{listDist}{data.table. Optional. Result of a call to \code{\link{spuDist}}.
-A list of possible disturbances in the spatial unit(s) with columns
-'spatial_unit_id', 'disturbance_type_id', 'disturbance_matrix_id', 'name', 'description'.
-If provided, the \code{dbPath} and \code{localeID} arguments are not required.}
 
 \item{ask}{logical.
 If TRUE, prompt the user to choose the correct disturbance matches.
 If FALSE, the function will look for exact name matches.}
+
+\item{...}{arguments to \code{\link{spuDistMatch}}}
 }
 \description{
 Identifies the stand-replacing wildfire disturbance in each spatial unit.
 }
 \details{
+In all spatial units in Canada, the historical disturbance is set to fire.
 Historical disturbances in CBM-CFS3 are used for "filling-up" the soil-related carbon pools.
 Boudewyn et al. (2007) translate the m3/ha curves into biomass per ha in each of four pools:
 total biomass for stem wood, total biomass for bark, total biomass for branches and total
 biomass for foliage.
 Biomass in coarse and fine roots, in aboveground- and belowground- very-fast, -fast, -slow,
 in medium-soil, and in snags still needs to be estimated.
-In all spatial units in Canada, the historical disturbance is set to fire.
 A stand-replacing fire disturbance is used in a disturb-grow cycle, where stands are disturbed
 and regrown with turnover, overmature, decay, functioning until the dead organic matter pools
-biomass values stabilize (+/- 10\%).
-\subsection{TODO: (I think but that is in the Rcpp-RCMBGrowthIncrements.cpp so can't check).}{
-
-By default the most recent is selected, but the user can change that.
-}
+biomass values stabilize (+/- 10\%) (TODO: check this).
 }
