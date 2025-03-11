@@ -26,6 +26,7 @@ Imports:
     ggforce,
     ggplot2,
     knitr,
+    LandR,
     magrittr,
     methods,
     quickPlot (>= 0.1.8.9001),
@@ -45,6 +46,7 @@ Suggests:
     testthat,
     withr
 Remotes:
+    PredictiveEcology/LandR@development,
     PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development
 VignetteBuilder: knitr, rmarkdown

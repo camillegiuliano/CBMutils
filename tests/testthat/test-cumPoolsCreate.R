@@ -1,18 +1,18 @@
 table6vol <- reproducible::prepInputs(url = "https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv",
                                       fun = "data.table::fread",
-                                      destinationPath = "inputs",
+                                      destinationPath = testDirs$temp$inputs,
                                       filename2 = "appendix2_table6.csv")
 table7vol <- reproducible::prepInputs(url = "https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv",
                                       fun = "data.table::fread",
-                                      destinationPath = "inputs",
+                                      destinationPath = testDirs$temp$inputs,
                                       filename2 = "appendix2_table7.csv")
 table6AGB <- reproducible::prepInputs(url = "https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv",
                                    fun = "data.table::fread",
-                                   destinationPath = "inputs",
+                                   destinationPath = testDirs$temp$inputs,
                                    filename2 = "appendix2_table6_tb.csv")
 table7AGB <- reproducible::prepInputs(url = "https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv",
                                    fun = "data.table::fread",
-                                   destinationPath = "inputs",
+                                   destinationPath = testDirs$temp$inputs,
                                    filename2 = "appendix2_table7_tb.csv")
 
 test_that("testing biomProp function", {
@@ -107,7 +107,7 @@ test_that("testing cumPoolsCreateAGB function", {
   dt$B <- round(runif(nrow(dt), 1, 100))
   dt$speciesCode[dt$canfi_species == 204] <- "PINU_CON"
   dt$speciesCode[dt$canfi_species == 1201] <- "POPU_TRE"
-  setorder(dt, speciesCode, age, poolsPixelGroup)
+  data.table::setorder(dt, speciesCode, age, poolsPixelGroup)
 
   out2 <- cumPoolsCreateAGB(dt, table6 = table6AGB, table7 = table7AGB)
 

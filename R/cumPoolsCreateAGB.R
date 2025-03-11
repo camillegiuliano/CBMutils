@@ -1,3 +1,7 @@
+utils::globalVariables(c(
+  "juris_id", "curve_id", ".I", "speciesCode", "canfi_spec", "CanfiCode", "LandR"
+))
+
 #' Convert total above ground biomass into 3 pools (\eqn{T/ha})
 #'
 #' Implements the flowchart from figure 3 of Boudewyn et al. (2007) using an alternative
