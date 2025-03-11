@@ -7,7 +7,8 @@ utils::globalVariables(c(
   "FineRoots", "Foliage", "HardwoodBranchSnag", "HardwoodStemSnag",
   "locale_id", "MediumSoil", "Merch", "Other",
   "pixelCount", "pixNPP", "pixTC", "pool", "products", "Products",
-  "res", "snags", "SoftwoodBranchSnag", "SoftwoodStemSnag", "soil", "StemSnag", "weight"
+  "res", "snags", "SoftwoodBranchSnag", "SoftwoodStemSnag", "soil", "StemSnag", "weight",
+  "x", "y", "ldSp_TestArea"
 ))
 
 #' `m3ToBiomIncOnlyPlots`
@@ -44,7 +45,8 @@ m3ToBiomIncOnlyPlots <- function(inc) {
 #'
 #' @export
 #' @importFrom data.table as.data.table
-#' @importFrom quickPlot Plot
+#' @importFrom ggforce theme_no_axes
+#' @importFrom ggplot2 aes geom_raster ggplot ggtitle scale_fill_continuous
 #' @importFrom terra rast res unwrap values
 spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
 
@@ -76,11 +78,11 @@ spatialPlot <- function(cbmPools, years, masterRaster, spatialDT) {
 #' @return invoked for side effect of creating plot
 #'
 #' @export
+#' @importFrom cowplot plot_grid
 #' @importFrom data.table as.data.table melt.data.table
 #' @importFrom ggplot2 aes element_text geom_col geom_line ggplot labs
 #' @importFrom ggplot2 scale_fill_discrete scale_x_continuous scale_y_continuous
 #' sec_axis theme theme_classic xlab
-#' @importFrom quickPlot Plot
 #' @importFrom scales pretty_breaks
 carbonOutPlot <- function(emissionsProducts) {
   totalOutByYr <- as.data.table(emissionsProducts)
@@ -118,7 +120,8 @@ carbonOutPlot <- function(emissionsProducts) {
 #'
 #' @export
 #' @importFrom data.table copy setkey
-#' @importFrom quickPlot Plot
+#' @importFrom ggforce theme_no_axes
+#' @importFrom ggplot2 ggplot geom_raster aes scale_fill_continuous ggtitle
 #' @importFrom terra rast res unwrap values
 NPPplot <- function(spatialDT, NPP, masterRaster) {
   masterRaster <- terra::unwrap(masterRaster)
@@ -152,9 +155,8 @@ NPPplot <- function(spatialDT, NPP, masterRaster) {
 #'
 #' @export
 #' @importFrom data.table as.data.table melt.data.table
-#' @importFrom ggplot2 aes expansion geom_col ggplot guides guide_legend labs
+#' @importFrom ggplot2 aes expansion geom_col ggplot ggtitle guides guide_legend labs
 #' scale_fill_brewer scale_fill_discrete scale_y_continuous theme_classic
-#' @importFrom quickPlot Plot
 barPlot <- function(cbmPools) {
   cbmPools <- as.data.table(cbmPools)
   cbmPools$pixelGroup <- as.character(cbmPools$pixelGroup)
