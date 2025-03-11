@@ -5,22 +5,27 @@
 \title{CBM-CFS3 Spatial Unit Disturbances}
 \usage{
 spuDist(
-  dbPath,
+  EXN = TRUE,
   spuIDs = NULL,
-  localeID = 1,
-  disturbance_matrix_association = NULL
+  dbPath = NULL,
+  disturbance_matrix_association = NULL,
+  localeID = 1
 )
 }
 \arguments{
-\item{dbPath}{Path to CBM-CFS3 SQLite database file}
+\item{EXN}{logical. Use CBM-EXN CBM-CFS3 equivalent model data.}
 
 \item{spuIDs}{Optional. Subset by spatial unit ID(s)}
 
-\item{localeID}{CBM-CFS3 locale_id}
+\item{dbPath}{Path to CBM-CFS3 SQLite database file.
+Required if EXN = TRUE or EXN = FALSE.}
 
 \item{disturbance_matrix_association}{data.frame. Optional.
 Alternative disturbance_matrix_association table with columns
-"spatial_unit_id", "disturbance_type_id", and "disturbance_matrix_id".}
+"spatial_unit_id", "disturbance_type_id", and "disturbance_matrix_id".
+Required if EXN = TRUE.}
+
+\item{localeID}{CBM-CFS3 locale_id}
 }
 \value{
 \code{data.table} with 'disturbance_type_tr' columns
