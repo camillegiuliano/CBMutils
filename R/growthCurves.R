@@ -131,62 +131,88 @@ sapfac <- function(table5, eq2, vol){
 #'
 #' @param table6 `data.frame` corresponding to Table 6 from Boudewyn et al. (2007),
 #' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6.csv>.
+#' The alternative table 6 for equations using total biomass as independent variable
+#' is available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table6_tb.csv>.
 #'
 #' @param table7 `data.frame` corresponding to Table 7 from Boudewyn et al. (2007),
 #' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7.csv>.
+#' The alternative table 7 for equations using total biomass as independent variable
+#' is available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
 #'
-#' @param vol gross merchantable volume per hectare (\eqn{m^3/ha})
+#' @param x `vector` gross merchantable volume per hectare (\eqn{m^3/ha}) or
+#' total biomass (\eqn{tonnes/ha})
+#'
+#' @param type `character` specifies if the `x` represents gross merchantable
+#' volume per hectare ("volume") or total biomass ("biomass").
 #'
 #' @return four-column matrix will columns corresponding to \eqn{p_{stemwood}}, \eqn{p_{bark}},
 #' \eqn{p_{branches}}, and \eqn{p_{foliage}}
 #'
 #' @export
-biomProp <- function(table6, table7, vol) {
+biomProp <- function(table6, table7, x, type = "volume") {
+  if (type == "volume"){
+    if(any(!(c("vol_min", "vol_max") %in% colnames(table7)))) {
+      stop("The parameter tables do not have the correct columns for ", type, " inputs.")
+    }
+    caps <- as.numeric(table7[,c("vol_min", "vol_max")])
+  } else if (type == "biomass") {
+    if(any(!(c("biom_min", "biom_max") %in% colnames(table7)))) {
+      stop("The parameter tables do not have the correct columns for ", type, " inputs.")
+    }
+    caps <- as.numeric(table7[,c("biom_min", "biom_max")])
+  } else {
+    stop("The argument type in biomProp() needs to be `volume` or `biomass`")
+  }
+
   # flag if vol in below vol_min or above vol_max (when not NA)
   # the model was developed on
-  if (length(is.na(unique(table7$vol_min))) > 0) {
-    testVec <- min(vol) < unique(table7$vol_min)
+  # DC 2025-03-07: ONLY FOR VOLUME. MUTED FOR BIOMASS BECAUSE IT HAPPENS ALL THE
+  # TIME WHEN CREATING YIELD TABLES FROM LANDR
+  if (length(is.na(unique(caps[1]))) > 0 & type == "volume") {
+    testVec <- min(x) < unique(caps[1])
     if (any(testVec)) {
-      message("Some volumes in the growth information provided are smaller than the minumum volume ",
-              "the proportions model was developed with.")
+      message("Some volumes in the growth information provided are smaller than ",
+              "the minimum volume the proportions model was developed with.")
     }
   }
 
-  if (length(is.na(unique(table7$vol_max))) > 0) {
-    testVec <- max(vol) > unique(table7$vol_max)
+  if (length(is.na(unique(caps[2]))) > 0 & type == "volume") {
+    testVec <- max(x) > unique(caps[2])
     if (any(testVec)) {
-      message("Some volumes in the growth information provided are larger than the maximumum ",
-              "volume the proportions model was developed with.")
+      message("Some volumes in the growth information provided are larger than ",
+              "the maximum volume the proportions model was developed with.")
     }
   }
 
-  lvol <- log(vol + 5)
+
+  lvol <- log(x + 5)
 
   ## denominator is the same for all 4 equations
-  denom <- (1 + exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) +
-              exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) +
-              exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol))
-
+  denom <- (1 + exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) +
+              exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) +
+              exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol))
   ## for each proportion, enforce caps per table 7
   pstem <- 1 / denom
-  pstem[which(vol < table7$vol_min)] <- table7$p_sw_low
-  pstem[which(vol > table7$vol_max)] <- table7$p_sw_high
+  pstem[which(x < caps[1])] <- table7$p_sw_low
+  pstem[which(x > caps[2])] <- table7$p_sw_high
 
-  pbark <- exp(table6[, a1] + table6[, a2] * vol + table6[, a3] * lvol) / denom
-  pbark[which(vol < table7$vol_min)] <- table7$p_sb_low
-  pbark[which(vol > table7$vol_max)] <- table7$p_sb_high
+  pbark <- exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) / denom
+  pbark[which(x < caps[1])] <- table7$p_sb_low
+  pbark[which(x > caps[2])] <- table7$p_sb_high
 
-  pbranches <- exp(table6[, b1] + table6[, b2] * vol + table6[, b3] * lvol) / denom
-  pbranches[which(vol < table7$vol_min)] <- table7$p_br_low
-  pbranches[which(vol > table7$vol_max)] <- table7$p_br_high
+  pbranches <- exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) / denom
+  pbranches[which(x < caps[1])] <- table7$p_br_low
+  pbranches[which(x > caps[2])] <- table7$p_br_high
 
-  pfol <- exp(table6[, c1] + table6[, c2] * vol + table6[, c3] * lvol) / denom
-  pfol[which(vol < table7$vol_min)] <- table7$p_fl_low
-  pfol[which(vol > table7$vol_max)] <- table7$p_fl_high
+  pfol <- exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol) / denom
+  pfol[which(x < caps[1])] <- table7$p_fl_low
+  pfol[which(x > caps[2])] <- table7$p_fl_high
 
   propVect <- cbind(pstem = pstem, pbark = pbark, pbranches = pbranches, pfol = pfol)
 
-  ## TODO: sanity check that propVect sums to 1
+  if(any(abs(rowSums(propVect) - 1) > 0.001)) {
+    stop("The sums of biomass proportions do not sum to 1...")
+  }
 
   return(propVect)
 }
@@ -266,7 +292,7 @@ convertM3biom <- function(meta, gCvalues, spsMatch, ecozones, params3, params4, 
   totalStemWood[which(is.nan(totalStemWood))] <- NA
   # calculate the 4 proportions that should be returned: proportion for
   # stemwood, prop for bark, prop for branches, and prop for foliage.
-  pVect <- biomProp(table6 = params6, table7 = params7, vol = oneCurve$MerchVolume)
+  pVect <- biomProp(table6 = params6, table7 = params7, x = oneCurve$MerchVolume)
   # translating this into biomass values for the carbon pools
   totMerch <- eq1
   totTree <- totalStemWood / pVect[, 1]
