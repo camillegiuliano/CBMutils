@@ -187,26 +187,26 @@ biomProp <- function(table6, table7, x, type = "volume") {
 
   lvol <- log(x + 5)
 
-  ## denominator is the same for all 4 equations
-  denom <- (1 + exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) +
-              exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) +
-              exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol))
+ ## denominator is the same for all 4 equations
+  denom <- (1 + exp(table6[1, a1] + table6[1, a2] * x + table6[1, a3] * lvol) +
+              exp(table6[1, b1] + table6[1, b2] * x + table6[1, b3] * lvol) +
+              exp(table6[1, c1] + table6[1, c2] * x + table6[1, c3] * lvol))
   ## for each proportion, enforce caps per table 7
   pstem <- 1 / denom
-  pstem[which(x < caps[1])] <- table7$p_sw_low
-  pstem[which(x > caps[2])] <- table7$p_sw_high
+  pstem[which(x < caps[1])] <- table7[1, p_sw_low]
+  pstem[which(x > caps[2])] <- table7[1, p_sw_high]
 
-  pbark <- exp(table6[, a1] + table6[, a2] * x + table6[, a3] * lvol) / denom
-  pbark[which(x < caps[1])] <- table7$p_sb_low
-  pbark[which(x > caps[2])] <- table7$p_sb_high
+  pbark <- exp(table6[1, a1] + table6[1, a2] * x + table6[1, a3] * lvol) / denom
+  pbark[which(x < caps[1])] <- table7[1, p_sb_low]
+  pbark[which(x > caps[2])] <- table7[1, p_sb_high]
 
-  pbranches <- exp(table6[, b1] + table6[, b2] * x + table6[, b3] * lvol) / denom
-  pbranches[which(x < caps[1])] <- table7$p_br_low
-  pbranches[which(x > caps[2])] <- table7$p_br_high
+  pbranches <- exp(table6[1, b1] + table6[1, b2] * x + table6[1, b3] * lvol) / denom
+  pbranches[which(x < caps[1])] <- table7[1, p_br_low]
+  pbranches[which(x > caps[2])] <- table7[1, p_br_high]
 
-  pfol <- exp(table6[, c1] + table6[, c2] * x + table6[, c3] * lvol) / denom
-  pfol[which(x < caps[1])] <- table7$p_fl_low
-  pfol[which(x > caps[2])] <- table7$p_fl_high
+  pfol <- exp(table6[, c1] + table6[1, c2] * x + table6[1, c3] * lvol) / denom
+  pfol[which(x < caps[1])] <- table7[1, p_fl_low]
+  pfol[which(x > caps[2])] <- table7[1, p_fl_high]
 
   propVect <- cbind(pstem = pstem, pbark = pbark, pbranches = pbranches, pfol = pfol)
 
