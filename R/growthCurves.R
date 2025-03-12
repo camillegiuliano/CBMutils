@@ -154,12 +154,12 @@ biomProp <- function(table6, table7, x, type = "volume") {
     if(any(!(c("vol_min", "vol_max") %in% colnames(table7)))) {
       stop("The parameter tables do not have the correct columns for ", type, " inputs.")
     }
-    caps <- as.numeric(table7[,c("vol_min", "vol_max")])
+    caps <- as.numeric(table7[1 ,c("vol_min", "vol_max")])
   } else if (type == "biomass") {
     if(any(!(c("biom_min", "biom_max") %in% colnames(table7)))) {
       stop("The parameter tables do not have the correct columns for ", type, " inputs.")
     }
-    caps <- as.numeric(table7[,c("biom_min", "biom_max")])
+    caps <- as.numeric(table7[1 ,c("biom_min", "biom_max")])
   } else {
     stop("The argument type in biomProp() needs to be `volume` or `biomass`")
   }
