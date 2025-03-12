@@ -1,5 +1,5 @@
 utils::globalVariables(c(
-  ".", ":=", "age", "ages", "AGturnover", "BGturnover",
+  "age", "ages", "AGturnover", "BGturnover",
   "CoarseRootTurnProp", "FineRootTurnProp", "grossGrowthAG", "grossGrowthBG",
   "HardwoodBranchTurnoverRate", "HardwoodFoliageFallRate",
   "HardwoodCoarseRoots", "HardwoodFineRoots", "HardwoodFoliage", "HardwoodMerch", "HardwoodOther",

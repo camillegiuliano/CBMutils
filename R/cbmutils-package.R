@@ -11,3 +11,9 @@
 #' @importFrom Rcpp sourceCpp
 ## usethis namespace: end
 NULL
+
+# data.table package common variables
+utils::globalVariables(c(
+  ".", ":="
+))
+

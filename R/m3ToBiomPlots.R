@@ -1,5 +1,5 @@
 utils::globalVariables(c(
-  ":=", "..id_col", "valueNumeric"
+  "..id_col", "valueNumeric"
 ))
 
 #' Plot all columns that are not id_col

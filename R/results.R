@@ -1,5 +1,5 @@
 utils::globalVariables(c(
-  ":=", "..colsAG", "..colsBG", "absCarbon"
+  "..colsAG", "..colsBG", "absCarbon"
 ))
 
 #' Plot
