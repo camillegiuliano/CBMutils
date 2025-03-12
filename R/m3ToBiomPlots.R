@@ -17,7 +17,6 @@ utils::globalVariables(c(
 #' @importFrom data.table copy melt
 #' @importFrom ggforce facet_wrap_paginate
 #' @importFrom ggplot2 aes element_text facet_wrap geom_line ggplot ggsave labs theme_bw
-#' @importFrom magrittr %>%
 #' @importFrom reproducible checkPath
 #'
 m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol = 5,
@@ -39,7 +38,7 @@ m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol =
   set(gc, NULL, "valueNumeric", as.numeric(gc$value))
 
   idSim <- unique(gc[, ..id_col])[[1]]
-  plots <- gc %>% # [id_ecozone %in% idSim[1:20]] %>%
+  plots <- gc |> # [id_ecozone %in% idSim[1:20]] |>
     ggplot(aes(x = age, y = valueNumeric, group = variable, color = variable)) +
     theme_bw() +
     geom_line() +
