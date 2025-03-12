@@ -92,13 +92,14 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
       # Helper function: prompt user to choose a match
       .spuDistMatchSelect <- function(distMatches, chooseID = "disturbance_type_id"){
 
-        if (chooseID == "disturbance_type_id"){
-          printTable <- unique(distMatches[, .(disturbance_type_id, name, description)])
+        printCols <- if (chooseID == "disturbance_type_id"){
+          c("disturbance_type_id", "name", "description")
         }else{
-          printTable <- distMatches[, intersect(
+          intersect(
             c("disturbance_type_id", "sw_hw", "disturbance_matrix_id", "name", "description"),
-            names(distMatches)), with = FALSE]
+            names(printTable))
         }
+        printTable <- as.data.frame(distMatches)[, printCols, drop = FALSE]
 
         repeat{
 
@@ -112,7 +113,7 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
             }),
             "",
             "CBM-CFS3 disturbance(s) with a matching name or description:",
-            knitr::kable(printTable[, setdiff(names(printTable), "description"), with = FALSE], format = "pipe"),
+            knitr::kable(printTable[, setdiff(names(printTable), "description"), drop = FALSE], format = "pipe"),
             "",
             crayon::yellow(
               "Enter the correct", chooseID,
