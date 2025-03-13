@@ -12,8 +12,8 @@ of the Canadian Forest Service v3 (CBM-CFS3).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://CBMutils.predictiveecology.org/}
   \item \url{https://github.com/PredictiveEcology/CBMutils}
+  \item \url{https://docs.google.com/spreadsheets/d/1SNHvHpr7SVIMfaxOdKENYElwiME75GK-jl3vaVQb6-w}
 }
 
 }
@@ -29,6 +29,9 @@ Authors:
 Other contributors:
 \itemize{
   \item Ian Eddy \email{ian.eddy@nrcan-rncan.gc.ca} [contributor]
+  \item Camille Giuliano \email{camsgiu@gmail.com} [contributor]
+  \item Susan Murray \email{murray.e.susan@gmail.com} [contributor]
+  \item Dominique Caron \email{dominiquecaron01@gmail.com} [contributor]
 }
 
 }
