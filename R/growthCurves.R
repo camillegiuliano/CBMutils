@@ -1,7 +1,9 @@
 utils::globalVariables(c(
   "a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3",
   "Age", "canfi_species", "eco", "ecozone", "genus", "gcids",
-  "spatialUnitID", "species", "speciesName"
+  "spatialUnitID", "species", "speciesName",
+  "p_sw_low", "p_sw_high", "p_sb_low", "p_sb_high",
+  "p_br_low", "p_br_high", "p_fl_low", "p_fl_high"
 ))
 
 #' Calculate stemwood biomass (per ha) of live merchantable trees
