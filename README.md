@@ -5,4 +5,5 @@
 [![Codecov test coverage](https://codecov.io/gh/PredictiveEcology/CBMutils/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PredictiveEcology/CBMutils?branch=master)
 <!-- badges: end -->
 
-Implementation of several components of the Carbon Budget Model of the Canadian Forest Service (v3) in R.
+Utilities for modelling carbon in R and SpaDES based on the Carbon Budget Model
+of the Canadian Forest Service v3 (CBM-CFS3).
