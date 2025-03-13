@@ -4,10 +4,8 @@ Title: Utilities for modelling carbon based on CBM-CFS3
 Description: Implementation of several components of the Carbon Budget Model of the
     Canadian Forest Service (v3).
 URL:
-    https://github.com/PredictiveEcology/CBMutils,
-    https://docs.google.com/spreadsheets/d/1SNHvHpr7SVIMfaxOdKENYElwiME75GK-jl3vaVQb6-w
-Date: 2025-03-13
-Version: 1.0
+    https://github.com/PredictiveEcology/CBMutils
+Version: 2.0.0.0000
 Authors@R: c(
     person("Céline",    "Boisvenue", email = "celine.boisvenue@nrcan-rncan.gc.ca", role = c("aut")),
     person("Alex M",    "Chubaty",   email = "achubaty@for-cast.ca",               role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7146-8135")),
@@ -19,38 +17,28 @@ Authors@R: c(
     )
 License: GPL-3
 Depends: R (>= 4.2)
-LinkingTo: 
-    Rcpp
 Imports:
     cowplot,
     crayon,
     data.table,
-    fasterize,
     ggforce,
     ggplot2,
     knitr,
     LandR,
-    magrittr,
     methods,
-    quickPlot (>= 0.1.8.9001),
-    raster,
-    reproducible,
     robustbase,
-    Rcpp,
     RSQLite,
     scales,
-    sf,
-    sp,
     terra
 Suggests:
     covr,
     devtools,
+    reproducible,
     rmarkdown,
     testthat,
     withr
 Remotes:
     PredictiveEcology/LandR@development,
-    PredictiveEcology/quickPlot@development,
     PredictiveEcology/reproducible@development
 VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8

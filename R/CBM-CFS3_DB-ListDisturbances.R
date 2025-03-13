@@ -1,4 +1,6 @@
 
+utils::globalVariables("spatial_unit_id")
+
 #' CBM-CFS3 Disturbances Match
 #'
 #' Match disturbance names with CBM-CFS3 spatial unit disturbances.
@@ -419,7 +421,8 @@ seeDist <- function(EXN = TRUE, matrixIDs = NULL,
     }
 
     # CRAN requirement: predefine variables
-    source_pool_id <- source_pool <- sink_pool_id <- sink_pool <- proportion <- code <- NULL
+    id <- source_pool_id <- source_pool <- sink_pool_id <- sink_pool <- NULL
+    disturbance_matrix_id <- proportion <- code <- NULL
 
     cbmDBM[["pool_source"]] <- copy(cbmDBM[["pool"]])[, source_pool := code]
     cbmDBM[["pool_sink"]]   <- copy(cbmDBM[["pool"]])[, sink_pool   := code]
