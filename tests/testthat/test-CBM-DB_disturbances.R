@@ -1,6 +1,4 @@
 
-## SET UP ----
-
 if (!testthat::is_testing()) source(testthat::test_path("setup.R"))
 
 # Download CBM-CFS3 databases
@@ -17,13 +15,10 @@ exnDB <- {
       "https://raw.githubusercontent.com/cat-cfs/libcbm_py/main/libcbm/resources/cbm_exn",
       paste0(csvName, ".csv"))
     destfile <- file.path(testDirs$temp$inputs, basename(url))
-    download.file(url = url, destfile = destfile, quiet = TRUE)
+    if (!file.exists(destfile)) download.file(url = url, destfile = destfile, quiet = TRUE)
     read.csv(destfile, stringsAsFactors = FALSE, row.names = NULL)
   })
 }
-
-
-## TEST ----
 
 test_that("spuDist", {
 
@@ -306,6 +301,10 @@ test_that("seeDist", {
 
   expect_identical(names(distVals), "2")
   expect_true(all(distVals[["2"]]$disturbance_matrix_id == 2))
+
+})
+
+test_that("simDist", {
 
 })
 
