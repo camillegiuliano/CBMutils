@@ -26,17 +26,18 @@ Imports:
     knitr,
     LandR,
     methods,
+    reticulate,
     robustbase,
     RSQLite,
     scales,
-    terra
+    terra,
+    withr
 Suggests:
     covr,
     devtools,
     reproducible,
     rmarkdown,
-    testthat,
-    withr
+    testthat
 Remotes:
     PredictiveEcology/LandR@development,
     PredictiveEcology/reproducible@development
