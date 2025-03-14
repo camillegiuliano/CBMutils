@@ -22,16 +22,16 @@
 #' @param pyenvRoot character. Path to directory of where to download the pyenv-win tool
 #' @param pyenvOnly logical. Exclude versions not within a pyenv install directory
 #'
-#' @return character. Path to Python executable (.exe) file
+#' @return character. Path to Python interpreter
 #' @export
 ReticulateFindPython <- function(version, versionInstall = version, useGit = TRUE, prompt = FALSE,
                                  pyenvRoot = tools::R_user_dir("CBMutils"), pyenvOnly = FALSE){
 
   # Get path to Python interpreter
-  pyExe <- reticulate_python_exe_path(version, pyenvRoot = pyenvRoot, pyenvOnly = pyenvOnly)
+  pyInterp <- reticulate_python_path(version, pyenvRoot = pyenvRoot, pyenvOnly = pyenvOnly)
 
   # If found: return
-  if (!is.null(pyExe)) return(pyExe)
+  if (!is.null(pyInterp)) return(pyInterp)
 
   # If not found: install Python
   if (identical(.Platform$OS.type, "windows")){
@@ -45,10 +45,10 @@ ReticulateFindPython <- function(version, versionInstall = version, useGit = TRU
   }
 
   # Return path to interpreter
-  reticulate_python_exe_path(version, pyenvRoot = pyenvRoot)
+  reticulate_python_path(version, pyenvRoot = pyenvRoot, pyenvOnly = pyenvOnly)
 }
 
-#' Python EXE path
+#' Python interpreter path
 #'
 #' Get path to Python interpreter, including installs at a given pyenv-win location
 #'
@@ -57,9 +57,9 @@ ReticulateFindPython <- function(version, versionInstall = version, useGit = TRU
 #' @param pyenvRoot character. Path to directory containing pyenv-win tool
 #' @param pyenvOnly logical. Exclude versions not within a pyenv install directory
 #'
-#' @return character or NULL. IF found, a path to Python executable (.exe) file
-reticulate_python_exe_path <- function(version = NULL,
-                                       pyenvRoot = tools::R_user_dir("CBMutils"), pyenvOnly = FALSE){
+#' @return character or NULL. IF found, a path to Python interpreter
+reticulate_python_path <- function(version = NULL,
+                                   pyenvRoot = tools::R_user_dir("CBMutils"), pyenvOnly = FALSE){
 
   # Get paths to Python interpreters in known locations
   pyPaths <- reticulate::virtualenv_starter(version = version, all = TRUE)
@@ -86,7 +86,8 @@ reticulate_python_exe_path <- function(version = NULL,
 
   if (pyenvOnly & nrow(pyPaths) > 0){
     pyPaths <- pyPaths[sapply(pyPaths$path, function(path){
-      any(c("pyenv", "pyenv-win") %in% strsplit(normalizePath(path, winslash = "/"), "/")[[1]])
+      any(c(".pyenv", "pyenv", ".pyenv-win", "pyenv-win") %in%
+            strsplit(normalizePath(path, winslash = "/"), "/")[[1]])
     }),]
   }
 

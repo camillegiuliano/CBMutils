@@ -7,23 +7,25 @@ test_that("ReticulateFindPython", {
   dir.create(pyenvRoot)
 
   # Check that Python can be installed
-  pyEXE <- ReticulateFindPython(
+  pyInterp <- ReticulateFindPython(
     version = "3.10", pyenvRoot = pyenvRoot,
     pyenvOnly = TRUE, useGit = FALSE, prompt = FALSE)
 
-  expect_equal(length(pyEXE), 1)
-  expect_true(file.exists(pyEXE))
-  expect_true(tolower(tools::file_ext(pyEXE)) == "exe")
+  expect_equal(length(pyInterp), 1)
+  expect_true(file.exists(pyInterp))
 
   # Check that Python was installed at pyeenvRoot
-  expect_true("ReticulateFindPython" %in% strsplit(normalizePath(pyEXE, winslash = "/"), "/")[[1]])
+  if (identical(.Platform$OS.type, "windows")){
+    expect_true(tolower(tools::file_ext(pyInterp)) == "exe")
+    expect_true("ReticulateFindPython" %in% strsplit(normalizePath(pyInterp, winslash = "/"), "/")[[1]])
+  }
 
   # Check that re-running returns the same path
-  pyEXE2 <- ReticulateFindPython(
+  pyInterp2 <- ReticulateFindPython(
     version = "3.10", pyenvRoot = pyenvRoot,
     pyenvOnly = TRUE, useGit = FALSE, prompt = FALSE)
 
-  expect_identical(pyEXE, pyEXE2)
+  expect_identical(pyInterp, pyInterp2)
 
 })
 

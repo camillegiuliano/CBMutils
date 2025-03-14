@@ -29,7 +29,7 @@ Defaults to 'version'. Required if 'version' is a string of versions constraints
 \item{pyenvOnly}{logical. Exclude versions not within a pyenv install directory}
 }
 \value{
-character. Path to Python executable (.exe) file
+character. Path to Python interpreter
 }
 \description{
 Use reticulate to find or install Python that meets version requirements.
