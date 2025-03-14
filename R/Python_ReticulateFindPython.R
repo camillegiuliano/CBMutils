@@ -34,7 +34,7 @@ ReticulateFindPython <- function(version, versionInstall = version, useGit = TRU
   if (!is.null(pyExe)) return(pyExe)
 
   # If not found: install Python
-  if (identical(tolower(Sys.info()[["sysname"]]), "windows")){
+  if (identical(.Platform$OS.type, "windows")){
 
     reticulate_install_python_windows(
       versionInstall, pyenvRoot = pyenvRoot, useGit = useGit, prompt = prompt)
