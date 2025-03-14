@@ -26,6 +26,7 @@ Imports:
     knitr,
     LandR,
     methods,
+    reticulate,
     robustbase,
     RSQLite,
     scales,
