@@ -17,7 +17,7 @@ utils::globalVariables(c(
 #' @importFrom crayon red
 #' @importFrom data.table copy
 #' @importFrom robustbase nlrob
-#' @importFrom stats approx as.formula na.omit predict
+#' @importFrom stats approx as.formula na.omit predict runif
 #' @importFrom utils tail
 cumPoolsSmooth <- function(cumPoolsRaw, colsToUse = c("totMerch", "fol", "other"),
                            colsToUseNew = paste0(colsToUse, "_New"))  {

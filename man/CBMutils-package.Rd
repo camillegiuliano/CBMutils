@@ -13,7 +13,6 @@ of the Canadian Forest Service v3 (CBM-CFS3).
 Useful links:
 \itemize{
   \item \url{https://github.com/PredictiveEcology/CBMutils}
-  \item \url{https://docs.google.com/spreadsheets/d/1SNHvHpr7SVIMfaxOdKENYElwiME75GK-jl3vaVQb6-w}
 }
 
 }

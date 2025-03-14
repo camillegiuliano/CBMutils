@@ -1,5 +1,5 @@
 utils::globalVariables(c(
-  "..id_col", "valueNumeric"
+  "..id_col", "age", "value", "valueNumeric", "variable", "set"
 ))
 
 #' Plot all columns that are not id_col
@@ -17,8 +17,6 @@ utils::globalVariables(c(
 #' @importFrom data.table copy melt
 #' @importFrom ggforce facet_wrap_paginate
 #' @importFrom ggplot2 aes element_text facet_wrap geom_line ggplot ggsave labs theme_bw
-#' @importFrom reproducible checkPath
-#'
 m3ToBiomPlots <- function(inc = "increments", id_col = "gcids", nrow = 5, ncol = 5,
                           filenameBase = "rawCumBiomass_", path = NULL,
                           title = "Cumulative merch fol other by gc id",

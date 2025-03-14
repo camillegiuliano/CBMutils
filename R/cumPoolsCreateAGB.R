@@ -28,6 +28,7 @@ utils::globalVariables(c(
 #' @return biomass (\eqn{T/ha}) in each above ground pool for each cohort per pixel group.
 #'
 #' @export
+#' @importFrom data.table rbindlist setnames
 cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "poolsPixelGroup"){
   counter <- 0L
   cumBiomList <- list()

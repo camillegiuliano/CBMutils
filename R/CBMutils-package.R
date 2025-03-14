@@ -8,12 +8,6 @@
 #' @import methods
 "_PACKAGE"
 
-## usethis namespace: start
-#' @useDynLib CBMutils, .registration = TRUE
-#' @importFrom Rcpp sourceCpp
-## usethis namespace: end
-NULL
-
 # data.table package common variables
 utils::globalVariables(c(
   ".", ":="
