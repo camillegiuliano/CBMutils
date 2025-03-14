@@ -64,12 +64,6 @@ reticulate_python_exe_path <- function(version = NULL,
   # Get paths to Python interpreters in known locations
   pyPaths <- reticulate::virtualenv_starter(version = version, all = TRUE)
 
-  if (pyenvOnly & nrow(pyPaths) > 0){
-    pyPaths <- pyPaths[sapply(pyPaths$path, function(path){
-      "pyenv" %in% strsplit(normalizePath(path, winslash = "/"), "/")[[1]]
-    }),]
-  }
-
   # Search provided 'pyenvRoot' for more installs
   pyenvDir <- file.path(pyenvRoot, "pyenv")
   if (file.exists(pyenvDir)){
@@ -88,6 +82,12 @@ reticulate_python_exe_path <- function(version = NULL,
       pyPaths,
       reticulate::virtualenv_starter(version = version, all = TRUE)
     )
+  }
+
+  if (pyenvOnly & nrow(pyPaths) > 0){
+    pyPaths <- pyPaths[sapply(pyPaths$path, function(path){
+      any(c("pyenv", "pyenv-win") %in% strsplit(normalizePath(path, winslash = "/"), "/")[[1]])
+    }),]
   }
 
   # Choose highest version
