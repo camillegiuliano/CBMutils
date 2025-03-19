@@ -143,7 +143,7 @@ convertAGB2pools <- function(oneCurve, table6, table7){
   merch <- propMerch * totalStemWood
 
   # otherStemWood is everything that is not totMerch
-  otherStemWood <- totalStemWood - totMerch
+  otherStemWood <- totalStemWood - merch
 
   bark <- totTree * pVect[, 2]
   branch <- totTree * pVect[, 3]
