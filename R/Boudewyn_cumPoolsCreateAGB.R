@@ -61,7 +61,7 @@ cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol){
     cumBiom <- cumBiom * 0.5
 
     cumBiomList[[counter]] <- oneCurve[,
-                                       .(species = speciesCode,
+                                       .(speciesCode = speciesCode,
                                          age = age,
                                          pixGroupColValue = get(pixGroupCol))]
     setnames(cumBiomList[[counter]], "pixGroupColValue", pixGroupCol)
