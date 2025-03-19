@@ -23,20 +23,18 @@ utils::globalVariables(c(
 #' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
 #'
 #' @param pixGroupCol the name of the column in `allInforAGBin` serving as the pixel group
-#' identifier. Currently, this can be "poolsPixelGroup", or "yieldPixelGroups".
+#' identifier.
 
 #' @return biomass (\eqn{T/ha}) in each above ground pool for each cohort per pixel group.
 #'
 #' @export
 #' @importFrom data.table rbindlist setnames
-cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "poolsPixelGroup"){
+cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol){
   counter <- 0L
   cumBiomList <- list()
 
   expectedColumns <- c("canfi_species", "juris_id", "ecozone", "age", "B", pixGroupCol)
-  if (pixGroupCol == "yieldPixelGroup") {
-    expectedColumns <- c(expectedColumns, "cohort_id")
-  }
+
   if (any(!(expectedColumns %in% colnames(allInfoAGBin)))) {
     stop("The AGB table needs the following columns ", paste(expectedColumns, collapse = " "))
   }
@@ -62,12 +60,8 @@ cumPoolsCreateAGB <- function(allInfoAGBin, table6, table7, pixGroupCol = "pools
     ### HARD CODED VALUE ####################
     cumBiom <- cumBiom * 0.5
 
-    # To handle cohortData as well
-    if(pixGroupCol != "yieldPixelGroup") cohort_id <- NULL
-
     cumBiomList[[counter]] <- oneCurve[,
-                                       .(gcids = cohort_id,
-                                         species = speciesCode,
+                                       .(species = speciesCode,
                                          age = age,
                                          pixGroupColValue = get(pixGroupCol))]
     setnames(cumBiomList[[counter]], "pixGroupColValue", pixGroupCol)
@@ -146,16 +140,16 @@ convertAGB2pools <- function(oneCurve, table6, table7){
   # if age < MinMerchAge, the propMerch is 0, otherwise use FORCS, until we find actual data.
   propMerch <- (oneCurve$age >= minMerchAge) * a * (1-b^oneCurve$age)
 
-  totMerch <- propMerch * totalStemWood
+  merch <- propMerch * totalStemWood
 
   # otherStemWood is everything that is not totMerch
   otherStemWood <- totalStemWood - totMerch
 
   bark <- totTree * pVect[, 2]
   branch <- totTree * pVect[, 3]
-  fol <- totTree * pVect[, 4]
+  foliage <- totTree * pVect[, 4]
   other <- branch + bark + otherStemWood
-  biomCumulative <- as.matrix(cbind(totMerch,fol,other))
+  biomCumulative <- as.matrix(cbind(merch, foliage, other))
   return(biomCumulative)
 }
 
