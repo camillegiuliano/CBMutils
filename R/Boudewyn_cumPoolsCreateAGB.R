@@ -22,7 +22,7 @@ utils::globalVariables(c(
 #' @param table7 `data.frame` corresponding to Table 4 from Boudewyn et al. (2007),
 #' available from <https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv>.
 #'
-#' @param pixGroupCol the name of the column in `allInforAGBin` serving as the pixel group
+#' @param pixGroupCol the name of the column in `allInfoAGBin` serving as the pixel group
 #' identifier.
 
 #' @return biomass (\eqn{T/ha}) in each above ground pool for each cohort per pixel group.

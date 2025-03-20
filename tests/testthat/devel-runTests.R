@@ -4,4 +4,4 @@ testthat::test_local()
 
 # Run subsets of tests
 testthat::test_local(filter = "CBM-DB_disturbances")
-
+testthat::test_local(filter = "cumPoolsCreateAGB")
