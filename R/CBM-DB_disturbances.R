@@ -115,7 +115,9 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
             }),
             "",
             "CBM-CFS3 disturbance(s) with a matching name or description:",
-            knitr::kable(printTable[, setdiff(names(printTable), "description"), drop = FALSE], format = "pipe"),
+            knitr::kable(
+              unique(printTable[, setdiff(names(printTable), "description"), drop = FALSE]),
+              format = "pipe"),
             "",
             crayon::yellow(
               "Enter the correct", chooseID,
@@ -124,7 +126,7 @@ spuDistMatch <- function(distTable, ask = interactive(), nearMatches = TRUE,
 
           if (identical(trimws(tolower(ans)), "desc")){
             ans <- readline(cat(paste(c(
-              knitr::kable(printTable, format = "pipe"),
+              knitr::kable(unique(printTable), format = "pipe"),
               "",
               crayon::yellow("Enter the correct ", chooseID, ": ")
             ), collapse = "\n")))
