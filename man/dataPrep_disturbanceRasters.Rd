@@ -21,7 +21,7 @@ or a 1-length unnamed list of \code{disturbanceRasters} where the raster values
 contain event IDs.}
 
 \item{templateRast}{terra \code{\link[terra]{SpatRaster}}.
-Template raster to align rasters with 'mode' resampling.}
+Template raster to align rasters with.}
 
 \item{year}{digit or character.
 One or more years to summarize disturbance events for.
@@ -32,5 +32,6 @@ If NULL, all available years are summarized.}
 data.table with integer columns 'pixelIndex', 'year', 'eventID'.
 }
 \description{
-Process a list of \code{disturbanceRasters} into \code{disturbanceEvents}.
+Process a list of \code{disturbanceRasters} into \code{disturbanceEvents} for the CBM_core module.
+Optionally resample to align with a template raster.
 }
