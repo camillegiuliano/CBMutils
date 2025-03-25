@@ -4,12 +4,7 @@
 \alias{cumPoolsCreateAGB}
 \title{Convert total above ground biomass into 3 pools (\eqn{T/ha})}
 \usage{
-cumPoolsCreateAGB(
-  allInfoAGBin,
-  table6,
-  table7,
-  pixGroupCol = "poolsPixelGroup"
-)
+cumPoolsCreateAGB(allInfoAGBin, table6, table7, pixGroupCol)
 }
 \arguments{
 \item{allInfoAGBin}{\code{data.frame} with at least four following columns: \code{canfi_species},
@@ -21,8 +16,8 @@ available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_tabl
 \item{table7}{\code{data.frame} corresponding to Table 4 from Boudewyn et al. (2007),
 available from \url{https://nfi.nfis.org/resources/biomass_models/appendix2_table7_tb.csv}.}
 
-\item{pixGroupCol}{the name of the column in \code{allInforAGBin} serving as the pixel group
-identifier. Currently, this can be "poolsPixelGroup", or "yieldPixelGroups".}
+\item{pixGroupCol}{the name of the column in \code{allInfoAGBin} serving as the pixel group
+identifier.}
 }
 \value{
 biomass (\eqn{T/ha}) in each above ground pool for each cohort per pixel group.

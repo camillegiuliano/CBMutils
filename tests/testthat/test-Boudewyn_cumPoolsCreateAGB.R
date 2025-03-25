@@ -42,8 +42,8 @@ test_that("convertAGB2pools", {
 
   #sum of the pools equal total AGB
   expect_equal(rowSums(out), dt$B)
-  expect_true(out[dt$age < 15, "totMerch"] ==  0)
-  expect_true(all(colnames(out) == c("totMerch", "fol", "other")))
+  expect_true(out[dt$age < 15, "merch"] ==  0)
+  expect_true(all(colnames(out) == c("merch", "foliage", "other")))
   expect_true(all(!is.na(out)))
   expect_equal(dim(out), c(3,3))
 
@@ -63,19 +63,12 @@ test_that("cumPoolsCreateAGB", {
   dt$speciesCode[dt$canfi_species == 1201] <- "POPU_TRE"
   data.table::setorder(dt, speciesCode, age, poolsPixelGroup)
 
-  out2 <- cumPoolsCreateAGB(dt, table6 = table6AGB, table7 = table7AGB)
+  out2 <- cumPoolsCreateAGB(dt, table6 = table6AGB, table7 = table7AGB, pixGroupCol ="poolsPixelGroup")
 
-  expect_equal(rowSums(out2[,c("totMerch", "fol", "other")]), dt$B/2)
-  expect_true(all(out2[dt$age < 15, "totMerch"] ==  0))
+  expect_equal(rowSums(out2[,c("merch", "foliage", "other")]), dt$B/2)
+  expect_true(all(out2[dt$age < 15, "merch"] ==  0))
   expect_equal(nrow(out2), nrow(dt))
-  expect_true(all(colnames(out2) == c("species", "age", "poolsPixelGroup", "totMerch", "fol", "other")))
-
-  dt$yieldPixelGroup <- dt$poolsPixelGroup
-  dt$poolsPixelGroup <- NULL
-  dt$cohort_id <- c(1:nrow(dt))
-  out3 <- cumPoolsCreateAGB(dt, table6 = table6AGB, table7 = table7AGB, pixGroupCol = "yieldPixelGroup")
-  expect_equal(out3$gcids, dt$cohort_id)
-  expect_equivalent(out2, out3[,-c("gcids")])
+  expect_true(all(colnames(out2) == c("speciesCode", "age", "poolsPixelGroup", "merch", "foliage", "other")))
 
 })
 
