@@ -1,19 +1,18 @@
 
 #' CBM data prep: disturbanceRasters
 #'
-#' Process a list of \code{disturbanceRasters} into \code{disturbanceEvents} for the CBM_core module.
+#' Process \code{disturbanceRasters} into a table of \code{disturbanceEvents}
+#' for the CBM_core module.
 #' Optionally resample to align with a template raster.
 #'
-#' @param disturbanceRastersList list of \code{disturbanceRasters}.
-#' Each \code{disturbanceRasters} item must be named by a 4 digit year
-#' such that a single terra \code{\link[terra]{SpatRaster}} layer can be accessed
-#' for each disturbance year (e.g.  \code{disturbanceRasters[["1"]][["2025"]]}).
-#' This can either be a list named with disturbance event IDs such that every
-#' non-NA raster value is considered an event of that type,
-#' or a 1-length unnamed list of \code{disturbanceRasters} where the raster values
-#' contain event IDs.
+#' @param disturbanceRasters terra \code{\link[terra]{SpatRaster}} or list of SpatRaster.
+#' Must be named with 4 digit years such that a single raster layer can be accessed
+#' for each disturbance year (e.g.  \code{disturbanceRasters[["2025"]]}).
+#' @param eventID integer. Disturbance event ID.
+#' All non-NA cells will be included as events of this type.
+#' If NULL, the raster cell values must be the event IDs.
 #' @param templateRast terra \code{\link[terra]{SpatRaster}}.
-#' Template raster to align rasters with.
+#' Optional template raster to align rasters with.
 #' @param year digit or character.
 #' One or more years to summarize disturbance events for.
 #' If NULL, all available years are summarized.
@@ -27,7 +26,7 @@
 #' @importFrom terra compareGeom rast
 #' @export
 dataPrep_disturbanceRasters <- function(
-    disturbanceRastersList, templateRast = NULL, year = NULL){
+    disturbanceRasters, eventID = NULL, templateRast = NULL, year = NULL){
 
   # Set table template
   tableTemplate <- data.table::data.table(
@@ -37,26 +36,7 @@ dataPrep_disturbanceRasters <- function(
   )
 
   # If no disturbances provided: return empty table
-  if (length(disturbanceRastersList) == 0) return(tableTemplate)
-
-  # Check disturbanceRastersList input
-  if (!is.list(disturbanceRastersList)) stop("'disturbanceRastersList' must be a list")
-  if (is.null(names(disturbanceRastersList)) & length(disturbanceRastersList) > 1) stop(
-    "if length('disturbanceRastersList') > 1 it must be named but disturbance event ID")
-
-  distListNames <- lapply(disturbanceRastersList, names)
-  if (any(sapply(distListNames, is.null)) ||
-      any(do.call(c, lapply(distListNames, nchar)) != 4)) stop(
-    "'disturbanceRastersList' items must be named by disturbance year")
-
-  # Set event IDs
-  if (!is.null(names(disturbanceRastersList))){
-    eventIDs <- suppressWarnings(tryCatch(
-      as.integer(names(disturbanceRastersList)),
-      error = function(e) NA))
-    if (any(is.na(eventIDs))) stop(
-      "'disturbanceRastersList' names must match integer event IDs")
-  }
+  if (length(disturbanceRasters) == 0) return(tableTemplate)
 
   # Read template raster
   if (!is.null(templateRast) && !inherits(templateRast, "SpatRaster")){
@@ -67,79 +47,80 @@ dataPrep_disturbanceRasters <- function(
         call. = FALSE))
   }
 
-  # Choose years to summarize
-  if (is.null(year)) year <- sort(unique(do.call(c, lapply(disturbanceRastersList, names))))
+  # Set disturbance years
+  distYears <- names(disturbanceRasters)
+  if (is.null(distYears) || any(nchar(distYears) != 4)) stop(
+    "'disturbanceRasters' must be named by 4 character disturbance year")
+
+  if (!is.null(year)) distYears <- as.character(year)
 
   # Read disurbances and summarize into a table
-  do.call(rbind, lapply(year, function(yr){
+  do.call(rbind, lapply(distYears, function(year){
 
-    do.call(rbind, lapply(1:length(disturbanceRastersList), function(i){
+    if (year %in% names(disturbanceRasters)){
 
-      if (as.character(yr) %in% names(disturbanceRastersList[[i]])){
+      # Get year disturbances
+      annualDist <- disturbanceRasters[[year]]
 
-        # Get year disturbances
-        annualDist <- disturbanceRastersList[[i]][[as.character(yr)]]
+      # Convert to SpatRaster
+      if (!is(annualDist, "SpatRaster")){
+        annualDist <- tryCatch(
+          terra::rast(annualDist),
+          error = function(e) stop(
+            "'disturbanceRaster' for year ", year, " failed to be read as terra SpatRaster: ",
+            e$message, call. = FALSE))
+      }
 
-        # Convert to SpatRaster
-        if (!is(annualDist, "SpatRaster")){
-          annualDist <- tryCatch(
-            terra::rast(annualDist),
-            error = function(e) stop(
-              "'disturbanceRaster' for year ", yr, " failed to be read as terra SpatRaster: ",
-              e$message, call. = FALSE))
-        }
+      # Align with template raster
+      if (!is.null(templateRast)){
 
-        # Align with template raster
-        if (!is.null(templateRast)){
+        needsAlign <- !terra::compareGeom(
+          annualDist, templateRast,
+          lyrs = FALSE,
+          crs = TRUE, warncrs = FALSE,
+          ext = TRUE, rowcol = TRUE, res = TRUE,
+          stopOnError = FALSE, messages = FALSE)
 
-          needsAlign <- !terra::compareGeom(
+        if (needsAlign){
+
+          # assumption: max is faster if values are not required
+          annualDist <- exactextractr::exact_resample(
             annualDist, templateRast,
-            lyrs = FALSE,
-            crs = TRUE, warncrs = FALSE,
-            ext = TRUE, rowcol = TRUE, res = TRUE,
-            stopOnError = FALSE, messages = FALSE)
-
-          if (needsAlign){
-
-            # assumption: max is faster if values are not required
-            annualDist <- exactextractr::exact_resample(
-              annualDist, templateRast,
-              fun = ifelse(is.null(names(disturbanceRastersList)), "mode", "max")
-            ) |> Cache()
-          }
+            fun = ifelse(is.null(eventID), "mode", "max")
+          ) |> Cache()
         }
+      }
 
-        # Get raster values
-        rasVals <- as.integer(terra::values(annualDist)[,1])
+      # Get raster values
+      rasVals <- terra::values(annualDist)[,1]
+
+      # Summarize events into a table
+      if (!is.null(eventID)){
+
+        data.table::data.table(
+          pixelIndex = which((rasVals > 0) %in% TRUE),
+          year       = as.integer(year),
+          eventID    = eventID
+        )
+
+      }else{
+
+        # Set event IDs
+        eventIDs <- suppressWarnings(tryCatch(
+          as.integer(rasVals),
+          error = function(e) NULL))
+        if (!is.integer(eventIDs)) stop(
+          "if eventID is NULL, disturbance raster values must be integer event IDs")
 
         # Summarize events into a table
-        if (!is.null(names(disturbanceRastersList))){
+        data.table::data.table(
+          pixelIndex = as.integer(1:length(rasVals)),
+          year       = as.integer(year),
+          eventID    = eventIDs
+        )[(eventIDs > 0) %in% TRUE,]
+      }
 
-          data.table::data.table(
-            pixelIndex = which((rasVals > 0) %in% TRUE),
-            year       = as.integer(yr),
-            eventID    = eventIDs[[i]]
-          )
-
-        }else{
-
-          # Set event IDs
-          eventIDs <- suppressWarnings(tryCatch(
-            as.integer(rasVals),
-            error = function(e) NULL))
-          if (!is.integer(eventIDs)) stop(
-            "Disturbance raster values must be integer event IDs")
-
-          # Summarize events into a table
-          data.table::data.table(
-            pixelIndex = as.integer(1:length(rasVals)),
-            year       = as.integer(yr),
-            eventID    = eventIDs
-          )[(eventIDs > 0) %in% TRUE,]
-        }
-
-      }else tableTemplate
-    }))
+    }else tableTemplate
   }))
 }
 

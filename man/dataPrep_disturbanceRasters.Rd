@@ -5,23 +5,23 @@
 \title{CBM data prep: disturbanceRasters}
 \usage{
 dataPrep_disturbanceRasters(
-  disturbanceRastersList,
+  disturbanceRasters,
+  eventID = NULL,
   templateRast = NULL,
   year = NULL
 )
 }
 \arguments{
-\item{disturbanceRastersList}{list of \code{disturbanceRasters}.
-Each \code{disturbanceRasters} item must be named by a 4 digit year
-such that a single terra \code{\link[terra]{SpatRaster}} layer can be accessed
-for each disturbance year (e.g.  \code{disturbanceRasters[["1"]][["2025"]]}).
-This can either be a list named with disturbance event IDs such that every
-non-NA raster value is considered an event of that type,
-or a 1-length unnamed list of \code{disturbanceRasters} where the raster values
-contain event IDs.}
+\item{disturbanceRasters}{terra \code{\link[terra]{SpatRaster}} or list of SpatRaster.
+Must be named with 4 digit years such that a single raster layer can be accessed
+for each disturbance year (e.g.  \code{disturbanceRasters[["2025"]]}).}
+
+\item{eventID}{integer. Disturbance event ID.
+All non-NA cells will be included as events of this type.
+If NULL, the raster cell values must be the event IDs.}
 
 \item{templateRast}{terra \code{\link[terra]{SpatRaster}}.
-Template raster to align rasters with.}
+Optional template raster to align rasters with.}
 
 \item{year}{digit or character.
 One or more years to summarize disturbance events for.
@@ -32,6 +32,7 @@ If NULL, all available years are summarized.}
 data.table with integer columns 'pixelIndex', 'year', 'eventID'.
 }
 \description{
-Process a list of \code{disturbanceRasters} into \code{disturbanceEvents} for the CBM_core module.
+Process \code{disturbanceRasters} into a table of \code{disturbanceEvents}
+for the CBM_core module.
 Optionally resample to align with a template raster.
 }
