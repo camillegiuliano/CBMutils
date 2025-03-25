@@ -3,9 +3,8 @@ if (!testthat::is_testing()) source(testthat::test_path("setup.R"))
 
 # Set URL to disturbance rasters ZIP archive
 ## Raster test data is a subset of the Wulder and White disturbance rasters covering SK 1984-2011
-## TODO: update link to repo main or development branch
 disturbanceRastersURL <- file.path(
-  "https://raw.githubusercontent.com/suz-estella/CBMutils/refs/heads/dev-distRasters",
+  "https://raw.githubusercontent.com/PredictiveEcology/CBMutils/refs/heads/development",
   "tests/testthat/testdata/SaskDist_1985-1857_crop.zip")
 
 # Set output path
