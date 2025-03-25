@@ -100,7 +100,7 @@ dataPrep_disturbanceRasters <- function(
         data.table::data.table(
           pixelIndex = which((rasVals > 0) %in% TRUE),
           year       = as.integer(year),
-          eventID    = eventID
+          eventID    = as.integer(eventID)
         )
 
       }else{
