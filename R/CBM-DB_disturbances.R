@@ -449,35 +449,28 @@ seeDist <- function(EXN = TRUE, matrixIDs = NULL,
 #' proportion in which the carbon-transfers are completed.
 #'
 #' @param sim A `SpaDES` CBM simulation (`simList`) object.
+#' @param disturbanceMeta Table defining the disturbance event types created in the CBM_dataPrep module.
+#' @param disturbanceMatrix Default disturbance data table created in the CBM_defaults module.
+#' @param dbPath Path to CBM-CFS3 SQLite database file.
+#'
+#' @return List of `data.frame` for each disturbance matrix id in the study area, named by disturbance name
 #'
 #' @export
+#' @importFrom data.table
 simDist <- function(sim) {
-  # put names to the pools
-  poolNames <- as.data.frame(cbind(sim@.envir$pooldef[-1], c(1:24, 26)))
-  names(poolNames) <- c("pool", "dmPoolId")
+  # Getting the disturbances in study area
+  DMID <- unique(sim@.envir$disturbanceMeta[, 6])
 
-  # Getting the number of DisturbanceMatrixID
-  matNum <- unique(sim$mySpuDmids[, 2])
-  # matNum will be the lenght of the list of data.frames
-  clearDists <- vector("list", length = length(matNum))
+  # Getting all disturbance tables from seeDist
+  allDist <- seeDist(EXN = FALSE, dbPath = sim@.envir$dbPath)
+  # Subsetting table list to only those relevant to study area
+  subsetDist <- allDist[names(allDist) %in% DMID$disturbance_matrix_id]
 
-  # for each matNum, create a data.frame that explains the pool transfers
-  for (i in 1:length(matNum)) {
-    # get the lines specific to the distMatrix in question
-    matD <- as.data.frame(sim@.envir$cbmData@disturbanceMatrixValues[
-      which(sim@.envir$cbmData@disturbanceMatrixValues[, 1] == matNum[i]), ])
-    names(poolNames) <- c("sinkName", "sink_pool_id")
-    sinkNames <- merge.data.frame(poolNames, matD)
-
-    names(poolNames) <- c("sourceName", "source_pool_id")
-    sourceNames <- merge.data.frame(poolNames, sinkNames)
-    clearDists[[i]] <- sourceNames[, c(5, 1:4, 6)]
-  }
   # each data.frame gets a descriptive name
-  names(clearDists) <- sim@.envir$cbmData@disturbanceMatrix[matNum, 3]
+  names(subsetDist) <- unique(sim@.envir$disturbanceMatrix[DMID, on = "disturbance_matrix_id", .(disturbance_matrix_id, name)])$name
   # description
   # "Salvage uprooting and burn for Boreal Plains"
-  return(clearDists)
+  return(subsetDist)
 }
 
 
